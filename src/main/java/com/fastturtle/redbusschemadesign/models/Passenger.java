@@ -15,6 +15,9 @@ public class Passenger {
     @ManyToMany(mappedBy = "passengers")
     private Set<Booking> bookings;
 
+    @ManyToMany(mappedBy = "passengers")
+    private Set<Travel> travels;
+
     private String name;
     private int age;
 
@@ -40,6 +43,14 @@ public class Passenger {
 
     public void setBookings(Set<Booking> bookings) {
         this.bookings = bookings;
+    }
+
+    public Set<Travel> getTravels() {
+        return travels;
+    }
+
+    public void setTravels(Set<Travel> travels) {
+        this.travels = travels;
     }
 
     public String getName() {
