@@ -1,15 +1,16 @@
 package com.fastturtle.redbusschemadesign.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "bus")
 public class Bus {
     @Id
-    @Column(name = "busNo")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "busId")
+    private String busId;
+
+    @Column(name = "busNo", nullable = false, unique = true)
     private String busNo;
 
     @Column(name = "companyName")
@@ -18,7 +19,18 @@ public class Bus {
     @Column(name = "totalSeats")
     private int totalSeats;
 
-    public Bus() {
+    @Column(name = "availableSeats")
+    private int availableSeats;
+
+    @Column(name = "busType", nullable = false)
+    private BusType busType;
+
+    public String getBusId() {
+        return busId;
+    }
+
+    public void setBusId(String busId) {
+        this.busId = busId;
     }
 
     public String getBusNo() {
@@ -43,5 +55,21 @@ public class Bus {
 
     public void setTotalSeats(int totalSeats) {
         this.totalSeats = totalSeats;
+    }
+
+    public int getAvailableSeats() {
+        return availableSeats;
+    }
+
+    public void setAvailableSeats(int availableSeats) {
+        this.availableSeats = availableSeats;
+    }
+
+    public BusType getBusType() {
+        return busType;
+    }
+
+    public void setBusType(BusType busType) {
+        this.busType = busType;
     }
 }
