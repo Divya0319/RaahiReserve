@@ -8,7 +8,7 @@ public class Bus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "busId")
-    private String busId;
+    private int busId;
 
     @Column(name = "busNo", nullable = false, unique = true)
     private String busNo;
@@ -25,11 +25,11 @@ public class Bus {
     @Column(name = "busType", nullable = false)
     private BusType busType;
 
-    public String getBusId() {
+    public int getBusId() {
         return busId;
     }
 
-    public void setBusId(String busId) {
+    public void setBusId(int busId) {
         this.busId = busId;
     }
 
