@@ -19,6 +19,7 @@ public class BusController {
     public BusController(BusService busService) {
         this.busService = busService;
     }
+
     @GetMapping("/getBuses")
     public List<Bus> getBuses() {
         return busService.getAllBuses();
