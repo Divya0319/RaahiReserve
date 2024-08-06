@@ -3,7 +3,8 @@ package com.fastturtle.redbusschemadesign.models;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "busSeat")
+@Table(name = "busSeat", uniqueConstraints =
+@UniqueConstraint(columnNames = {"bus_id", "seat_number"}))
 public class BusSeat {
 
     @Id
