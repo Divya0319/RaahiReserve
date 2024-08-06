@@ -2,11 +2,11 @@ package com.fastturtle.redbusschemadesign.controllers;
 
 import com.fastturtle.redbusschemadesign.models.Bus;
 import com.fastturtle.redbusschemadesign.services.BusService;
+import com.fastturtle.redbusschemadesign.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -14,14 +14,11 @@ import java.util.List;
 public class BusController {
 
     private BusService busService;
+    private UserService userService;
 
     @Autowired
-    public BusController(BusService busService) {
+    public BusController(BusService busService, UserService userService) {
         this.busService = busService;
-    }
-
-    @GetMapping("/getBuses")
-    public List<Bus> getBuses() {
-        return busService.getAllBuses();
+        this.userService = userService;
     }
 }
