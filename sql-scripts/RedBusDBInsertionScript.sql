@@ -21,18 +21,15 @@ VALUES
     ('divya', 'divya123', 'divya@gmail.com', '9898978787'),
     ('guruji', 'guruji123', 'guruji@gmail.com', '8989878787');
 
-INSERT INTO booking (user_id, bus_route_id, booking_date, payment_id)
+INSERT INTO booking (user_id, bus_route_id, booking_date)
 VALUES
-    (1, 1, '2023-08-01 10:00:00', NULL),
-    (2, 2, '2023-08-02 11:00:00', NULL);
+    (1, 1, '2023-08-01 10:00:00'),
+    (2, 2, '2023-08-02 11:00:00');
 
 INSERT INTO payment (booking_id, amount, payment_method, payment_status)
 VALUES
     (1, 500.00, 'CREDIT_CARD', 'COMPLETED'),
     (2, 300.00, 'DEBIT_CARD', 'PENDING');
-
-UPDATE booking SET payment_id = 1 WHERE booking_id = 1;
-UPDATE booking SET payment_id = 2 WHERE booking_id = 2;
 
 INSERT INTO passenger (name, age, gender, bus_seat_id)
 VALUES
