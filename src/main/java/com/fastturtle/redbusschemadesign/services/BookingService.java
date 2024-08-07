@@ -58,12 +58,13 @@ public class BookingService {
         Booking booking = new Booking();
         booking.setBusRoute(busRoute);
         booking.setUser(user);
-        booking.setBookingDate(LocalDateTime.now());
+        booking.setBookingDate(LocalDate.now());
 
         return bookingRepository.save(booking);
     }
 
     public double getAverageCostOfTicketsOnDate(LocalDate date) {
-        return bookingRepository.findAverageCostOfTicketsOnDate(date);
+        Double averageCost = bookingRepository.findAverageCostOfTicketsOnDate(date);
+        return averageCost != null ? averageCost : 0.0;
     }
 }

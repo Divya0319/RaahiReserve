@@ -10,5 +10,5 @@ import java.time.LocalDate;
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     @Query("SELECT AVG(p.amount) FROM Booking b JOIN b.payment p WHERE b.bookingDate = :date")
-    double findAverageCostOfTicketsOnDate(@Param("date") LocalDate date);
+    Double findAverageCostOfTicketsOnDate(@Param("date") LocalDate date);
 }

@@ -2,6 +2,7 @@ package com.fastturtle.redbusschemadesign.models;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -23,7 +24,7 @@ public class Booking {
     private BusRoute busRoute;
 
     @Column(name = "bookingDate")
-    private LocalDateTime bookingDate;
+    private LocalDate bookingDate;
 
     @ManyToMany
     @JoinTable
@@ -59,11 +60,11 @@ public class Booking {
         this.busRoute = busRoute;
     }
 
-    public LocalDateTime getBookingDate() {
+    public LocalDate getBookingDate() {
         return bookingDate;
     }
 
-    public void setBookingDate(LocalDateTime bookingDate) {
+    public void setBookingDate(LocalDate bookingDate) {
         this.bookingDate = bookingDate;
     }
 
