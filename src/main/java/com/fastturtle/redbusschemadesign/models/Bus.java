@@ -28,7 +28,7 @@ public class Bus {
     @Column(name = "busType", nullable = false)
     private BusType busType;
 
-    @OneToMany
+    @OneToMany(mappedBy = "bus")
     private Set<BusRoute> busRoutes;
 
     public int getBusId() {

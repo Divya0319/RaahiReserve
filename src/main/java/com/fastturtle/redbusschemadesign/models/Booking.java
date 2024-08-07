@@ -32,8 +32,7 @@ public class Booking {
             inverseJoinColumns = @JoinColumn(name = "passenger_id"))
     private Set<Passenger> passengers;
 
-    @OneToOne
-    @JoinColumn(name = "paymentId")
+    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)
     private Payment payment;
 
     public int getBookingId() {

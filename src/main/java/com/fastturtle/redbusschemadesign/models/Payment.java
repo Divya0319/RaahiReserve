@@ -12,7 +12,7 @@ public class Payment {
     private int paymentId;
 
     @OneToOne
-    @JoinColumn(name = "booking_id")
+    @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
 
     @Column(name = "amount", nullable = false)
