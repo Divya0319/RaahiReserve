@@ -1,6 +1,6 @@
 CREATE TABLE user (
     user_id INT PRIMARY KEY AUTO_INCREMENT,
-    username VARCHAR(50) NOT NULL,
+    user_name VARCHAR(50) NOT NULL,
     password VARCHAR(255) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     phone_number VARCHAR(15)
@@ -12,7 +12,7 @@ CREATE TABLE bus (
     company_name VARCHAR(50),
     total_seats INT,
     available_seats INT,
-    bus_type ENUM('AC', 'Non-AC', 'Sleeper') NOT NULL
+    bus_type ENUM('AC', 'NON_AC', 'SLEEPER') NOT NULL
 );
 
 CREATE TABLE route (
@@ -25,7 +25,7 @@ CREATE TABLE bus_route (
     bus_route_id INT PRIMARY KEY AUTO_INCREMENT,
     bus_id INT,
     route_id INT,
-    direction ENUM('Outbound', 'Inbound') NOT NULL,
+    direction ENUM('UP', 'DOWN') NOT NULL,
     FOREIGN KEY (bus_id) REFERENCES bus(bus_id),
     FOREIGN KEY (route_id) REFERENCES route(route_id)
 );
@@ -53,7 +53,8 @@ CREATE TABLE payment (
     booking_id INT,
     amount DECIMAL(10, 2) NOT NULL,
     payment_date DATETIME NOT NULL,
-    payment_method VARCHAR(50),
+    payment_method ENUM('CASH', 'CREDIT_CARD', 'DEBIT_CARD', 'WALLET'),
+    payment_status ENUM('Pending', 'Completed', 'Failed') DEFAULT 'Pending',
     FOREIGN KEY (booking_id) REFERENCES booking(booking_id)
 );
 
