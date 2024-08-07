@@ -2,12 +2,13 @@ package com.fastturtle.redbusschemadesign.dtos;
 
 import com.fastturtle.redbusschemadesign.models.Passenger;
 
+import java.util.List;
 import java.util.Set;
 
 public class TravelRequest {
 
     private int bookingId;
-    private Set<Passenger> passengers;
+    private List<Integer> passengerIds;
 
     public int getBookingId() {
         return bookingId;
@@ -17,11 +18,11 @@ public class TravelRequest {
         this.bookingId = bookingId;
     }
 
-    public Set<Passenger> getPassengers() {
-        return passengers;
+    public List<Integer> getPassengerIds() {
+        return passengerIds;
     }
 
-    public void setPassengers(Set<Passenger> passengers) {
-        this.passengers = passengers;
+    public void setPassengerIds(List<Integer> passengerIds) {
+        this.passengerIds = passengerIds;
     }
 }
