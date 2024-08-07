@@ -2,6 +2,8 @@ package com.fastturtle.redbusschemadesign.models;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -20,7 +22,11 @@ public class Travel {
     )
     private Set<Passenger> passengers;
 
+    @Column(name = "traveled")
     private boolean traveled = false;
+
+    @Column(name = "travelDate")
+    private LocalDate travelDate;
 
     public int getTravelId() {
         return travelId;
@@ -46,4 +52,11 @@ public class Travel {
         this.traveled = traveled;
     }
 
+    public LocalDate getTravelDate() {
+        return travelDate;
+    }
+
+    public void setTravelDate(LocalDate travelDate) {
+        this.travelDate = travelDate;
+    }
 }

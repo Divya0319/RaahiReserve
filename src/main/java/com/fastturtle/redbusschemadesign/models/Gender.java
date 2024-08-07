@@ -1,8 +1,9 @@
 package com.fastturtle.redbusschemadesign.models;
 
 public enum Gender {
-    MALE("M"),
-    FEMALE("F");
+    MALE("Male"),
+    FEMALE("Female"),
+    OTHER("Other");
 
     private final String value;
 

@@ -2,6 +2,8 @@ package com.fastturtle.redbusschemadesign.models;
 
 import jakarta.persistence.*;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "bus")
 public class Bus {
@@ -22,8 +24,12 @@ public class Bus {
     @Column(name = "availableSeats")
     private int availableSeats;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "busType", nullable = false)
     private BusType busType;
+
+    @OneToMany
+    private Set<BusRoute> busRoutes;
 
     public int getBusId() {
         return busId;
@@ -71,5 +77,13 @@ public class Bus {
 
     public void setBusType(BusType busType) {
         this.busType = busType;
+    }
+
+    public Set<BusRoute> getBusRoutes() {
+        return busRoutes;
+    }
+
+    public void setBusRoutes(Set<BusRoute> busRoutes) {
+        this.busRoutes = busRoutes;
     }
 }

@@ -22,6 +22,10 @@ public class Payment {
     @Column(name = "paymentMethod", nullable = false)
     private PaymentMethods paymentMethod;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "paymentStatus", nullable = false)
+    private PaymentStatus paymentStatus;
+
     public int getPaymentId() {
         return paymentId;
     }
@@ -52,5 +56,13 @@ public class Payment {
 
     public void setPaymentMethod(PaymentMethods paymentMethod) {
         this.paymentMethod = paymentMethod;
+    }
+
+    public PaymentStatus getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(PaymentStatus paymentStatus) {
+        this.paymentStatus = paymentStatus;
     }
 }

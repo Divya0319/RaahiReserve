@@ -1,8 +1,8 @@
 package com.fastturtle.redbusschemadesign.models;
 
 public enum Direction {
-    OUTBOUND("Outbound"),
-    INBOUND("Inbound");
+    UP("UP"),
+    DOWN("DOWN");
 
     private final String value;
 

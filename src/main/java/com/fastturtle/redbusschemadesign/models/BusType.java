@@ -2,8 +2,8 @@ package com.fastturtle.redbusschemadesign.models;
 
 public enum BusType {
     AC("AC"),
-    NON_AC("Non-AC"),
-    SLEEPER("Sleeper");
+    NON_AC("NON_AC"),
+    SLEEPER("SLEEPER");
 
     private final String value;
 

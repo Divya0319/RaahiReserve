@@ -1,14 +1,13 @@
 package com.fastturtle.redbusschemadesign.models;
 
-public enum PaymentMethods {
-    CASH("CASH"),
-    DEBIT_CARD("DEBIT_CARD"),
-    CREDIT_CARD("CREDIT_CARD"),
-    WALLET("WALLET");
+public enum PaymentStatus {
+    PENDING("Pending"),
+    COMPLETED("Completed"),
+    FAILED("Failed");
 
     private final String value;
 
-    PaymentMethods(String value) {
+    private PaymentStatus(String value) {
         this.value = value;
     }
 

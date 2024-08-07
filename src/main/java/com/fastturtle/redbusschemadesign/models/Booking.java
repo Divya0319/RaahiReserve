@@ -32,6 +32,10 @@ public class Booking {
             inverseJoinColumns = @JoinColumn(name = "passenger_id"))
     private Set<Passenger> passengers;
 
+    @OneToOne
+    @JoinColumn(name = "paymentId")
+    private Payment payment;
+
     public int getBookingId() {
         return bookingId;
     }
@@ -70,5 +74,13 @@ public class Booking {
 
     public void setPassengers(Set<Passenger> passengers) {
         this.passengers = passengers;
+    }
+
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
     }
 }
