@@ -23,13 +23,13 @@ VALUES
 
 INSERT INTO booking (user_id, bus_route_id, booking_date)
 VALUES
-    (1, 1, '2023-08-01 10:00:00'),
-    (2, 2, '2023-08-02 11:00:00');
+    (1, 1, '2023-08-01 00:00:00'),
+    (2, 2, '2023-08-02 00:00:00');
 
-INSERT INTO payment (booking_id, amount, payment_method, payment_status)
+INSERT INTO payment (booking_id, amount, payment_date, payment_method, payment_status)
 VALUES
-    (1, 500.00, 'CREDIT_CARD', 'COMPLETED'),
-    (2, 300.00, 'DEBIT_CARD', 'PENDING');
+    (1, 500.00, '2023-08-01 00:00:00', 'CREDIT_CARD', 'COMPLETED'),
+    (2, 300.00, '2023-08-01 00:00:00','DEBIT_CARD', 'PENDING');
 
 INSERT INTO passenger (name, age, gender, bus_seat_id)
 VALUES
