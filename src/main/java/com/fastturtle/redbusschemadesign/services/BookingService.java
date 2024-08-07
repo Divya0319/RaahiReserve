@@ -12,7 +12,9 @@ import com.fastturtle.redbusschemadesign.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class BookingService {
@@ -34,8 +36,12 @@ public class BookingService {
     }
 
     public Booking bookBus(BookingRequest bookingRequest) {
-        BusRoute busRoute = busRouteRepository.findById(bookingRequest.getBusRouteId())
-                .orElseThrow(() -> new RuntimeException("BusRoute not found"));
+        BusRoute busRoute = busRouteRepository.findFirstBusRouteBySourceAndDestination(bookingRequest.getSource(), bookingRequest.getDestination());
+
+        if(busRoute == null) {
+            throw new RuntimeException("Bus route not found");
+        }
+
 
         User user = userRepository.findById(bookingRequest.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -55,5 +61,9 @@ public class BookingService {
         booking.setBookingDate(LocalDateTime.now());
 
         return bookingRepository.save(booking);
+    }
+
+    public double getAverageCostOfTicketsOnDate(LocalDate date) {
+        return bookingRepository.findAverageCostOfTicketsOnDate(date);
     }
 }

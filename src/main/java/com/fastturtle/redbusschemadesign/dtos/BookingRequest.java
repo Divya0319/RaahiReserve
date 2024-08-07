@@ -2,7 +2,8 @@ package com.fastturtle.redbusschemadesign.dtos;
 
 public class BookingRequest {
     private int userId;
-    private int busRouteId;
+    private String source;
+    private String destination;
     private int passengerCount;
 
     public int getUserId() {
@@ -13,12 +14,20 @@ public class BookingRequest {
         this.userId = userId;
     }
 
-    public int getBusRouteId() {
-        return busRouteId;
+    public String getSource() {
+        return source;
     }
 
-    public void setBusRouteId(int busRouteId) {
-        this.busRouteId = busRouteId;
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public void setDestination(String destination) {
+        this.destination = destination;
     }
 
     public int getPassengerCount() {

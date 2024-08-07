@@ -21,4 +21,9 @@ public class BusController {
         this.busService = busService;
         this.userService = userService;
     }
+
+    @GetMapping("/availableOnRoute")
+    public List<Bus> getAvailableBusesOnRoute(@RequestParam("source") String source, @RequestParam("destination") String destination) {
+        return busService.getAvailableBusesOnRoute(source, destination);
+    }
 }
