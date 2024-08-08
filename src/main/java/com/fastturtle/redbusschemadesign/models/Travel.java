@@ -1,5 +1,7 @@
 package com.fastturtle.redbusschemadesign.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -20,7 +22,12 @@ public class Travel {
             joinColumns = @JoinColumn(name = "travel_id"),
             inverseJoinColumns = @JoinColumn(name = "passenger_id")
     )
+    @JsonIgnore
     private Set<Passenger> passengers;
+
+    @OneToMany
+    @JoinColumn(name = "booking_id")
+    private Set<Booking> bookings;
 
     @Column(name = "traveled")
     private boolean traveled = false;
@@ -58,5 +65,13 @@ public class Travel {
 
     public void setTravelDate(LocalDate travelDate) {
         this.travelDate = travelDate;
+    }
+
+    public Set<Booking> getBookings() {
+        return bookings;
+    }
+
+    public void setBookings(Set<Booking> bookings) {
+        this.bookings = bookings;
     }
 }
