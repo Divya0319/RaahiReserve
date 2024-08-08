@@ -19,9 +19,9 @@ public class TravelController {
         this.travelService = travelService;
     }
 
-    @PostMapping("/travel")
-    public Travel travel(@RequestBody TravelRequest travelRequest) {
-        return travelService.travel(travelRequest);
+    @PostMapping("/update")
+    public Travel updateTravel(@RequestBody TravelRequest travelRequest) {
+        return travelService.updateTravelStatus(travelRequest);
     }
 
     @GetMapping("/passengersOnDate")

@@ -31,11 +31,18 @@ public class TravelService {
         this.passengerRepository = passengerRepository;
     }
 
-    public Travel travel(TravelRequest travelRequest) {
-        bookingRepository.findById(travelRequest.getBookingId())
+    public long getPassengersTraveledOnDate(LocalDate date) {
+        return travelRepository.countByTraveledDate(date);
+    }
+
+    public Travel updateTravelStatus(TravelRequest travelRequest) {
+        Booking booking = bookingRepository.findById(travelRequest.getBookingId())
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
 
-        Travel travel = new Travel();
+        Travel travel = travelRepository.findTravelByBookingId(travelRequest.getBookingId());
+        if(travel == null) {
+            throw new RuntimeException("Travel not found");
+        }
         travel.setTraveled(true);
         Set<Passenger> passengers = new HashSet<>();
 
@@ -47,11 +54,10 @@ public class TravelService {
         if(!passengers.isEmpty()) {
             travel.setPassengers(passengers);
         }
+        travel.setBooking(booking);   // Ensure the travel is linked to the booking
+
+        travel.setTravelDate(LocalDate.now());
 
         return travelRepository.save(travel);
-    }
-
-    public long getPassengersTraveledOnDate(LocalDate date) {
-        return travelRepository.countByTraveledDate(date);
     }
 }

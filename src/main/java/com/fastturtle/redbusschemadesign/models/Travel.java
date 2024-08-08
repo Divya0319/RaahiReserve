@@ -25,9 +25,9 @@ public class Travel {
     @JsonIgnore
     private Set<Passenger> passengers;
 
-    @OneToMany
-    @JoinColumn(name = "booking_id")
-    private Set<Booking> bookings;
+    @ManyToOne
+    @JoinColumn(name = "booking_id", nullable = false)
+    private Booking booking;
 
     @Column(name = "traveled")
     private boolean traveled = false;
@@ -67,11 +67,11 @@ public class Travel {
         this.travelDate = travelDate;
     }
 
-    public Set<Booking> getBookings() {
-        return bookings;
+    public Booking getBooking() {
+        return booking;
     }
 
-    public void setBookings(Set<Booking> bookings) {
-        this.bookings = bookings;
+    public void setBooking(Booking booking) {
+        this.booking = booking;
     }
 }
