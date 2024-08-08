@@ -1,5 +1,7 @@
 package com.fastturtle.redbusschemadesign.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -13,9 +15,11 @@ public class Passenger {
     private int passengerId;
 
     @ManyToMany(mappedBy = "passengers")
+    @JsonIgnore
     private Set<Booking> bookings;
 
     @ManyToMany(mappedBy = "passengers")
+    @JsonIgnore
     private Set<Travel> travels;
 
     private String name;

@@ -1,5 +1,6 @@
 package com.fastturtle.redbusschemadesign.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -29,6 +30,7 @@ public class Bus {
     private BusType busType;
 
     @OneToMany(mappedBy = "bus")
+    @JsonIgnore
     private Set<BusRoute> busRoutes;
 
     public int getBusId() {

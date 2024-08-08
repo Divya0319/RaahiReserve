@@ -1,5 +1,8 @@
 package com.fastturtle.redbusschemadesign.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -31,9 +34,11 @@ public class Booking {
             (name = "booking_passenger",
             joinColumns = @JoinColumn(name = "booking_id"),
             inverseJoinColumns = @JoinColumn(name = "passenger_id"))
+    @JsonIgnore
     private Set<Passenger> passengers;
 
     @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Payment payment;
 
     public int getBookingId() {

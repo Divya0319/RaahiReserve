@@ -1,5 +1,7 @@
 package com.fastturtle.redbusschemadesign.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,6 +15,7 @@ public class Payment {
 
     @OneToOne
     @JoinColumn(name = "booking_id", nullable = false)
+    @JsonIgnore
     private Booking booking;
 
     @Column(name = "amount", nullable = false)
