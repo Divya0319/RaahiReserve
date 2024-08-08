@@ -23,9 +23,9 @@ public class PaymentController {
         return paymentService.makePayment(paymentRequest);
     }
 
-    @PutMapping("/update/{paymentId}")
-    public Payment updatePayment(@PathVariable int paymentId, @RequestBody PaymentRequest paymentRequest) {
-        return paymentService.updatePayment(paymentId, paymentRequest);
+    @PutMapping("/update")
+    public Payment updatePayment(@RequestBody PaymentRequest paymentRequest) {
+        return paymentService.updatePayment(paymentRequest);
     }
 
     @GetMapping("/status/{bookingId}")

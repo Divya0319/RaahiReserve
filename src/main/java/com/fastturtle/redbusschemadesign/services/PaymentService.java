@@ -34,22 +34,21 @@ public class PaymentService {
         return paymentRepository.save(payment);
     }
 
-    public Payment updatePayment(int paymentId, PaymentRequest paymentRequest) {
-        Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() -> new RuntimeException("Payment not found"));
+    public Payment updatePayment(PaymentRequest paymentRequest) {
+        Payment payment = paymentRepository.findByBookingId(paymentRequest.getBookingId())
+                .orElseThrow(() -> new RuntimeException("Payment not found for booking id : " + paymentRequest.getBookingId()));
 
         payment.setAmount(paymentRequest.getAmount());
         payment.setPaymentMethod(paymentRequest.getPaymentMethod());
+        payment.setPaymentStatus(paymentRequest.getPaymentStatus());
 
         return paymentRepository.save(payment);
     }
 
     public PaymentStatus getPaymentStatus(int bookingId) {
-        Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
 
-        Payment payment = paymentRepository.findByBooking(booking)
-                .orElseThrow(() -> new RuntimeException("Payment not found"));
+        Payment payment = paymentRepository.findByBookingId(bookingId)
+                .orElseThrow(() -> new RuntimeException("Payment not found for booking id : " + bookingId));
 
         return payment.getPaymentStatus();
     }
