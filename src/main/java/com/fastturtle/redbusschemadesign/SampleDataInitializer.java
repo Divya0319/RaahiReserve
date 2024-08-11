@@ -1,27 +1,39 @@
 package com.fastturtle.redbusschemadesign;
 
-import com.fastturtle.redbusschemadesign.models.BusType;
-import com.fastturtle.redbusschemadesign.models.PaymentMethods;
-import com.fastturtle.redbusschemadesign.models.PaymentStatus;
+import com.fastturtle.redbusschemadesign.models.*;
 import com.fastturtle.redbusschemadesign.repositories.BusRepository;
+import com.fastturtle.redbusschemadesign.repositories.BusRouteRepository;
+import com.fastturtle.redbusschemadesign.repositories.RouteRepository;
 import jakarta.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
 public class SampleDataInitializer {
-    private BusRepository busRepository;
+    private final BusRouteRepository busRouteRepository;
+
+    private final BusRepository busRepository;
+
+    private final RouteRepository routeRepository;
 
     @Autowired
-    public SampleDataInitializer(BusRepository busRepository) {
+    public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository) {
         this.busRepository = busRepository;
+        this.routeRepository = routeRepository;
+        this.busRouteRepository = busRouteRepository;
     }
 
     @PostConstruct
+    @Transactional
     public void init() {
         insertIntoEntitiesOneByOne();
     }
+
 
 
     private void insertIntoEntitiesOneByOne() {
@@ -55,6 +67,7 @@ public class SampleDataInitializer {
 
         String[] source = {"Chattisgarh", "Mumbai", "Hyderabad", "Bangalore", "Goa"};
         String[] destination = {"Mumbai", "Indore", "Chhattisgarh", "Punjab", "Mumbai"};
+        Direction[] directions = {Direction.UP, Direction.DOWN, Direction.UP, Direction.UP, Direction.DOWN};
 
         String[] usernames = {"JohnDoe", "AliceSmith", "BobJohnson", "EmilyBrown", "MichaelDavis"};
         String[] password = {"doe@123", "smith@234", "john@345", "brown@456", "davis@567"};
@@ -144,22 +157,21 @@ public class SampleDataInitializer {
         // TODO: When a passenger confirms his travel, mark traveled = true for that booking id( need to rethink it)
 
 
-        // Sample data for BookReview
-        String[] comments = {
-                "Great book, highly recommended.",
-                "Interesting read, but could use more examples.",
-                "Loved it! Can't wait for the sequel.",
-                "Informative and well-written.",
-                "Not what I expected, but pleasantly surprised."
-        };
+        for (int i = 0; i < busNos.length; i++) {
+            // Create and save Bus
+            Bus bus = new Bus(busNos[i], busCompanyNames[i], totalSeats[i], availableSeats[i],
+            busType[i]);
+            busRepository.save(bus);
 
+            // Create and save Route
+            Route route = new Route(source[i], destination[i]);
+            routeRepository.save(route);
 
-        for (int i = 0; i < 5; i++) {
-            // Create and save CoderDetail
+            // Create and save BusRoute
+            BusRoute busRoute = new BusRoute(bus, route, directions[i]
+            );
 
-
-            // Create and save Coder
-
+            busRouteRepository.save(busRoute);
 
 
         }

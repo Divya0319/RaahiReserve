@@ -33,6 +33,19 @@ public class Bus {
     @JsonIgnore
     private Set<BusRoute> busRoutes;
 
+    public Bus(String busNo, String companyName, int totalSeats,
+               int availableSeats, BusType busType) {
+        this.busNo = busNo;
+        this.companyName = companyName;
+        this.totalSeats = totalSeats;
+        this.availableSeats = availableSeats;
+        this.busType = busType;
+    }
+
+    public Bus() {
+
+    }
+
     public int getBusId() {
         return busId;
     }

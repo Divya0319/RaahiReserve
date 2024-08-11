@@ -15,6 +15,15 @@ public class Route {
     @Column(name = "destination", nullable = false)
     private String destination;
 
+    public Route(String source, String destination) {
+        this.source = source;
+        this.destination = destination;
+    }
+
+    public Route() {
+
+    }
+
     public int getRouteId() {
         return routeId;
     }

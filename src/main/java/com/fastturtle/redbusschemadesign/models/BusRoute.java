@@ -23,6 +23,15 @@ public class BusRoute {
     @Column(name = "direction", nullable = false)
     private Direction direction;
 
+    public BusRoute(Bus bus, Route route, Direction direction) {
+        this.bus = bus;
+        this.route = route;
+        this.direction = direction;
+    }
+
+    public BusRoute() {
+    }
+
     public int getBusRouteId() {
         return busRouteId;
     }
