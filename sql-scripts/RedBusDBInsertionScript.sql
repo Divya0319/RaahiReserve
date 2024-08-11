@@ -46,10 +46,10 @@ VALUES
 UPDATE passenger SET bus_seat_id = 1 WHERE passenger_id = 1;
 UPDATE passenger SET bus_seat_id = 2 WHERE passenger_id = 2;
 
-INSERT INTO travel (passenger_id, traveled, travel_date, booking_id)
+INSERT INTO travel (traveled, travel_date, booking_id)
 VALUES
-    (1, FALSE, null, 1),
-    (2, TRUE, '2023-09-02 00:00:00', 2);
+    (FALSE, null, 1),
+    (TRUE, '2023-09-02 00:00:00', 2);
 
 INSERT INTO passenger_travel (travel_id, passenger_id)
 VALUES

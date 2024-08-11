@@ -1,8 +1,9 @@
 package com.fastturtle.redbusschemadesign.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "payment")
@@ -20,6 +21,9 @@ public class Payment {
 
     @Column(name = "amount", nullable = false)
     private float amount;
+
+    @Column(name = "payment_date")
+    private LocalDate paymentDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "paymentMethod", nullable = false)
@@ -51,6 +55,14 @@ public class Payment {
 
     public void setAmount(float amount) {
         this.amount = amount;
+    }
+
+    public LocalDate getPaymentDate() {
+        return paymentDate;
+    }
+
+    public void setPaymentDate(LocalDate paymentDate) {
+        this.paymentDate = paymentDate;
     }
 
     public PaymentMethods getPaymentMethod() {
