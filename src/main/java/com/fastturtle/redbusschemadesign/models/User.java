@@ -20,6 +20,16 @@ public class User {
 
     private String phoneNumber;
 
+    public User(String userName, String password, String email, String phoneNumber) {
+        this.userName = userName;
+        this.password = password;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
+
+    public User() {
+    }
+
     public int getUserId() {
         return userId;
     }

@@ -4,6 +4,7 @@ import com.fastturtle.redbusschemadesign.models.*;
 import com.fastturtle.redbusschemadesign.repositories.BusRepository;
 import com.fastturtle.redbusschemadesign.repositories.BusRouteRepository;
 import com.fastturtle.redbusschemadesign.repositories.RouteRepository;
+import com.fastturtle.redbusschemadesign.repositories.UserRepository;
 import jakarta.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,14 @@ public class SampleDataInitializer {
 
     private final RouteRepository routeRepository;
 
+    private final UserRepository userRepository;
+
     @Autowired
-    public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository) {
+    public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository) {
         this.busRepository = busRepository;
         this.routeRepository = routeRepository;
         this.busRouteRepository = busRouteRepository;
+        this.userRepository = userRepository;
     }
 
     @PostConstruct
@@ -70,7 +74,7 @@ public class SampleDataInitializer {
         Direction[] directions = {Direction.UP, Direction.DOWN, Direction.UP, Direction.UP, Direction.DOWN};
 
         String[] usernames = {"JohnDoe", "AliceSmith", "BobJohnson", "EmilyBrown", "MichaelDavis"};
-        String[] password = {"doe@123", "smith@234", "john@345", "brown@456", "davis@567"};
+        String[] passwords = {"doe@123", "smith@234", "john@345", "brown@456", "davis@567"};
         String[] emails = {"john.doe@example.com", "alice.smith@example.com", "bob.johnson@example.com", "emily.brown@example.com",
                 "michael.davis@example.com"};
         String[] phNos = {"9898976767", "7878765656", "8989877665", "9988656543", "8987967578"};
@@ -172,6 +176,9 @@ public class SampleDataInitializer {
             );
 
             busRouteRepository.save(busRoute);
+
+            User user = new User(usernames[i], passwords[i], emails[i], phNos[i]);
+            userRepository.save(user);
 
 
         }
