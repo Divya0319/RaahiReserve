@@ -45,6 +45,9 @@ public class Booking {
     @Column(name = "is_user_passenger")
     private Boolean isUserPassenger;
 
+    @Column(name = "price")
+    private float price;
+
     public Booking(User user, BusRoute busRoute, LocalDate bookingDate) {
         this.user = user;
         this.busRoute = busRoute;
@@ -111,5 +114,13 @@ public class Booking {
 
     public void setUserPassenger(Boolean userPassenger) {
         isUserPassenger = userPassenger;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
     }
 }
