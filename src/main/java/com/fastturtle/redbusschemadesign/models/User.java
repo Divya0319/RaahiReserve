@@ -18,12 +18,21 @@ public class User {
     @Column(name = "email", nullable = false)
     private String email;
 
+    @Column(name = "age")
+    private int age;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "gender")
+    private Gender gender;
+
     private String phoneNumber;
 
-    public User(String userName, String password, String email, String phoneNumber) {
+    public User(String userName, String password, String email, int age, Gender gender, String phoneNumber) {
         this.userName = userName;
         this.password = password;
         this.email = email;
+        this.age = age;
+        this.gender = gender;
         this.phoneNumber = phoneNumber;
     }
 
@@ -60,6 +69,22 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
     }
 
     public String getPhoneNumber() {
