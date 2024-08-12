@@ -22,7 +22,10 @@ public class Passenger {
     @JsonIgnore
     private Set<Travel> travels;
 
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "age")
     private int age;
 
     @Enumerated(EnumType.STRING)
