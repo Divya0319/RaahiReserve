@@ -17,25 +17,22 @@ import java.util.Set;
 @Component
 public class SampleDataInitializer {
     private final BusRouteRepository busRouteRepository;
-
     private final BusRepository busRepository;
-
     private final RouteRepository routeRepository;
-
     private final UserRepository userRepository;
-
     private final BusSeatRepository busSeatRepository;
-
     private final BookingRepository bookingRepository;
+    private final SeatCostRepository seatCostRepository;
 
     @Autowired
-    public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository) {
+    public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository) {
         this.busRepository = busRepository;
         this.routeRepository = routeRepository;
         this.busRouteRepository = busRouteRepository;
         this.userRepository = userRepository;
         this.busSeatRepository = busSeatRepository;
         this.bookingRepository = bookingRepository;
+        this.seatCostRepository = seatCostRepository;
     }
 
     @PostConstruct
@@ -83,6 +80,8 @@ public class SampleDataInitializer {
         String[] passwords = {"doe@123", "smith@234", "john@345", "brown@456", "davis@567"};
         String[] emails = {"john.doe@example.com", "alice.smith@example.com", "bob.johnson@example.com", "emily.brown@example.com",
                 "michael.davis@example.com"};
+        int[] userAges = {23, 46, 58, 33, 21};
+        Gender[] userGenders = {Gender.MALE, Gender.FEMALE, Gender.MALE, Gender.OTHER, Gender.MALE};
         String[] phNos = {"9898976767", "7878765656", "8989877665", "9988656543", "8987967578"};
 
         LocalDate[] bookingDates = {LocalDate.parse(new DateFormatConverter().convertDateFormat("02/09/2023")),
@@ -107,7 +106,6 @@ public class SampleDataInitializer {
                 PaymentStatus.COMPLETED,
                 PaymentStatus.PENDING
         };
-        double[] amount = {300.00, 200.00, 400.00, 550.00, 450.00};
 
 
         // Sample data for Passenger
@@ -150,7 +148,7 @@ public class SampleDataInitializer {
                 Gender.OTHER   // Julia Martin
         };
 
-        // TODO : assign bus seat to a passenger randomly from available seats, and if that seat is already booked, do another random search
+        // TODO : (DONE) assign bus seat to a passenger randomly from available seats, and if that seat is already booked, do another random search
         // TODO: give option to choose aisle or window, depending on availability, allot them that seat
 
         // TODO: entry for bus seat booking will be done in bus_seat table, and it will hold only those entries of seats which are booked
@@ -175,10 +173,25 @@ public class SampleDataInitializer {
 
             busRouteRepository.save(busRoute);
 
-            User user = new User(usernames[i], passwords[i], emails[i], phNos[i]);
+            User user = new User(usernames[i], passwords[i], emails[i], userAges[i], userGenders[i], phNos[i]);
             userRepository.save(user);
 
         }
+
+        SeatCost seatCost1 = new SeatCost();
+        seatCost1.setBusType(BusType.NON_AC);
+        seatCost1.setCost(200.0f);
+        seatCostRepository.save(seatCost1);
+
+        SeatCost seatCost2 = new SeatCost();
+        seatCost2.setBusType(BusType.AC);
+        seatCost2.setCost(300.0f);
+        seatCostRepository.save(seatCost2);
+
+        SeatCost seatCost3 = new SeatCost();
+        seatCost3.setBusType(BusType.SLEEPER);
+        seatCost3.setCost(500.0f);
+        seatCostRepository.save(seatCost3);
 
         // Create and save new Booking
         Booking booking1 = new Booking(userRepository.findById(1).get(), busRouteRepository.findById(1).get(), bookingDates[0]);
@@ -188,6 +201,8 @@ public class SampleDataInitializer {
         RandomSeatNumberProvider rsnp = new RandomSeatNumberProvider(busRepository, busSeatRepository);
         rsnp.setBusNo(busNos[0]);
 
+        Float booking1Cost = 0.0f;
+
         if(booking1.getUserPassenger()) {
             int assignedSeatForUser = rsnp.getRandomSeatNumber();
             BusSeat busSeatForUser = new BusSeat();
@@ -195,12 +210,18 @@ public class SampleDataInitializer {
             busSeatForUser.setSeatNumber(assignedSeatForUser);
             busSeatRepository.save(busSeatForUser);
 
+            BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(busSeatForUser);
+            Float seatCostForUser = seatCostRepository.findCostByBusType(busTypeForUser);
+
+            booking1Cost += seatCostForUser;
+
             Passenger userPassenger = new Passenger();
             userPassenger.setName(booking1.getUser().getUserName());
-            userPassenger.setAge(45);
-            userPassenger.setGender(passengerGenders[1]);
+            userPassenger.setAge(booking1.getUser().getAge());
+            userPassenger.setGender(booking1.getUser().getGender());
             userPassenger.setBusSeat(busSeatForUser);
             booking1.addPassenger(userPassenger);
+
         }
 
         int assignedSeatNo1 = rsnp.getRandomSeatNumber();
@@ -211,6 +232,8 @@ public class SampleDataInitializer {
 
         busSeatRepository.save(busSeat1);
 
+
+
         int assignedSeatNo2 = rsnp.getRandomSeatNumber();
 
         BusSeat busSeat2 = new BusSeat();
@@ -219,10 +242,18 @@ public class SampleDataInitializer {
 
         busSeatRepository.save(busSeat2);
 
+        BusType busTypeForSeat1 = busSeatRepository.findBusTypeFromBusSeat(busSeat1);
+        Float seatCostForSeat1 = seatCostRepository.findCostByBusType(busTypeForSeat1);
+
+        BusType busTypeForSeat2 = busSeatRepository.findBusTypeFromBusSeat(busSeat2);
+        Float seatCostForSeat2 = seatCostRepository.findCostByBusType(busTypeForSeat2);
+
 
         booking1.addPassenger(new Passenger(passengerNames[0], passengerAges[0], passengerGenders[0], busSeat1));
         booking1.addPassenger(new Passenger(passengerNames[1], passengerAges[1], passengerGenders[1], busSeat2));
 
+        booking1Cost = booking1Cost + seatCostForSeat1 + seatCostForSeat2;
+        booking1.setPrice(booking1Cost);
         bookingRepository.save(booking1);
 
         Booking booking2 = new Booking(userRepository.findById(2).get(), busRouteRepository.findById(2).get(), bookingDates[1]);
@@ -237,8 +268,12 @@ public class SampleDataInitializer {
 
         busSeatRepository.save(busSeat3);
 
+        BusType busTypeForSeat3 = busSeatRepository.findBusTypeFromBusSeat(busSeat3);
+        Float seatCostForSeat3 = seatCostRepository.findCostByBusType(busTypeForSeat3);
+
 
         booking2.addPassenger(new Passenger(passengerNames[2], passengerAges[2], passengerGenders[2], busSeat3));
+        booking2.setPrice(seatCostForSeat3);
 
         bookingRepository.save(booking2);
 
