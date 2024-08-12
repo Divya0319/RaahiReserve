@@ -1,9 +1,9 @@
 package com.fastturtle.redbusschemadesign.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -33,6 +33,18 @@ public class Passenger {
     @JoinColumn(name = "bus_seat_id")
     private BusSeat busSeat;
 
+    public Passenger(String name, int age, Gender gender, BusSeat busSeat) {
+        this.name = name;
+        this.age = age;
+        this.gender = gender;
+        this.busSeat = busSeat;
+        this.bookings = new HashSet<>();
+    }
+
+    public Passenger() {
+        this.bookings = new HashSet<>();
+    }
+
     public int getPassengerId() {
         return passengerId;
     }
@@ -45,8 +57,9 @@ public class Passenger {
         return bookings;
     }
 
-    public void setBookings(Set<Booking> bookings) {
-        this.bookings = bookings;
+    public void addBooking(Booking booking) {
+        this.bookings.add(booking);
+        booking.getPassengers().add(this);
     }
 
     public Set<Travel> getTravels() {

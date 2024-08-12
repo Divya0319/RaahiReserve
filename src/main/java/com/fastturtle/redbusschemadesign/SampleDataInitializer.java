@@ -1,16 +1,16 @@
 package com.fastturtle.redbusschemadesign;
 
+import com.fastturtle.redbusschemadesign.helpers.DateFormatConverter;
+import com.fastturtle.redbusschemadesign.helpers.RandomSeatNumberProvider;
 import com.fastturtle.redbusschemadesign.models.*;
-import com.fastturtle.redbusschemadesign.repositories.BusRepository;
-import com.fastturtle.redbusschemadesign.repositories.BusRouteRepository;
-import com.fastturtle.redbusschemadesign.repositories.RouteRepository;
-import com.fastturtle.redbusschemadesign.repositories.UserRepository;
+import com.fastturtle.redbusschemadesign.repositories.*;
 import jakarta.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,12 +24,18 @@ public class SampleDataInitializer {
 
     private final UserRepository userRepository;
 
+    private final BusSeatRepository busSeatRepository;
+
+    private final BookingRepository bookingRepository;
+
     @Autowired
-    public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository) {
+    public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository) {
         this.busRepository = busRepository;
         this.routeRepository = routeRepository;
         this.busRouteRepository = busRouteRepository;
         this.userRepository = userRepository;
+        this.busSeatRepository = busSeatRepository;
+        this.bookingRepository = bookingRepository;
     }
 
     @PostConstruct
@@ -79,21 +85,13 @@ public class SampleDataInitializer {
                 "michael.davis@example.com"};
         String[] phNos = {"9898976767", "7878765656", "8989877665", "9988656543", "8987967578"};
 
-
-
-
-        // Sample data for Designer
-        String[] firstNamesDes = {"Sarah", "David", "Emma", "Ryan", "Olivia"};
-        String[] lastNamesDes = {"Wilson", "Jones", "Taylor", "Clark", "Anderson"};
-        String[] emailsDes = {
-                "sarah.wilson@example.com",
-                "david.jones@example.com",
-                "emma.taylor@example.com",
-                "ryan.clark@example.com",
-                "olivia.anderson@example.com"
+        LocalDate[] bookingDates = {LocalDate.parse(new DateFormatConverter().convertDateFormat("02/09/2023")),
+                LocalDate.parse(new DateFormatConverter().convertDateFormat("08/09/2023")),
+                LocalDate.parse(new DateFormatConverter().convertDateFormat("10/09/2023")),
+                LocalDate.parse(new DateFormatConverter().convertDateFormat("12/12/2023")),
+                LocalDate.parse(new DateFormatConverter().convertDateFormat("08/08/2024"))
         };
 
-        String[] bookingDates = {"02/09/2023", "08/09/2023", "10/09/2023", "12/12/2023", "08/08/2024"};
         String[] paymentDates = {"03/09/2023", "08/10/2023", "15/09/2023", "12/12/2023", "08/08/2024"};
         PaymentMethods[] paymentMethods = {
                 PaymentMethods.CASH,
@@ -112,7 +110,7 @@ public class SampleDataInitializer {
         double[] amount = {300.00, 200.00, 400.00, 550.00, 450.00};
 
 
-        // Sample data for Book
+        // Sample data for Passenger
         String[] passengerNames = {
                 "Alice Johnson",
                 "Bob Smith",
@@ -139,17 +137,17 @@ public class SampleDataInitializer {
                 33   // Julia Martin
         };
 
-        String[] passengerGenders = {
-                "FEMALE", // Alice Johnson
-                "MALE",   // Bob Smith
-                "OTHER",  // Charlie Brown
-                "MALE",   // David Wilson
-                "FEMALE", // Eva Davis
-                "MALE",   // Frank Moore
-                "OTHER",  // Grace Taylor
-                "FEMALE", // Hannah Anderson
-                "MALE",   // Isaac Thomas
-                "OTHER"   // Julia Martin
+        Gender[] passengerGenders = {
+                Gender.FEMALE, // Alice Johnson
+                Gender.MALE,   // Bob Smith
+                Gender.OTHER,  // Charlie Brown
+                Gender.MALE,   // David Wilson
+                Gender.FEMALE, // Eva Davis
+                Gender.MALE,   // Frank Moore
+                Gender.OTHER,  // Grace Taylor
+                Gender.FEMALE, // Hannah Anderson
+                Gender.MALE,   // Isaac Thomas
+                Gender.OTHER   // Julia Martin
         };
 
         // TODO : assign bus seat to a passenger randomly from available seats, and if that seat is already booked, do another random search
@@ -180,8 +178,69 @@ public class SampleDataInitializer {
             User user = new User(usernames[i], passwords[i], emails[i], phNos[i]);
             userRepository.save(user);
 
-
         }
+
+        // Create and save new Booking
+        Booking booking1 = new Booking(userRepository.findById(1).get(), busRouteRepository.findById(1).get(), bookingDates[0]);
+
+        booking1.setUserPassenger(true);
+
+        RandomSeatNumberProvider rsnp = new RandomSeatNumberProvider(busRepository, busSeatRepository);
+        rsnp.setBusNo(busNos[0]);
+
+        if(booking1.getUserPassenger()) {
+            int assignedSeatForUser = rsnp.getRandomSeatNumber();
+            BusSeat busSeatForUser = new BusSeat();
+            busSeatForUser.setBus(busRepository.findById(1).get());
+            busSeatForUser.setSeatNumber(assignedSeatForUser);
+            busSeatRepository.save(busSeatForUser);
+
+            Passenger userPassenger = new Passenger();
+            userPassenger.setName(booking1.getUser().getUserName());
+            userPassenger.setAge(45);
+            userPassenger.setGender(passengerGenders[1]);
+            userPassenger.setBusSeat(busSeatForUser);
+            booking1.addPassenger(userPassenger);
+        }
+
+        int assignedSeatNo1 = rsnp.getRandomSeatNumber();
+
+        BusSeat busSeat1 = new BusSeat();
+        busSeat1.setBus(busRepository.findById(1).get());
+        busSeat1.setSeatNumber(assignedSeatNo1);
+
+        busSeatRepository.save(busSeat1);
+
+        int assignedSeatNo2 = rsnp.getRandomSeatNumber();
+
+        BusSeat busSeat2 = new BusSeat();
+        busSeat2.setBus(busRepository.findById(1).get());
+        busSeat2.setSeatNumber(assignedSeatNo2);
+
+        busSeatRepository.save(busSeat2);
+
+
+        booking1.addPassenger(new Passenger(passengerNames[0], passengerAges[0], passengerGenders[0], busSeat1));
+        booking1.addPassenger(new Passenger(passengerNames[1], passengerAges[1], passengerGenders[1], busSeat2));
+
+        bookingRepository.save(booking1);
+
+        Booking booking2 = new Booking(userRepository.findById(2).get(), busRouteRepository.findById(2).get(), bookingDates[1]);
+
+        rsnp.setBusNo(busNos[1]);
+
+        int assignedSeatNo3 = rsnp.getRandomSeatNumber();
+
+        BusSeat busSeat3 = new BusSeat();
+        busSeat3.setBus(busRepository.findById(2).get());
+        busSeat3.setSeatNumber(assignedSeatNo3);
+
+        busSeatRepository.save(busSeat3);
+
+
+        booking2.addPassenger(new Passenger(passengerNames[2], passengerAges[2], passengerGenders[2], busSeat3));
+
+        bookingRepository.save(booking2);
 
     }
 

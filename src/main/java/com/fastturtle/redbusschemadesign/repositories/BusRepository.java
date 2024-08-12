@@ -14,4 +14,10 @@ public interface BusRepository extends JpaRepository<Bus, Integer> {
 
     @Query("SELECT b FROM Bus b JOIN b.busRoutes br WHERE br.route = :route AND b.availableSeats > 0")
     List<Bus> findAvailableBusesOnRoute(@Param("route") Route route);
+
+    @Query("SELECT b.totalSeats FROM Bus b WHERE b.busNo = :busNo")
+    int findTotalSeatsByBusNo(String busNo);
+
+    @Query("SELECT b.availableSeats FROM Bus b WHERE b.busNo = :busNo")
+    int findAvailableSeatsByBusNo(String busNo);
 }

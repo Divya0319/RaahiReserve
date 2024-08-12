@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -29,7 +30,7 @@ public class Booking {
     @Column(name = "bookingDate")
     private LocalDate bookingDate;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable
             (name = "booking_passenger",
             joinColumns = @JoinColumn(name = "booking_id"),
@@ -40,6 +41,20 @@ public class Booking {
     @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)
     @JsonIgnore
     private Payment payment;
+
+    @Column(name = "is_user_passenger")
+    private Boolean isUserPassenger;
+
+    public Booking(User user, BusRoute busRoute, LocalDate bookingDate) {
+        this.user = user;
+        this.busRoute = busRoute;
+        this.bookingDate = bookingDate;
+        this.passengers = new HashSet<>();
+    }
+
+    public Booking() {
+        this.passengers = new HashSet<>();
+    }
 
     public int getBookingId() {
         return bookingId;
@@ -77,8 +92,9 @@ public class Booking {
         return passengers;
     }
 
-    public void setPassengers(Set<Passenger> passengers) {
-        this.passengers = passengers;
+    public void addPassenger(Passenger passenger) {
+        this.passengers.add(passenger);
+        passenger.getBookings().add(this);
     }
 
     public Payment getPayment() {
@@ -87,5 +103,13 @@ public class Booking {
 
     public void setPayment(Payment payment) {
         this.payment = payment;
+    }
+
+    public Boolean getUserPassenger() {
+        return isUserPassenger;
+    }
+
+    public void setUserPassenger(Boolean userPassenger) {
+        isUserPassenger = userPassenger;
     }
 }
