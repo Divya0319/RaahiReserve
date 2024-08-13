@@ -89,7 +89,13 @@ public class SampleDataInitializer {
                 LocalDate.parse(new DateFormatConverter().convertDateFormat("08/08/2024"))
         };
 
-        String[] paymentDates = {"03/09/2023", "08/10/2023", "15/09/2023", "12/12/2023", "08/08/2024"};
+        LocalDate[] paymentDates = {
+                LocalDate.parse(new DateFormatConverter().convertDateFormat("03/09/2023")),
+                LocalDate.parse(new DateFormatConverter().convertDateFormat("08/10/2023")),
+                LocalDate.parse(new DateFormatConverter().convertDateFormat("15/09/2023")),
+                LocalDate.parse(new DateFormatConverter().convertDateFormat("12/12/2023")),
+                LocalDate.parse(new DateFormatConverter().convertDateFormat("08/08/2024"))
+        };
         PaymentMethods[] paymentMethods = {
                 PaymentMethods.CASH,
                 PaymentMethods.CREDIT_CARD,
@@ -257,6 +263,14 @@ public class SampleDataInitializer {
         booking1Cost = booking1Cost + seatCostForSeat1 + seatCostForSeat2;
         booking1.setPrice(booking1Cost);
 
+        Payment payment1 = new Payment();
+        payment1.setPaymentMethod(null);
+        payment1.setPaymentStatus(paymentStatuses[4]);
+        payment1.setBooking(booking1);
+        payment1.setAmount(0.00f);
+        payment1.setPaymentDate(null);
+        booking1.setPayment(payment1);
+
         // Saving booking1
         bookingRepository.save(booking1);
 
@@ -281,6 +295,14 @@ public class SampleDataInitializer {
 
         booking2.addPassenger(new Passenger(passengerNames[2], passengerAges[2], passengerGenders[2], busSeat3));
         booking2.setPrice(seatCostForSeat3);
+
+        Payment payment2 = new Payment();
+        payment2.setPaymentMethod(paymentMethods[3]);
+        payment2.setPaymentStatus(paymentStatuses[3]);
+        payment2.setBooking(booking2);
+        payment2.setAmount(booking2.getPrice());
+        payment2.setPaymentDate(paymentDates[3]);
+        booking2.setPayment(payment2);
 
         // Saving booking2
         bookingRepository.save(booking2);
@@ -331,6 +353,14 @@ public class SampleDataInitializer {
 
         booking3Cost = booking3Cost + seatCostForSeat4;
         booking3.setPrice(booking3Cost);
+
+        Payment payment3 = new Payment();
+        payment3.setPaymentMethod(paymentMethods[2]);
+        payment3.setPaymentStatus(paymentStatuses[2]);
+        payment3.setBooking(booking3);
+        payment3.setAmount(booking3.getPrice());
+        payment3.setPaymentDate(paymentDates[2]);
+        booking3.setPayment(payment3);
 
         // Saving booking3
         bookingRepository.save(booking3);
