@@ -11,8 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 
 @Component
 public class SampleDataInitializer {
@@ -194,19 +192,23 @@ public class SampleDataInitializer {
         seatCostRepository.save(seatCost3);
 
         // Create and save new Booking
-        Booking booking1 = new Booking(userRepository.findById(1).get(), busRouteRepository.findById(1).get(), bookingDates[0]);
+        BusRoute busRouteForBooking1 = busRouteRepository.findById(4).get();
+
+        Booking booking1 = new Booking(userRepository.findById(4).get(), busRouteForBooking1, bookingDates[0]);
 
         booking1.setUserPassenger(true);
 
         RandomSeatNumberProvider rsnp = new RandomSeatNumberProvider(busRepository, busSeatRepository);
-        rsnp.setBusNo(busNos[0]);
+
+        Bus busForBooking1 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking1).get(0);
+        rsnp.setBusNo(busForBooking1.getBusNo());
 
         Float booking1Cost = 0.0f;
 
-        if(booking1.getUserPassenger()) {
+        if(booking1.isUserPassenger()) {
             int assignedSeatForUser = rsnp.getRandomSeatNumber();
             BusSeat busSeatForUser = new BusSeat();
-            busSeatForUser.setBus(busRepository.findById(1).get());
+            busSeatForUser.setBus(busForBooking1);
             busSeatForUser.setSeatNumber(assignedSeatForUser);
             busSeatRepository.save(busSeatForUser);
 
@@ -254,11 +256,16 @@ public class SampleDataInitializer {
 
         booking1Cost = booking1Cost + seatCostForSeat1 + seatCostForSeat2;
         booking1.setPrice(booking1Cost);
+
+        // Saving booking1
         bookingRepository.save(booking1);
 
-        Booking booking2 = new Booking(userRepository.findById(2).get(), busRouteRepository.findById(2).get(), bookingDates[1]);
+        BusRoute busRouteForBooking2 = busRouteRepository.findById(3).get();
 
-        rsnp.setBusNo(busNos[1]);
+        Booking booking2 = new Booking(userRepository.findById(3).get(), busRouteForBooking2, bookingDates[1]);
+
+        Bus busForBooking2 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking2).get(0);
+        rsnp.setBusNo(busForBooking2.getBusNo());
 
         int assignedSeatNo3 = rsnp.getRandomSeatNumber();
 
@@ -275,7 +282,59 @@ public class SampleDataInitializer {
         booking2.addPassenger(new Passenger(passengerNames[2], passengerAges[2], passengerGenders[2], busSeat3));
         booking2.setPrice(seatCostForSeat3);
 
+        // Saving booking2
         bookingRepository.save(booking2);
+
+        BusRoute busRouteForBooking3 = busRouteRepository.findById(2).get();
+        Booking booking3 = new Booking(userRepository.findById(2).get(), busRouteForBooking3, bookingDates[3]);
+        booking3.setUserPassenger(true);
+
+        Bus busForBooking3 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking3).get(0);
+        rsnp.setBusNo(busForBooking3.getBusNo());
+
+        Float booking3Cost = 0.0f;
+
+        if(booking3.isUserPassenger()) {
+            int assignedSeatForUser = rsnp.getRandomSeatNumber();
+            BusSeat busSeatForUser = new BusSeat();
+            busSeatForUser.setBus(busForBooking3);
+            busSeatForUser.setSeatNumber(assignedSeatForUser);
+            busSeatRepository.save(busSeatForUser);
+
+            BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(busSeatForUser);
+            Float seatCostForUser = seatCostRepository.findCostByBusType(busTypeForUser);
+
+            booking3Cost += seatCostForUser;
+
+            Passenger userPassenger = new Passenger();
+            userPassenger.setName(booking3.getUser().getUserName());
+            userPassenger.setAge(booking3.getUser().getAge());
+            userPassenger.setGender(booking3.getUser().getGender());
+            userPassenger.setBusSeat(busSeatForUser);
+            booking3.addPassenger(userPassenger);
+
+        }
+
+        int assignedSeatNo4 = rsnp.getRandomSeatNumber();
+
+        BusSeat busSeat4 = new BusSeat();
+        busSeat4.setBus(busForBooking3);
+        busSeat4.setSeatNumber(assignedSeatNo4);
+
+        busSeatRepository.save(busSeat4);
+
+        BusType busTypeForSeat4 = busSeatRepository.findBusTypeFromBusSeat(busSeat4);
+        Float seatCostForSeat4 = seatCostRepository.findCostByBusType(busTypeForSeat4);
+
+
+        booking3.addPassenger(new Passenger(passengerNames[3], passengerAges[3], passengerGenders[3], busSeat4));
+
+        booking3Cost = booking3Cost + seatCostForSeat4;
+        booking3.setPrice(booking3Cost);
+
+        // Saving booking3
+        bookingRepository.save(booking3);
+
 
     }
 

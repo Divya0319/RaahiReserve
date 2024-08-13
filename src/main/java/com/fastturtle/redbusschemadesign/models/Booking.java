@@ -1,12 +1,9 @@
 package com.fastturtle.redbusschemadesign.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -108,7 +105,7 @@ public class Booking {
         this.payment = payment;
     }
 
-    public Boolean getUserPassenger() {
+    public Boolean isUserPassenger() {
         return isUserPassenger;
     }
 
