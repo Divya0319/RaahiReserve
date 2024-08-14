@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Component
@@ -29,7 +28,7 @@ public class RandomSeatNumberProvider {
 
     }
 
-    private List<Integer> getAvailableSeats() {
+    public List<Integer> getAvailableSeats() {
         int totalSeats = busRepository.findTotalSeatsByBusNo(busNo);
 
         List<Integer> bookedSeats = busSeatRepository.findAvailableSeatsByBusNo(busNo);

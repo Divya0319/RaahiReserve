@@ -19,6 +19,10 @@ public class BusSeat {
     @Column(name = "seatNumber", nullable = false)
     private int seatNumber;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "seatType", nullable = false)
+    private SeatType seatType;
+
     public int getBusSeatId() {
         return busSeatId;
     }
@@ -41,5 +45,13 @@ public class BusSeat {
 
     public void setSeatNumber(int seatNumber) {
         this.seatNumber = seatNumber;
+    }
+
+    public SeatType getSeatType() {
+        return seatType;
+    }
+
+    public void setSeatType(SeatType seatType) {
+        this.seatType = seatType;
     }
 }

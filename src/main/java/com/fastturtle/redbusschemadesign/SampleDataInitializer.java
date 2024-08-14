@@ -1,7 +1,7 @@
 package com.fastturtle.redbusschemadesign;
 
 import com.fastturtle.redbusschemadesign.helpers.DateFormatConverter;
-import com.fastturtle.redbusschemadesign.helpers.RandomSeatNumberProvider;
+import com.fastturtle.redbusschemadesign.helpers.RandomSeatNumberProviderWithPreference;
 import com.fastturtle.redbusschemadesign.models.*;
 import com.fastturtle.redbusschemadesign.repositories.*;
 import jakarta.annotation.PostConstruct;
@@ -12,9 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Component
 public class SampleDataInitializer {
@@ -220,7 +218,7 @@ public class SampleDataInitializer {
 
         booking1.setUserPassenger(true);
 
-        RandomSeatNumberProvider rsnp = new RandomSeatNumberProvider(busRepository, busSeatRepository);
+        RandomSeatNumberProviderWithPreference rsnp = new RandomSeatNumberProviderWithPreference(busRepository, busSeatRepository);
 
         Bus busForBooking1 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking1).get(0);
         rsnp.setBusNo(busForBooking1.getBusNo());
@@ -228,10 +226,11 @@ public class SampleDataInitializer {
         Float booking1Cost = 0.0f;
 
         if(booking1.isUserPassenger()) {
-            int assignedSeatForUser = rsnp.getRandomSeatNumber();
+            int assignedSeatForUser = rsnp.getRandomSeatNumberWithPreference(SeatType.AISLE, true);
             BusSeat busSeatForUser = new BusSeat();
             busSeatForUser.setBus(busForBooking1);
             busSeatForUser.setSeatNumber(assignedSeatForUser);
+            busSeatForUser.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatForUser));
             busSeatRepository.save(busSeatForUser);
 
             BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(busSeatForUser);
@@ -248,21 +247,23 @@ public class SampleDataInitializer {
 
         }
 
-        int assignedSeatNo1 = rsnp.getRandomSeatNumber();
+        int assignedSeatNo1 = rsnp.getRandomSeatNumberWithPreference(SeatType.WINDOW, true);
 
         BusSeat busSeat1 = new BusSeat();
         busSeat1.setBus(busRepository.findById(1).get());
         busSeat1.setSeatNumber(assignedSeatNo1);
+        busSeat1.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatNo1));
 
         busSeatRepository.save(busSeat1);
 
 
 
-        int assignedSeatNo2 = rsnp.getRandomSeatNumber();
+        int assignedSeatNo2 = rsnp.getRandomSeatNumberWithPreference(SeatType.WINDOW, true);
 
         BusSeat busSeat2 = new BusSeat();
         busSeat2.setBus(busRepository.findById(1).get());
         busSeat2.setSeatNumber(assignedSeatNo2);
+        busSeat2.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatNo2));
 
         busSeatRepository.save(busSeat2);
 
@@ -297,11 +298,12 @@ public class SampleDataInitializer {
         Bus busForBooking2 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking2).get(0);
         rsnp.setBusNo(busForBooking2.getBusNo());
 
-        int assignedSeatNo3 = rsnp.getRandomSeatNumber();
+        int assignedSeatNo3 = rsnp.getRandomSeatNumberWithPreference(SeatType.AISLE, true);
 
         BusSeat busSeat3 = new BusSeat();
         busSeat3.setBus(busRepository.findById(2).get());
         busSeat3.setSeatNumber(assignedSeatNo3);
+        busSeat3.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatNo3));
 
         busSeatRepository.save(busSeat3);
 
@@ -333,10 +335,11 @@ public class SampleDataInitializer {
         Float booking3Cost = 0.0f;
 
         if(booking3.isUserPassenger()) {
-            int assignedSeatForUser = rsnp.getRandomSeatNumber();
+            int assignedSeatForUser = rsnp.getRandomSeatNumberWithPreference(SeatType.WINDOW, true);
             BusSeat busSeatForUser = new BusSeat();
             busSeatForUser.setBus(busForBooking3);
             busSeatForUser.setSeatNumber(assignedSeatForUser);
+            busSeatForUser.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatForUser));
             busSeatRepository.save(busSeatForUser);
 
             BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(busSeatForUser);
@@ -353,11 +356,12 @@ public class SampleDataInitializer {
 
         }
 
-        int assignedSeatNo4 = rsnp.getRandomSeatNumber();
+        int assignedSeatNo4 = rsnp.getRandomSeatNumberWithPreference(SeatType.AISLE, true);
 
         BusSeat busSeat4 = new BusSeat();
         busSeat4.setBus(busForBooking3);
         busSeat4.setSeatNumber(assignedSeatNo4);
+        busSeat4.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatNo4));
 
         busSeatRepository.save(busSeat4);
 
