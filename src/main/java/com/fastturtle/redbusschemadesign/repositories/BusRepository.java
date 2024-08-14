@@ -16,8 +16,8 @@ public interface BusRepository extends JpaRepository<Bus, Integer> {
     List<Bus> findAvailableBusesOnRoute(@Param("route") Route route);
 
     @Query("SELECT b.totalSeats FROM Bus b WHERE b.busNo = :busNo")
-    int findTotalSeatsByBusNo(String busNo);
+    int findTotalSeatsByBusNo(@Param("busNo") String busNo);
 
     @Query("SELECT b.availableSeats FROM Bus b WHERE b.busNo = :busNo")
-    int findAvailableSeatsByBusNo(String busNo);
+    int findAvailableSeatsByBusNo(@Param("busNo") String busNo);
 }

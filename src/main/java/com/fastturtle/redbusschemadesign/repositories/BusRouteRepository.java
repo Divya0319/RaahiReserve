@@ -21,5 +21,5 @@ public interface BusRouteRepository extends JpaRepository<BusRoute, Integer> {
             "WHERE br = :busRoute AND b.availableSeats > 0 " +
             "ORDER BY b.busId ASC"
     )
-    List<Bus> findBusesAvailableInGivenBusRoute(BusRoute busRoute);
+    List<Bus> findBusesAvailableInGivenBusRoute(@Param("busRoute") BusRoute busRoute);
 }
