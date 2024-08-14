@@ -11,6 +11,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Component
 public class SampleDataInitializer {
@@ -21,9 +25,11 @@ public class SampleDataInitializer {
     private final BusSeatRepository busSeatRepository;
     private final BookingRepository bookingRepository;
     private final SeatCostRepository seatCostRepository;
+    private final TravelRepository travelRepository;
+    private final PassengerRepository passengerRepository;
 
     @Autowired
-    public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository) {
+    public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, TravelRepository travelRepository, PassengerRepository passengerRepository) {
         this.busRepository = busRepository;
         this.routeRepository = routeRepository;
         this.busRouteRepository = busRouteRepository;
@@ -31,6 +37,8 @@ public class SampleDataInitializer {
         this.busSeatRepository = busSeatRepository;
         this.bookingRepository = bookingRepository;
         this.seatCostRepository = seatCostRepository;
+        this.travelRepository = travelRepository;
+        this.passengerRepository = passengerRepository;
     }
 
     @PostConstruct
@@ -83,18 +91,26 @@ public class SampleDataInitializer {
         String[] phNos = {"9898976767", "7878765656", "8989877665", "9988656543", "8987967578"};
 
         LocalDate[] bookingDates = {LocalDate.parse(new DateFormatConverter().convertDateFormat("02/09/2023")),
-                LocalDate.parse(new DateFormatConverter().convertDateFormat("08/09/2023")),
+                LocalDate.parse(new DateFormatConverter().convertDateFormat("03/09/2023")),
                 LocalDate.parse(new DateFormatConverter().convertDateFormat("10/09/2023")),
                 LocalDate.parse(new DateFormatConverter().convertDateFormat("12/12/2023")),
                 LocalDate.parse(new DateFormatConverter().convertDateFormat("08/08/2024"))
         };
 
         LocalDate[] paymentDates = {
-                LocalDate.parse(new DateFormatConverter().convertDateFormat("03/09/2023")),
+                LocalDate.parse(new DateFormatConverter().convertDateFormat("08/09/2023")),
                 LocalDate.parse(new DateFormatConverter().convertDateFormat("08/10/2023")),
                 LocalDate.parse(new DateFormatConverter().convertDateFormat("15/09/2023")),
                 LocalDate.parse(new DateFormatConverter().convertDateFormat("12/12/2023")),
-                LocalDate.parse(new DateFormatConverter().convertDateFormat("08/08/2024"))
+                LocalDate.parse(new DateFormatConverter().convertDateFormat("15/08/2024"))
+        };
+
+        LocalDate[] travelDates = {
+                LocalDate.parse(new DateFormatConverter().convertDateFormat("03/10/2023")),
+                LocalDate.parse(new DateFormatConverter().convertDateFormat("10/10/2023")),
+                LocalDate.parse(new DateFormatConverter().convertDateFormat("15/09/2023")),
+                LocalDate.parse(new DateFormatConverter().convertDateFormat("03/01/2024")),
+                LocalDate.parse(new DateFormatConverter().convertDateFormat("25/08/2024"))
         };
         PaymentMethods[] paymentMethods = {
                 PaymentMethods.CASH,
@@ -365,6 +381,68 @@ public class SampleDataInitializer {
         // Saving booking3
         bookingRepository.save(booking3);
 
+        // Initiating travel from here
+        Travel travel1 = new Travel();
+        travel1.setTravelDate(travelDates[0]);
+        travel1.setBooking(booking1);
+
+
+        List<Passenger> listOfPassengersInB1 = bookingRepository.findAllPassengersInBooking(booking1);
+        List<Passenger> travellingPassengersB1 = new ArrayList<>();
+        travellingPassengersB1.add(listOfPassengersInB1.get(0));
+
+        for(Passenger p : listOfPassengersInB1) {
+            p.setTraveled(travellingPassengersB1.contains(p));
+        }
+
+        // Updating all passenger's travel status belonging to a booking
+        passengerRepository.saveAll(listOfPassengersInB1);
+
+        for(Passenger p : travellingPassengersB1) {
+            travel1.addPassenger(p);
+        }
+        travelRepository.save(travel1);
+
+        Travel travel2 = new Travel();
+        travel2.setTravelDate(travelDates[1]);
+        travel2.setBooking(booking2);
+
+        List<Passenger> listOfPassengersInB2 = bookingRepository.findAllPassengersInBooking(booking2);
+        List<Passenger> travellingPassengersB2 = new ArrayList<>();
+        travellingPassengersB2.add(listOfPassengersInB2.get(0));
+
+        for(Passenger p : listOfPassengersInB2) {
+            p.setTraveled(travellingPassengersB2.contains(p));
+        }
+
+        passengerRepository.saveAll(listOfPassengersInB2);
+
+        for(Passenger p : travellingPassengersB2) {
+            travel2.addPassenger(p);
+        }
+
+        travelRepository.save(travel2);
+
+
+        Travel travel3 = new Travel();
+        travel3.setTravelDate(travelDates[3]);
+        travel3.setBooking(booking3);
+
+        List<Passenger> listOfPassengersInB3 = bookingRepository.findAllPassengersInBooking(booking3);
+        List<Passenger> travellingPassengersB3 = new ArrayList<>();
+        travellingPassengersB3.add(listOfPassengersInB3.get(0));
+
+        for(Passenger p : listOfPassengersInB3) {
+            p.setTraveled(travellingPassengersB3.contains(p));
+        }
+
+        passengerRepository.saveAll(listOfPassengersInB3);
+
+        for (Passenger p : travellingPassengersB3) {
+            travel3.addPassenger(p);
+
+        }
+        travelRepository.save(travel3);
 
     }
 
