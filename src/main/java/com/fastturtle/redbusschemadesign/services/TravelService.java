@@ -43,7 +43,6 @@ public class TravelService {
         if(travel == null) {
             throw new RuntimeException("Travel not found");
         }
-        travel.setTraveled(true);
         Set<Passenger> passengers = new HashSet<>();
 
         for(Integer passengerId : travelRequest.getPassengerIds()) {
@@ -51,9 +50,9 @@ public class TravelService {
             passenger.ifPresent(passengers::add);
         }
 
-        if(!passengers.isEmpty()) {
-            travel.setPassengers(passengers);
-        }
+//        if(!passengers.isEmpty()) {
+//            travel.setPassengers(passengers);
+//        }
         travel.setBooking(booking);   // Ensure the travel is linked to the booking
 
         travel.setTravelDate(LocalDate.now());

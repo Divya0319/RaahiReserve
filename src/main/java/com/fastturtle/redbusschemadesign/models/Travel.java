@@ -1,12 +1,11 @@
 package com.fastturtle.redbusschemadesign.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "travel")
@@ -23,17 +22,18 @@ public class Travel {
             inverseJoinColumns = @JoinColumn(name = "passenger_id")
     )
     @JsonIgnore
-    private Set<Passenger> passengers;
+    private List<Passenger> passengers;
 
     @ManyToOne
     @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
 
-    @Column(name = "traveled")
-    private boolean traveled = false;
-
     @Column(name = "travelDate")
     private LocalDate travelDate;
+
+    public Travel() {
+        this.passengers = new ArrayList<>();
+    }
 
     public int getTravelId() {
         return travelId;
@@ -43,20 +43,12 @@ public class Travel {
         this.travelId = travelId;
     }
 
-    public Set<Passenger> getPassengers() {
+    public List<Passenger> getPassengers() {
         return passengers;
     }
 
-    public void setPassengers(Set<Passenger> passengers) {
-        this.passengers = passengers;
-    }
-
-    public boolean isTraveled() {
-        return traveled;
-    }
-
-    public void setTraveled(boolean traveled) {
-        this.traveled = traveled;
+    public void addPassenger(Passenger passenger) {
+        this.passengers.add(passenger);
     }
 
     public LocalDate getTravelDate() {

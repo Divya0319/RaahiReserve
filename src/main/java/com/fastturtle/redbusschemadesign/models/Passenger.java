@@ -36,6 +36,9 @@ public class Passenger {
     @JoinColumn(name = "bus_seat_id")
     private BusSeat busSeat;
 
+    @Column(name = "traveled")
+    private Boolean traveled;
+
     public Passenger(String name, int age, Gender gender, BusSeat busSeat) {
         this.name = name;
         this.age = age;
@@ -103,5 +106,13 @@ public class Passenger {
 
     public void setBusSeat(BusSeat busSeat) {
         this.busSeat = busSeat;
+    }
+
+    public Boolean getTraveled() {
+        return traveled;
+    }
+
+    public void setTraveled(Boolean traveled) {
+        this.traveled = traveled;
     }
 }
