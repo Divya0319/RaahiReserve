@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "booking")
@@ -33,14 +33,14 @@ public class Booking {
             joinColumns = @JoinColumn(name = "booking_id"),
             inverseJoinColumns = @JoinColumn(name = "passenger_id"))
     @JsonIgnore
-    private Set<Passenger> passengers;
+    private List<Passenger> passengers;
 
     @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)
     @JsonIgnore
     private Payment payment;
 
     @Column(name = "is_user_passenger")
-    private Boolean isUserPassenger;
+    private boolean isUserPassenger = false;
 
     @Column(name = "price")
     private float price;
@@ -49,11 +49,11 @@ public class Booking {
         this.user = user;
         this.busRoute = busRoute;
         this.bookingDate = bookingDate;
-        this.passengers = new HashSet<>();
+        this.passengers = new ArrayList<>();
     }
 
     public Booking() {
-        this.passengers = new HashSet<>();
+        this.passengers = new ArrayList<>();
     }
 
     public int getBookingId() {
@@ -88,7 +88,7 @@ public class Booking {
         this.bookingDate = bookingDate;
     }
 
-    public Set<Passenger> getPassengers() {
+    public List<Passenger> getPassengers() {
         return passengers;
     }
 

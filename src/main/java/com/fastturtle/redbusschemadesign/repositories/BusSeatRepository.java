@@ -11,8 +11,8 @@ import java.util.List;
 
 public interface BusSeatRepository extends JpaRepository<BusSeat, Integer> {
 
-    @Query("SELECT b.seatNumber FROM BusSeat b WHERE b.bus.busNo = :busNo")
-    List<Integer> findAvailableSeatsByBusNo(@Param("busNo") String busNo);
+    @Query("SELECT b.seatNumber FROM BusSeat b WHERE b.bus.busNo = :busNo AND b.occupied = true")
+    List<Integer> findBookedSeatsByBusNo(@Param("busNo") String busNo);
 
     @Query("SELECT b.busType FROM BusSeat bs JOIN bs.bus b WHERE bs = :busSeat")
     BusType findBusTypeFromBusSeat(@Param("busSeat") BusSeat busSeat);

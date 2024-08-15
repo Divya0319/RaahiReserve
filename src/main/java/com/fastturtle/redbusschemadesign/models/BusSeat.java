@@ -23,6 +23,9 @@ public class BusSeat {
     @Column(name = "seatType", nullable = false)
     private SeatType seatType;
 
+    @Column(name = "occupied")
+    private boolean occupied = false;
+
     public int getBusSeatId() {
         return busSeatId;
     }
@@ -53,5 +56,13 @@ public class BusSeat {
 
     public void setSeatType(SeatType seatType) {
         this.seatType = seatType;
+    }
+
+    public boolean isOccupied() {
+        return occupied;
+    }
+
+    public void setOccupied(boolean occupied) {
+        this.occupied = occupied;
     }
 }
