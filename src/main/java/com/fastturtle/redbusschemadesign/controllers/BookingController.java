@@ -1,9 +1,11 @@
 package com.fastturtle.redbusschemadesign.controllers;
 
 import com.fastturtle.redbusschemadesign.dtos.BookingRequest;
+import com.fastturtle.redbusschemadesign.helpers.DateFormatConverter;
 import com.fastturtle.redbusschemadesign.models.Booking;
 import com.fastturtle.redbusschemadesign.services.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -19,12 +21,13 @@ public class BookingController {
     }
 
     @PostMapping("/book")
-    public Booking bookBus(@RequestBody BookingRequest bookingRequest) {
+    public ResponseEntity<?> bookBus(@RequestBody BookingRequest bookingRequest) {
         return bookingService.bookBus(bookingRequest);
     }
 
     @GetMapping("/averageCostOnDate")
-    public double getAverageCostOfTicketsOnDate(@RequestParam LocalDate date) {
-        return bookingService.getAverageCostOfTicketsOnDate(date);
+    public double getAverageCostOfTicketsOnDate(@RequestParam String date) {
+        return bookingService.getAverageCostOfTicketsOnDate(LocalDate.parse
+                (new DateFormatConverter().convertDateFormat(date)));
     }
 }

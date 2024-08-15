@@ -50,9 +50,11 @@ public class TravelService {
             passenger.ifPresent(passengers::add);
         }
 
-//        if(!passengers.isEmpty()) {
-//            travel.setPassengers(passengers);
-//        }
+        for(Passenger p : passengers) {
+            p.setTraveled(true);
+            travel.addPassenger(p);
+        }
+
         travel.setBooking(booking);   // Ensure the travel is linked to the booking
 
         travel.setTravelDate(LocalDate.now());

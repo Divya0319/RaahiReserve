@@ -10,11 +10,16 @@ import com.fastturtle.redbusschemadesign.repositories.BusRepository;
 import com.fastturtle.redbusschemadesign.repositories.BusRouteRepository;
 import com.fastturtle.redbusschemadesign.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class BookingService {
@@ -35,32 +40,41 @@ public class BookingService {
         this.busRepository = busRepository;
     }
 
-    public Booking bookBus(BookingRequest bookingRequest) {
+    public ResponseEntity<?> bookBus(BookingRequest bookingRequest) {
         BusRoute busRoute = busRouteRepository.findFirstBusRouteBySourceAndDestination(bookingRequest.getSource(), bookingRequest.getDestination());
 
         if(busRoute == null) {
-            throw new RuntimeException("Bus route not found");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Bus route not found"));
         }
 
 
-        User user = userRepository.findById(bookingRequest.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        Optional<User> optionalUser = userRepository.findById(bookingRequest.getUserId());
+        User user;
+        if(optionalUser.isPresent()) {
+            user = optionalUser.get();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
 
         Bus bus = busRoute.getBus();
-
+        ResponseEntity<?> response;
         if (bus.getAvailableSeats() < bookingRequest.getPassengerCount()) {
-            throw new RuntimeException("Not enough available seats");
+            Map<String, String> error = new HashMap<>();
+            error.put("message", "Not enough available seats");
+            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        } else {
+            bus.setAvailableSeats(bus.getAvailableSeats() - bookingRequest.getPassengerCount());
+            busRepository.save(bus);
+
+            Booking booking = new Booking();
+            booking.setBusRoute(busRoute);
+            booking.setUser(user);
+            booking.setBookingDate(LocalDate.now());
+            response = ResponseEntity.ok(booking);
         }
 
-        bus.setAvailableSeats(bus.getAvailableSeats() - bookingRequest.getPassengerCount());
-        busRepository.save(bus);
-
-        Booking booking = new Booking();
-        booking.setBusRoute(busRoute);
-        booking.setUser(user);
-        booking.setBookingDate(LocalDate.now());
-
-        return bookingRepository.save(booking);
+        return response;
     }
 
     public double getAverageCostOfTicketsOnDate(LocalDate date) {
