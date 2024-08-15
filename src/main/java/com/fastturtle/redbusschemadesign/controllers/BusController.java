@@ -1,13 +1,11 @@
 package com.fastturtle.redbusschemadesign.controllers;
 
-import com.fastturtle.redbusschemadesign.models.Bus;
 import com.fastturtle.redbusschemadesign.services.BusService;
 import com.fastturtle.redbusschemadesign.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/booking/bus")
@@ -23,7 +21,7 @@ public class BusController {
     }
 
     @GetMapping("/availableOnRoute")
-    public List<Bus> getAvailableBusesOnRoute(@RequestParam("source") String source, @RequestParam("destination") String destination) {
+    public ResponseEntity<?> getAvailableBusesOnRoute(@RequestParam("source") String source, @RequestParam("destination") String destination) {
         return busService.getAvailableBusesOnRoute(source, destination);
     }
 }

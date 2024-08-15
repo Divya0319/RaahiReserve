@@ -1,9 +1,9 @@
 package com.fastturtle.redbusschemadesign.controllers;
 
 import com.fastturtle.redbusschemadesign.dtos.TravelRequest;
-import com.fastturtle.redbusschemadesign.models.Travel;
 import com.fastturtle.redbusschemadesign.services.TravelService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -20,7 +20,7 @@ public class TravelController {
     }
 
     @PostMapping("/update")
-    public Travel updateTravel(@RequestBody TravelRequest travelRequest) {
+    public ResponseEntity<?> updateTravel(@RequestBody TravelRequest travelRequest) {
         return travelService.updateTravelStatus(travelRequest);
     }
 

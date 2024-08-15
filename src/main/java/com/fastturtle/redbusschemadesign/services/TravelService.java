@@ -8,10 +8,13 @@ import com.fastturtle.redbusschemadesign.repositories.BookingRepository;
 import com.fastturtle.redbusschemadesign.repositories.PassengerRepository;
 import com.fastturtle.redbusschemadesign.repositories.TravelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -35,13 +38,15 @@ public class TravelService {
         return travelRepository.countByTraveledDate(date);
     }
 
-    public Travel updateTravelStatus(TravelRequest travelRequest) {
-        Booking booking = bookingRepository.findById(travelRequest.getBookingId())
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
+    public ResponseEntity<?> updateTravelStatus(TravelRequest travelRequest) {
+        Optional<Booking> booking = bookingRepository.findById(travelRequest.getBookingId());
+        if (booking.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Booking not found"));
+        }
 
         Travel travel = travelRepository.findTravelByBookingId(travelRequest.getBookingId());
         if(travel == null) {
-            throw new RuntimeException("Travel not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Travel not found"));
         }
         Set<Passenger> passengers = new HashSet<>();
 
@@ -55,10 +60,10 @@ public class TravelService {
             travel.addPassenger(p);
         }
 
-        travel.setBooking(booking);   // Ensure the travel is linked to the booking
+        travel.setBooking(booking.get());   // Ensure the travel is linked to the booking
 
         travel.setTravelDate(LocalDate.now());
 
-        return travelRepository.save(travel);
+        return ResponseEntity.ok().body(travelRepository.save(travel));
     }
 }
