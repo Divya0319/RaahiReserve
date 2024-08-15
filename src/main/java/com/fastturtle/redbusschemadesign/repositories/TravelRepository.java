@@ -1,5 +1,6 @@
 package com.fastturtle.redbusschemadesign.repositories;
 
+import com.fastturtle.redbusschemadesign.models.Booking;
 import com.fastturtle.redbusschemadesign.models.Travel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,4 +15,7 @@ public interface TravelRepository extends JpaRepository<Travel, Integer> {
 
     @Query("SELECT t FROM Travel t WHERE t.booking.bookingId = :bookingId")
     Travel findTravelByBookingId(@Param("bookingId") int bookingId);
+
+    @Query("SELECT t.booking FROM Travel t WHERE t = :travel")
+    Booking findBookingForTravel(@Param("travel") Travel travel);
 }

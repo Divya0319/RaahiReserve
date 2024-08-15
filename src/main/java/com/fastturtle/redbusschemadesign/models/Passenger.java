@@ -37,7 +37,7 @@ public class Passenger {
     private BusSeat busSeat;
 
     @Column(name = "traveled")
-    private Boolean traveled;
+    private boolean traveled;
 
     public Passenger(String name, int age, Gender gender, BusSeat busSeat) {
         this.name = name;
@@ -108,7 +108,7 @@ public class Passenger {
         this.busSeat = busSeat;
     }
 
-    public Boolean getTraveled() {
+    public Boolean isTraveled() {
         return traveled;
     }
 

@@ -31,7 +31,7 @@ public class RandomSeatNumberProvider {
     public List<Integer> getAvailableSeats() {
         int totalSeats = busRepository.findTotalSeatsByBusNo(busNo);
 
-        List<Integer> bookedSeats = busSeatRepository.findAvailableSeatsByBusNo(busNo);
+        List<Integer> bookedSeats = busSeatRepository.findBookedSeatsByBusNo(busNo);
 
         List<Integer> allSeats = IntStream.rangeClosed(1, totalSeats)
                 .boxed()

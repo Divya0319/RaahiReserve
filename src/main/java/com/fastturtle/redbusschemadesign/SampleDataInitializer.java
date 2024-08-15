@@ -82,8 +82,8 @@ public class SampleDataInitializer {
 
         String[] usernames = {"JohnDoe", "AliceSmith", "BobJohnson", "EmilyBrown", "MichaelDavis"};
         String[] passwords = {"doe@123", "smith@234", "john@345", "brown@456", "davis@567"};
-        String[] emails = {"john.doe@example.com", "alice.smith@example.com", "bob.johnson@example.com", "emily.brown@example.com",
-                "michael.davis@example.com"};
+        String[] emails = {"john.doe@gmail.com", "alice.smith@rediffmail.com", "bob.johnson@yahoo.in", "emily.brown@gmail.com",
+                "michael.davis@rediffmail.com"};
         int[] userAges = {23, 46, 58, 33, 21};
         Gender[] userGenders = {Gender.MALE, Gender.FEMALE, Gender.MALE, Gender.OTHER, Gender.MALE};
         String[] phNos = {"9898976767", "7878765656", "8989877665", "9988656543", "8987967578"};
@@ -166,14 +166,6 @@ public class SampleDataInitializer {
                 Gender.OTHER   // Julia Martin
         };
 
-        // TODO : (DONE) assign bus seat to a passenger randomly from available seats, and if that seat is already booked, do another random search
-        // TODO: give option to choose aisle or window, depending on availability, allot them that seat
-
-        // TODO: entry for bus seat booking will be done in bus_seat table, and it will hold only those entries of seats which are booked
-        // TODO: once travel is done for a booking, vacate that seat from the bus(seems logical)
-
-        // TODO: When a passenger confirms his travel, mark traveled = true for that booking id( need to rethink it)
-
 
         for (int i = 0; i < busNos.length; i++) {
             // Create and save Bus
@@ -196,6 +188,7 @@ public class SampleDataInitializer {
 
         }
 
+        // Initialising seat costs for various bus types
         SeatCost seatCost1 = new SeatCost();
         seatCost1.setBusType(BusType.NON_AC);
         seatCost1.setCost(200.0f);
@@ -231,6 +224,7 @@ public class SampleDataInitializer {
             busSeatForUser.setBus(busForBooking1);
             busSeatForUser.setSeatNumber(assignedSeatForUser);
             busSeatForUser.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatForUser));
+            busSeatForUser.setOccupied(true);
             busSeatRepository.save(busSeatForUser);
 
             BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(busSeatForUser);
@@ -253,6 +247,7 @@ public class SampleDataInitializer {
         busSeat1.setBus(busRepository.findById(1).get());
         busSeat1.setSeatNumber(assignedSeatNo1);
         busSeat1.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatNo1));
+        busSeat1.setOccupied(true);
 
         busSeatRepository.save(busSeat1);
 
@@ -264,6 +259,7 @@ public class SampleDataInitializer {
         busSeat2.setBus(busRepository.findById(1).get());
         busSeat2.setSeatNumber(assignedSeatNo2);
         busSeat2.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatNo2));
+        busSeat2.setOccupied(true);
 
         busSeatRepository.save(busSeat2);
 
@@ -304,6 +300,7 @@ public class SampleDataInitializer {
         busSeat3.setBus(busRepository.findById(2).get());
         busSeat3.setSeatNumber(assignedSeatNo3);
         busSeat3.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatNo3));
+        busSeat3.setOccupied(true);
 
         busSeatRepository.save(busSeat3);
 
@@ -340,6 +337,7 @@ public class SampleDataInitializer {
             busSeatForUser.setBus(busForBooking3);
             busSeatForUser.setSeatNumber(assignedSeatForUser);
             busSeatForUser.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatForUser));
+            busSeatForUser.setOccupied(true);
             busSeatRepository.save(busSeatForUser);
 
             BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(busSeatForUser);
@@ -362,6 +360,7 @@ public class SampleDataInitializer {
         busSeat4.setBus(busForBooking3);
         busSeat4.setSeatNumber(assignedSeatNo4);
         busSeat4.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatNo4));
+        busSeat4.setOccupied(true);
 
         busSeatRepository.save(busSeat4);
 
@@ -407,6 +406,16 @@ public class SampleDataInitializer {
         }
         travelRepository.save(travel1);
 
+        Booking bookingForTravel1 = travelRepository.findBookingForTravel(travel1);
+
+        List<Passenger> passengersInBooking1 = bookingRepository.findAllPassengersInBooking(bookingForTravel1);
+
+        for(Passenger p : passengersInBooking1) {
+            BusSeat busSeat = p.getBusSeat();
+            busSeat.setOccupied(false);
+            busSeatRepository.save(busSeat);
+        }
+
         Travel travel2 = new Travel();
         travel2.setTravelDate(travelDates[1]);
         travel2.setBooking(booking2);
@@ -427,6 +436,16 @@ public class SampleDataInitializer {
 
         travelRepository.save(travel2);
 
+        // TODO: Bus seat vacating after travel is done
+        Booking bookingForTravel2 = travelRepository.findBookingForTravel(travel2);
+
+        List<Passenger> passengersInBooking2 = bookingRepository.findAllPassengersInBooking(bookingForTravel2);
+
+        for(Passenger p : passengersInBooking2) {
+            BusSeat busSeat = p.getBusSeat();
+            busSeat.setOccupied(false);
+            busSeatRepository.save(busSeat);
+        }
 
         Travel travel3 = new Travel();
         travel3.setTravelDate(travelDates[3]);
@@ -447,6 +466,15 @@ public class SampleDataInitializer {
 
         }
         travelRepository.save(travel3);
+
+        Booking bookingForTravel3 = travelRepository.findBookingForTravel(travel3);
+
+        List<Passenger> passengersInBooking3 = bookingRepository.findAllPassengersInBooking(bookingForTravel3);
+        for(Passenger p : passengersInBooking3) {
+            BusSeat busSeat = p.getBusSeat();
+            busSeat.setOccupied(false);
+            busSeatRepository.save(busSeat);
+        }
 
     }
 
