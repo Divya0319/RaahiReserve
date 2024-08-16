@@ -2,7 +2,7 @@ package com.fastturtle.redbusschemadesign.controllers;
 
 import com.fastturtle.redbusschemadesign.dtos.PaymentRequest;
 import com.fastturtle.redbusschemadesign.services.PaymentService;
-import io.swagger.v3.oas.annotations.Hidden;
+//import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +19,7 @@ public class PaymentController {
     }
 
     @PostMapping("/pay")
-    @Hidden
+//    @Hidden
     public ResponseEntity<?> makePayment(@RequestBody PaymentRequest paymentRequest) {
         return paymentService.makePayment(paymentRequest);
     }
