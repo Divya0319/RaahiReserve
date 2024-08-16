@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+//@Component
 public class SampleDataInitializer {
     private final BusRouteRepository busRouteRepository;
     private final BusRepository busRepository;
@@ -26,7 +26,7 @@ public class SampleDataInitializer {
     private final TravelRepository travelRepository;
     private final PassengerRepository passengerRepository;
 
-    @Autowired
+//    @Autowired
     public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, TravelRepository travelRepository, PassengerRepository passengerRepository) {
         this.busRepository = busRepository;
         this.routeRepository = routeRepository;

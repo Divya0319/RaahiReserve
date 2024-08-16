@@ -8,8 +8,11 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
+
+    Optional<Booking> findByBookingId(int bookingId);
 
     @Query("SELECT AVG(p.amount) FROM Booking b JOIN b.payment p WHERE b.bookingDate = :date")
     Double findAverageCostOfTicketsOnDate(@Param("date") LocalDate date);

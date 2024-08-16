@@ -1,10 +1,7 @@
 package com.fastturtle.redbusschemadesign.services;
 
 import com.fastturtle.redbusschemadesign.dtos.BookingRequest;
-import com.fastturtle.redbusschemadesign.models.Booking;
-import com.fastturtle.redbusschemadesign.models.Bus;
-import com.fastturtle.redbusschemadesign.models.BusRoute;
-import com.fastturtle.redbusschemadesign.models.User;
+import com.fastturtle.redbusschemadesign.models.*;
 import com.fastturtle.redbusschemadesign.repositories.BookingRepository;
 import com.fastturtle.redbusschemadesign.repositories.BusRepository;
 import com.fastturtle.redbusschemadesign.repositories.BusRouteRepository;
@@ -15,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,8 +73,31 @@ public class BookingService {
         return response;
     }
 
-    public double getAverageCostOfTicketsOnDate(LocalDate date) {
+    public ResponseEntity<?> getAverageCostOfTicketsOnDate(LocalDate date) {
         Double averageCost = bookingRepository.findAverageCostOfTicketsOnDate(date);
-        return averageCost != null ? averageCost : 0.0;
+        ResponseEntity<?> response;
+        if(averageCost == null) {
+            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "No bookings for given date"));
+        } else {
+            response = ResponseEntity.ok(averageCost);
+        }
+        return response;
+    }
+
+    public ResponseEntity<?> fetchAllPassengersForBooking(int bookingId) {
+        Optional<Booking> optionalBooking = bookingRepository.findByBookingId(bookingId);
+
+        ResponseEntity<?> response;
+        if(optionalBooking.isEmpty()) {
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Booking not found"));
+        } else {
+           Booking booking = optionalBooking.get();
+           List<Passenger> passengers = booking.getPassengers();
+
+
+           response = ResponseEntity.ok(passengers);
+        }
+
+        return response;
     }
 }
