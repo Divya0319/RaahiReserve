@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Average Cost on Date</title>
+</head>
+<body>
+<h1>Find Average Ticket Cost</h1>
+<form th:action="@{/bookings/averageCostOnDate}" method="post">
+    <label for="date">Enter Date (dd/MM/yyyy):</label>
+    <input type="text" id="date" name="date" placeholder="dd/MM/yyyy" required/>
+    <button type="submit">Get Average Cost</button>
+</form>
+<div th:if="${errorMessage}">
+    <p th:text="${errorMessage}" style="color: red;"></p>
+</div>
+<div th:if="${averageCost != null}">
+    <p>Average Ticket Cost: <span th:text="${averageCost}"></span></p>
+</div>
+</body>
+</html>

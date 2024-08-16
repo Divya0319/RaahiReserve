@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <title>Bus Booking System</title>
+</head>
+<body>
+    <h1>Welcome to Bus Booking System</h1>
+
+    <!-- Example Form to Get Average Cost of Tickets on a Specific Date -->
+    <form action="#" th:action="@{/averageCostOnDate}" method="get">
+        <label for="date">Enter Date (dd/MM/yyyy):</label>
+        <input type="text" id="date" name="date"/>
+        <button type="submit">Get Average Cost</button>
+    </form>
+
+    <!-- Display Result -->
+    <div th:if="${averageCost != null}">
+        <h2>Average Cost: <span th:text="${averageCost}"></span></h2>
+
+    </div>
+</body>
+</html>
