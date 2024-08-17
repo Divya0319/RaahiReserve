@@ -1,24 +1,56 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Average Cost on Date</title>
+    <title>Booking Operations</title>
+    <link rel="stylesheet" th:href="@{/css/align-center-style.css}">
 </head>
 <body>
-<h1>Find Average Ticket Cost</h1>
-<form th:action="@{/bookings/averageCostOnDate}" method="post">
-    <label for="date">Enter Date (dd/MM/yyyy):</label>
-    <input type="text" id="date" name="date" placeholder="dd/MM/yyyy" required/>
-    <button type="submit">Get Average Cost</button>
-</form>
-<div th:if="${errorMessage}">
-    <p th:text="${errorMessage}" style="color: red;"></p>
-</div>
-<div th:if="${averageCost != null}">
-    <p>Average Ticket Cost: <span th:text="${averageCost}"></span></p>
-</div>
 
-<!--Back button -->
-<button style="background-color: blue; color: white" onclick="window.location.href='/'">Go Back to Home</button>
+    <div class="container">
+
+        <!-- Section for Average Cost -->
+        <section id="average-cost-section">
+            <h2>Find Average Ticket Cost</h2>
+            <form th:action="@{/bookings/averageCostOnDate}" method="post">
+                <label for="date">Enter Date (dd/MM/yyyy):</label>
+                <input type="text" id="date" name="date" placeholder="dd/MM/yyyy" required/>
+                <button type="submit">Get Average Cost</button>
+            </form>
+            <div th:if="${errorMessageForAverageCost}">
+                <p th:text="${errorMessageForAverageCost}" style="color: red;"></p>
+            </div>
+            <div th:if="${averageCost != null}">
+                <p>Average Ticket Cost: <span th:text="${averageCost}"></span></p>
+            </div>
+
+        </section>
+
+        <!-- Section for Fetching Passengers for a Booking -->
+        <section id="fetch-passengers-section">
+            <h2>Fetch Passengers for Booking</h2>
+            <form th:action="@{/bookings/fetchPassengersForBooking}" method="get">
+                <label for="bookingId">Enter Booking ID:</label>
+                <input type="number" id="bookingId" name="bookingId" required />
+                <button type="submit">Fetch Passengers</button>
+
+            </form>
+            <div th:if="${errorMessageForFetchPassenger}">
+                <p th:text="${errorMessageForFetchPassenger}" style="color: red;"></p>
+            </div>
+
+            <div th:if="${passengers}">
+                <h3>Passengers:</h3>
+                <ul>
+                    <li th:each="passenger : ${passengers}" th:text="${passenger.name} + ' - ' + 'Passenger Seat Number: ' + ${passenger.busSeat.seatNumber}"></li>
+                </ul>
+
+            </div>
+        </section>
+
+        <!--Back button -->
+        <a href="/">Back to Home</a>
+
+    </div>
 
 </body>
 </html>

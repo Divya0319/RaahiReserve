@@ -2,14 +2,18 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Index Page</title>
+    <link rel="stylesheet" th:href="@{/css/align-center-style.css}">
 </head>
 <body>
-<h1>Welcome to the Booking Service</h1>
+    <div class="container">
 
-<h2>Navigation</h2>
-<ul>
-    <li><a th:href="@{/bookings/averageCostOnDate}">Find Average Ticket Cost on Date</a></li>
-    <!-- Add more links here as needed -->
-</ul>
+        <h1>Welcome to the Booking Service</h1>
+
+        <h2>Navigation</h2>
+        <ul>
+            <li><a th:href="@{/bookings/averageCostOnDate}">Booking Operations</a></li>
+            <!-- Add more links here as needed -->
+        </ul>
+    </div>
 </body>
 </html>
