@@ -45,24 +45,26 @@ public class BookingController {
             model.addAttribute("averageCost", averageCost);
         } else if(response.getStatusCode() == HttpStatus.BAD_REQUEST) {
             String errorMessage = ((Map<String, String>)response.getBody()).get("error");
-            model.addAttribute("errorMessageForAverageCost", errorMessage);
+            model.addAttribute("errorMessage", errorMessage);
         }
 
         return "averageCost";
     }
 
     @GetMapping("/fetchPassengersForBooking")
-    public String fetchAllPassengersForBooking(@RequestParam int bookingId, Model model) {
-        ResponseEntity<?> response = bookingService.fetchAllPassengersForBooking(bookingId);
+    public String fetchAllPassengersForBooking(@RequestParam(value = "bookingId", required = false) Integer bookingId, Model model) {
+        if(bookingId != null) {
+            ResponseEntity<?> response = bookingService.fetchAllPassengersForBooking(bookingId);
 
-        if(response.getStatusCode() == HttpStatus.OK) {
-            List<Passenger> passengers = (List<Passenger>) response.getBody();
-            model.addAttribute("passengers", passengers);
-        } else if(response.getStatusCode() == HttpStatus.NOT_FOUND) {
-            String errorMessage = ((Map<String, String>) response.getBody()).get("error");
-            model.addAttribute("errorMessageForFetchPassenger", errorMessage);
+            if(response.getStatusCode() == HttpStatus.OK) {
+                List<Passenger> passengers = (List<Passenger>) response.getBody();
+                model.addAttribute("passengers", passengers);
+            } else if(response.getStatusCode() == HttpStatus.NOT_FOUND) {
+                String errorMessage = ((Map<String, String>) response.getBody()).get("error");
+                model.addAttribute("errorMessage", errorMessage);
+            }
         }
 
-        return "averageCost";
+        return "findPassengersForBooking";
     }
 }

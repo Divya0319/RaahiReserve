@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fetch Passengers For Booking</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h2>Find Passengers for Booking</h2>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/bookings/fetchPassengersForBooking}" method="get">
+                    <div class="form-group">
+                        <label for="bookingId">Enter Booking ID:</label>
+                        <input type="text" id="bookingId" name="bookingId" class="form-control" placeholder="Booking ID" required/>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Fetch Passengers</button>
+                </form>
+
+                <div th:if="${errorMessage}" class="alert alert-danger mt-3">
+                    <p th:text="${errorMessage}"></p>
+                </div>
+
+                <div th:if="${passengers}">
+                    <h4 class="mt-4">Passengers:</h4>
+                    <ul class="list-group">
+                        <li th:each="passenger : ${passengers}" class="list-group-item">
+                            <span th:text="${passenger.name}"></span> - Seat No: <span th:text="${passenger.busSeat.seatNumber}"></span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Back Navigation Link -->
+                <a href="/" class="btn btn-secondary mt-3">Back to Home</a>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>

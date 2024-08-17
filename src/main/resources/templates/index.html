@@ -2,18 +2,23 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Index Page</title>
-    <link rel="stylesheet" th:href="@{/css/align-center-style.css}">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-
-        <h1>Welcome to the Booking Service</h1>
-
-        <h2>Navigation</h2>
-        <ul>
-            <li><a th:href="@{/bookings/averageCostOnDate}">Booking Operations</a></li>
-            <!-- Add more links here as needed -->
-        </ul>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h1>Welcome to the Booking Service</h1>
+            </div>
+            <div class="card-body">
+                <h2 class="mt-4">Navigation</h2>
+                <ul class="list-group">
+                    <li class="list-group-item"><a th:href="@{/bookings/averageCostOnDate}">Average cost of tickets on date</a></li>
+                    <li class="list-group-item"><a th:href="@{/bookings/fetchPassengersForBooking}">Passengers belonging to a Booking</a></li>
+                    <!-- Add more links here as needed -->
+                </ul>
+            </div>
+        </div>
     </div>
 </body>
 </html>
