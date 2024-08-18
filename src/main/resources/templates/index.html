@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Index Page</title>
+    <title>Red Bus Booking</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-5">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header bg-success text-white">
                 <h1>Welcome to the Booking Service</h1>
             </div>
-            <div class="card-body">
+            <div class="card-body bg-light text-dark">
                 <h2 class="mt-4">Navigation</h2>
                 <ul class="list-group">
                     <li class="list-group-item"><a th:href="@{/bookings/averageCostOnDate}">Average cost of tickets on date</a></li>

@@ -7,14 +7,14 @@
 <body>
     <div class="container mt-5">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header bg-success text-white">
                 <h1>Select Bus Type</h1>
             </div>
-            <div class="card-body">
+            <div class="card-body bg-light text-dark">
                 <form th:action="@{/bookings/saveSelectedBusType}" method="post">
                     <div class="mb-3">
                         <label for="busType" class="form-label">Bus Type:</label>
-                        <select id="busType" name="busType" class="form-select">
+                        <select class="form-select" id="busType" name="busType" >
                             <option th:each="busType : ${busTypes}" th:value="${busType}" th:text="${busType}"></option>
                         </select>
                     </div>
