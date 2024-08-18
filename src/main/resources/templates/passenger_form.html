@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Passenger Details</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <h2>Passenger Details</h2>
+
+    <form th:action="@{/bookings/submitPassengerDetails}" method="post">
+        <div id="passenger-forms">
+            <div class="form-group passenger-form">
+                <label for="name-0">Passenger Name:</label>
+                <input type="text" class="form-control" name="passengers[0].name" id="name-0" required>
+
+                <label for="age-0">Age:</label>
+                <input type="number" class="form-control" name="passengers[0].age" id="age-0" required>
+
+                <label for="gender-0">Gender:</label>
+                <select class="form-control" name="passengers[0].gender" id="gender-0">
+                    <option th:each="gender : ${genders}" th:value="${gender}" th:text="${gender}">Gender</option>
+                </select>
+
+                <label for="seatPreference-0">Seat Preference:</label>
+                <select class="form-control" name="passengers[0].seatPreference" id="seatPreference-0">
+                    <option th:each="seatPref : ${seatPreferences}" th:value="${seatPref}" th:text="${seatPref}">Seat Preference</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="button" id="add-passenger" class="btn btn-primary mt-3">Add Another Passenger</button>
+        <button type="submit" class="btn btn-success mt-3">Submit</button>
+    </form>
+</div>
+
+<script type="text/javascript">
+    let passengerIndex = 1;
+
+    $('#add-passenger').click(function () {
+        const newForm = `
+            <div class="form-group passenger-form">
+                <label for="name-${passengerIndex}">Passenger Name:</label>
+                <input type="text" class="form-control" name="passengers[${passengerIndex}].name" id="name-${passengerIndex}" required>
+
+                <label for="age-${passengerIndex}">Age:</label>
+                <input type="number" class="form-control" name="passengers[${passengerIndex}].age" id="age-${passengerIndex}" required>
+
+                <label for="gender-${passengerIndex}">Gender:</label>
+                <select class="form-control" name="passengers[${passengerIndex}].gender" id="gender-${passengerIndex}">
+                    <option th:each="gender : ${genders}" th:value="${gender}" th:text="${gender}">Gender</option>
+                </select>
+
+                <label for="seatPreference-${passengerIndex}">Seat Preference:</label>
+                <select class="form-control" name="passengers[${passengerIndex}].seatPreference" id="seatPreference-${passengerIndex}">
+                    <option th:each="seatPref : ${seatPreferences}" th:value="${seatPref}" th:text="${seatPref}">Seat Preference</option>
+                </select>
+            </div>
+        `;
+
+        $('#passenger-forms').append(newForm);
+        passengerIndex++;
+    });
+</script>
+</body>
+</html>
