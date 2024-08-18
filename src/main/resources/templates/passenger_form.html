@@ -24,7 +24,7 @@
                 </select>
 
                 <label for="seatPreference-0">Seat Preference:</label>
-                <select class="form-control" name="passengers[0].seatPreference" id="seatPreference-0">
+                <select class="form-control" name="passengers[0].busSeat.seatType" id="seatPreference-0">
                     <option th:each="seatPref : ${seatPreferences}" th:value="${seatPref}" th:text="${seatPref}">Seat Preference</option>
                 </select>
             </div>
@@ -38,6 +38,11 @@
 <script type="text/javascript">
     let passengerIndex = 1;
 
+    // Pass Thymeleaf variables to JavaScript
+
+    const genders = ['MALE', 'FEMALE', 'OTHER'];
+    const seatPreferences = ['NO_PREFERENCE', 'AISLE', 'WINDOW'];
+
     $('#add-passenger').click(function () {
         const newForm = `
             <div class="form-group passenger-form">
@@ -49,12 +54,12 @@
 
                 <label for="gender-${passengerIndex}">Gender:</label>
                 <select class="form-control" name="passengers[${passengerIndex}].gender" id="gender-${passengerIndex}">
-                    <option th:each="gender : ${genders}" th:value="${gender}" th:text="${gender}">Gender</option>
+                    ${genders.map(gender => `<option value="${gender}">${gender}</option>`).join('')}
                 </select>
 
                 <label for="seatPreference-${passengerIndex}">Seat Preference:</label>
-                <select class="form-control" name="passengers[${passengerIndex}].seatPreference" id="seatPreference-${passengerIndex}">
-                    <option th:each="seatPref : ${seatPreferences}" th:value="${seatPref}" th:text="${seatPref}">Seat Preference</option>
+                <select class="form-control" name="passengers[${passengerIndex}].busSeat.seatType" id="seatPreference-${passengerIndex}">
+                    ${seatPreferences.map(seatPref => `<option value="${seatPref}">${seatPref}</option>`).join('')}
                 </select>
             </div>
         `;
