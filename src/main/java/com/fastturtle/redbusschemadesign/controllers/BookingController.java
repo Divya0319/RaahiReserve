@@ -4,6 +4,7 @@ import com.fastturtle.redbusschemadesign.dtos.BookingRequest;
 import com.fastturtle.redbusschemadesign.helpers.DateFormatConverter;
 import com.fastturtle.redbusschemadesign.models.*;
 import com.fastturtle.redbusschemadesign.services.BookingService;
+import com.fastturtle.redbusschemadesign.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +22,12 @@ import java.util.Map;
 @RequestMapping("/bookings")
 public class BookingController {
     private final BookingService bookingService;
+    private UserService userService;
 
     @Autowired
-    public BookingController(BookingService bookingService) {
+    public BookingController(BookingService bookingService, UserService userService) {
         this.bookingService = bookingService;
+        this.userService = userService;
     }
 
     @PostMapping("/book")
@@ -110,6 +113,7 @@ public class BookingController {
         model.addAttribute("passengers", passengers);
         model.addAttribute("genders", Gender.values());
         model.addAttribute("seatPreferences", Arrays.asList("NO_PREFERENCE", SeatType.AISLE.name(), SeatType.WINDOW.name()));
+        model.addAttribute("users", userService.findAll());
 
         return "passenger_form";
     }

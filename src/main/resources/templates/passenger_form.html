@@ -10,6 +10,17 @@
     <h2>Passenger Details</h2>
 
     <form th:action="@{/bookings/submitPassengerDetails}" method="post">
+
+        <!-- User Selection Dropdown -->
+        <div class="form-group">
+            <label for="user">Select User:</label>
+            <select class="form-control" name="userId" id="user">
+                <option value="">No User Selected</option>
+                <option th:each="user : ${users}" th:value="${user.userId}" th:text="${user.userName}"></option>
+            </select>
+        </div>
+
+        <!-- Passenger Forms -->
         <div id="passenger-forms">
             <div class="form-group passenger-form">
                 <label for="name-0">Passenger Name:</label>
