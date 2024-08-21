@@ -6,44 +6,73 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-<div class="container">
-    <h2>Passenger Details</h2>
-
-    <form th:action="@{/bookings/submitPassengerDetails}" method="post">
-
-        <!-- User Selection Dropdown -->
-        <div class="form-group">
-            <label for="user">Select User:</label>
-            <select class="form-control" name="userId" id="user">
-                <option value="">No User Selected</option>
-                <option th:each="user : ${users}" th:value="${user.userId}" th:text="${user.userName}"></option>
-            </select>
+<div class="container mt-5 mb-5">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mt-4">Passenger Details</h2>
         </div>
+        <div class="card-body bg-light text-dark">
+            <form th:action="@{/bookings/create}" method="post">
 
-        <!-- Passenger Forms -->
-        <div id="passenger-forms">
-            <div class="form-group passenger-form">
-                <label for="name-0">Passenger Name:</label>
-                <input type="text" class="form-control" name="passengers[0].name" id="name-0" required>
+                <!-- User Selection Dropdown -->
+                <div class="form-group mt-2">
+                    <label for="user">Select User to Add as passenger:</label>
+                    <select class="form-control" name="userId" id="user">
+                        <option value="">No User Selected</option>
+                        <option th:each="user : ${users}" th:value="${user.userId}" th:text="${user.userName}"></option>
+                    </select>
+                </div>
 
-                <label for="age-0">Age:</label>
-                <input type="number" class="form-control" name="passengers[0].age" id="age-0" required>
+                <!-- Source Selection Dropdown -->
+                <div class="form-group mt-2">
+                    <label for="source">Select Source:</label>
+                    <select class="form-control" name="source" id="source">
+                        <option value="">No Source Selected</option>
+                        <option th:each="source : ${sources}" th:value="${source}" th:text="${source}"></option>
+                    </select>
+                </div>
 
-                <label for="gender-0">Gender:</label>
-                <select class="form-control" name="passengers[0].gender" id="gender-0">
-                    <option th:each="gender : ${genders}" th:value="${gender}" th:text="${gender}">Gender</option>
-                </select>
+                <!-- Destination Selection Dropdown -->
+                <div class="form-group mt-2">
+                    <label for="destination">Select Destination:</label>
+                    <select class="form-control" name="destination" id="destination">
+                        <option value="">No Destination Selected</option>
+                        <option th:each="destination : ${destinations}" th:value="${destination}" th:text="${destination}"></option>
+                    </select>
+                </div>
 
-                <label for="seatPreference-0">Seat Preference:</label>
-                <select class="form-control" name="passengers[0].busSeat.seatType" id="seatPreference-0">
-                    <option th:each="seatPref : ${seatPreferences}" th:value="${seatPref}" th:text="${seatPref}">Seat Preference</option>
-                </select>
-            </div>
+                <!-- Error message div -->
+                <div class="alert alert-danger mt-3" th:if="${errorMessage}" >
+                    <p th:text="${errorMessage}"></p>
+                </div>
+
+
+                <!-- Passenger Forms -->
+                <div id="passenger-forms">
+                    <div class="form-group passenger-form mt-4">
+                        <label for="name-0">Passenger Name:</label>
+                        <input type="text" class="form-control" name="passengers[0].name" id="name-0" required>
+
+                        <label for="age-0">Age:</label>
+                        <input type="number" class="form-control" name="passengers[0].age" id="age-0" required>
+
+                        <label for="gender-0">Gender:</label>
+                        <select class="form-control" name="passengers[0].gender" id="gender-0">
+                            <option th:each="gender : ${genders}" th:value="${gender}" th:text="${gender}">Gender</option>
+                        </select>
+
+                        <label for="seatPreference-0">Seat Preference:</label>
+                        <select class="form-control" name="passengers[0].busSeat.seatType" id="seatPreference-0">
+                            <option th:each="seatPref : ${seatPreferences}" th:value="${seatPref}" th:text="${seatPref}">Seat Preference</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="button" id="add-passenger" class="btn btn-primary mt-3">Add Another Passenger</button>
+                <button type="submit" class="btn btn-success mt-3">Submit</button>
+            </form>
         </div>
-
-        <button type="button" id="add-passenger" class="btn btn-primary mt-3">Add Another Passenger</button>
-        <button type="submit" class="btn btn-success mt-3">Submit</button>
-    </form>
+    </div>
 </div>
 
 <script type="text/javascript">
@@ -56,7 +85,8 @@
 
     $('#add-passenger').click(function () {
         const newForm = `
-            <div class="form-group passenger-form">
+            <hr class="text-primary my-4" style="border-top: 3px solid; border-radius: 5px;">
+            <div class="form-group passenger-form mt-4">
                 <label for="name-${passengerIndex}">Passenger Name:</label>
                 <input type="text" class="form-control" name="passengers[${passengerIndex}].name" id="name-${passengerIndex}" required>
 
