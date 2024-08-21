@@ -4,6 +4,7 @@ import com.fastturtle.redbusschemadesign.dtos.BookingRequest;
 import com.fastturtle.redbusschemadesign.helpers.DateFormatConverter;
 import com.fastturtle.redbusschemadesign.models.*;
 import com.fastturtle.redbusschemadesign.services.BookingService;
+import com.fastturtle.redbusschemadesign.services.RouteService;
 import com.fastturtle.redbusschemadesign.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,12 +23,14 @@ import java.util.Map;
 @RequestMapping("/bookings")
 public class BookingController {
     private final BookingService bookingService;
-    private UserService userService;
+    private final UserService userService;
+    private final RouteService routeService;
 
     @Autowired
-    public BookingController(BookingService bookingService, UserService userService) {
+    public BookingController(BookingService bookingService, UserService userService, RouteService routeService) {
         this.bookingService = bookingService;
         this.userService = userService;
+        this.routeService = routeService;
     }
 
     @PostMapping("/book")
@@ -105,7 +108,7 @@ public class BookingController {
         return "resultForPaymentModeSelection";
     }
 
-    @GetMapping("/passengerForm")
+    @GetMapping("/create")
     public String showPassengerForm(Model model) {
         List<Passenger> passengers = new ArrayList<>();
         passengers.add(new Passenger());
@@ -114,22 +117,45 @@ public class BookingController {
         model.addAttribute("genders", Gender.values());
         model.addAttribute("seatPreferences", Arrays.asList("NO_PREFERENCE", SeatType.AISLE.name(), SeatType.WINDOW.name()));
         model.addAttribute("users", userService.findAll());
+        model.addAttribute("sources", routeService.findAllSources());
+        model.addAttribute("destinations", routeService.findAllDestinations());
 
         return "passenger_form";
     }
 
-    @PostMapping("/submitPassengerDetails")
-    public String submitPassengerDetails(@ModelAttribute("passengers") List<Passenger> passengers, Model model) {
-        for (Passenger passenger : passengers) {
-            System.out.println("Passenger: " + passenger.getName() + ", Age: " + passenger.getAge() +
-                    ", Gender: " + passenger.getGender() + ", Seat Preference: " + passenger.getBusSeat().getSeatType());
+//    @GetMapping("/submitPassengerDetails")
+//    public String submitPassengerDetails(@ModelAttribute("passengers") List<Passenger> passengers, Model model) {
+//        for (Passenger passenger : passengers) {
+//            System.out.println("Passenger: " + passenger.getName() + ", Age: " + passenger.getAge() +
+//                    ", Gender: " + passenger.getGender() + ", Seat Preference: " + passenger.getBusSeat().getSeatType());
+//        }
+//
+//        model.addAttribute("passengers", passengers);
+//        model.addAttribute("genders", Gender.values());
+//        model.addAttribute("seatPreferences", Arrays.asList("NO_PREFERENCE", SeatType.AISLE.name(), SeatType.WINDOW.name()));
+//
+//        return "passenger_form";
+//    }
+
+    @PostMapping("/create")
+    public String createBooking(@RequestParam("userId") Integer userId,
+                                @RequestParam("source") String source,
+                                @RequestParam("destination") String destination,
+                                @ModelAttribute("passengers") List<Passenger> passengers, Model model) {
+
+        ResponseEntity<?> response = bookingService.doBookingFromPassengerForm(userId, source, destination, passengers);
+        Booking booking;
+        if(response.getStatusCode() == HttpStatus.OK) {
+            booking = (Booking) response.getBody();
+            model.addAttribute("booking", booking);
+            model.addAttribute("passengers", passengers);
+        } else {
+            String errorMessage = ((Map<String, String>) response.getBody()).get("error");
+            model.addAttribute("errorMessage", errorMessage);
         }
 
-        model.addAttribute("passengers", passengers);
-        model.addAttribute("genders", Gender.values());
-        model.addAttribute("seatPreferences", Arrays.asList("NO_PREFERENCE", SeatType.AISLE.name(), SeatType.WINDOW.name()));
+        return "bookingResult";
 
-        return "passenger_form";
     }
 
     //TODO: create a complete bus booking flow

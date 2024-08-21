@@ -12,7 +12,10 @@ import java.util.List;
 @Repository
 public interface BusRepository extends JpaRepository<Bus, Integer> {
 
-    @Query("SELECT b FROM Bus b JOIN b.busRoutes br WHERE br.route = :route AND b.availableSeats > 0")
+    @Query("SELECT b FROM Bus b " +
+            "JOIN b.busRoutes br " +
+            "WHERE br.route = :route " +
+            "AND b.availableSeats > 0")
     List<Bus> findAvailableBusesOnRoute(@Param("route") Route route);
 
     @Query("SELECT b.totalSeats FROM Bus b WHERE b.busNo = :busNo")
@@ -20,4 +23,12 @@ public interface BusRepository extends JpaRepository<Bus, Integer> {
 
     @Query("SELECT b.availableSeats FROM Bus b WHERE b.busNo = :busNo")
     int findAvailableSeatsByBusNo(@Param("busNo") String busNo);
+
+    @Query("SELECT b FROM Bus b " +
+            "JOIN b.busRoutes br " +
+            "JOIN br.route r " +
+            "WHERE r.source = :source " +
+            "AND r.destination = :destination " +
+            "AND b.availableSeats > 0")
+    List<Bus> findAvailableBusesBySourceAndDestination(@Param("source") String source, @Param("destination") String destination);
 }

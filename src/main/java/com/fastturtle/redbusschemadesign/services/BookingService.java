@@ -1,21 +1,17 @@
 package com.fastturtle.redbusschemadesign.services;
 
 import com.fastturtle.redbusschemadesign.dtos.BookingRequest;
+import com.fastturtle.redbusschemadesign.helpers.RandomSeatNumberProvider;
+import com.fastturtle.redbusschemadesign.helpers.RandomSeatNumberProviderWithPreference;
 import com.fastturtle.redbusschemadesign.models.*;
-import com.fastturtle.redbusschemadesign.repositories.BookingRepository;
-import com.fastturtle.redbusschemadesign.repositories.BusRepository;
-import com.fastturtle.redbusschemadesign.repositories.BusRouteRepository;
-import com.fastturtle.redbusschemadesign.repositories.UserRepository;
+import com.fastturtle.redbusschemadesign.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class BookingService {
@@ -27,13 +23,17 @@ public class BookingService {
     private final UserRepository userRepository;
 
     private final BusRepository busRepository;
+    private final BusSeatRepository busSeatRepository;
+    private final SeatCostRepository seatCostRepository;
 
     @Autowired
-    public BookingService(BookingRepository bookingRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusRepository busRepository) {
+    public BookingService(BookingRepository bookingRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusRepository busRepository, BusSeatRepository busSeatRepository, SeatCostRepository seatCostRepository) {
         this.bookingRepository = bookingRepository;
         this.busRouteRepository = busRouteRepository;
         this.userRepository = userRepository;
         this.busRepository = busRepository;
+        this.busSeatRepository = busSeatRepository;
+        this.seatCostRepository = seatCostRepository;
     }
 
     public ResponseEntity<?> bookBus(BookingRequest bookingRequest) {
@@ -98,6 +98,92 @@ public class BookingService {
            response = ResponseEntity.ok(passengers);
         }
 
+        return response;
+    }
+
+    public ResponseEntity<?> doBookingFromPassengerForm(Integer userId, String source, String destination, List<Passenger> passengers) {
+        ResponseEntity<?> response = null;
+        if(source.equals(destination)) {
+            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Source and destination cannot be same"));
+        } else {
+            Booking booking = new Booking();
+
+            Float bookingCost = 0.0f;
+            if (userId != null) {
+                User user = userRepository.findById(userId).orElse(null);
+                booking.setUser(user);
+                booking.setUserPassenger(true);
+
+                RandomSeatNumberProvider rsnp = new RandomSeatNumberProvider(busRepository, busSeatRepository);
+                List<Bus> busesForBooking = busRepository.findAvailableBusesBySourceAndDestination(source, destination);
+                if(busesForBooking.isEmpty()) {
+                    response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "No buses found for given source and destination"));
+                    return response;
+                } else {
+                    Bus busForBooking = busesForBooking.get(0);
+                    rsnp.setBusNo(busForBooking.getBusNo());
+
+                    int assignedSeatForUser = rsnp.getRandomSeatNumber();
+                    BusSeat busSeatForUser = new BusSeat();
+                    busSeatForUser.setBus(busForBooking);
+                    busSeatForUser.setSeatNumber(assignedSeatForUser);
+                    busSeatForUser.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatForUser));
+                    busSeatForUser.setOccupied(true);
+                    busSeatRepository.save(busSeatForUser);
+
+                    BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(busSeatForUser);
+                    Float seatCostForUser = seatCostRepository.findCostByBusType(busTypeForUser);
+
+                    bookingCost += seatCostForUser;
+
+                    Passenger userPassenger = new Passenger();
+                    userPassenger.setName(booking.getUser().getUserName());
+                    userPassenger.setAge(booking.getUser().getAge());
+                    userPassenger.setGender(booking.getUser().getGender());
+                    userPassenger.setBusSeat(busSeatForUser);
+                    booking.addPassenger(userPassenger);
+                }
+
+            } else {
+                booking.setUserPassenger(false);
+            }
+
+            RandomSeatNumberProviderWithPreference rsnpwp = new RandomSeatNumberProviderWithPreference(busRepository, busSeatRepository);
+            List<Bus> busesForBooking = busRepository.findAvailableBusesBySourceAndDestination(source, destination);
+
+            for(Passenger p : passengers) {
+                Bus busForBooking = busesForBooking.get(0);
+                rsnpwp.setBusNo(busForBooking.getBusNo());
+
+                int assignedSeatForPassenger = rsnpwp.getRandomSeatNumberWithPreference(p.getBusSeat().getSeatType(), true);
+                BusSeat busSeatForPassenger = new BusSeat();
+                busSeatForPassenger.setBus(busForBooking);
+                busSeatForPassenger.setSeatNumber(assignedSeatForPassenger);
+                busSeatForPassenger.setSeatType(rsnpwp.getSeatTypeFromSeatNumber(assignedSeatForPassenger));
+                busSeatForPassenger.setOccupied(true);
+                busSeatRepository.save(busSeatForPassenger);
+
+                BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(busSeatForPassenger);
+                Float seatCostForUser = seatCostRepository.findCostByBusType(busTypeForUser);
+
+                bookingCost += seatCostForUser;
+
+                booking.addPassenger(p);
+            }
+
+            booking.setPrice(bookingCost);
+
+            Payment payment = new Payment();
+            payment.setPaymentMethod(null);
+            payment.setPaymentStatus(PaymentStatus.PENDING);
+            payment.setBooking(booking);
+            payment.setAmount(0.00f);
+            payment.setPaymentDate(null);
+            booking.setPayment(payment);
+
+            bookingRepository.save(booking);
+
+        }
         return response;
     }
 }

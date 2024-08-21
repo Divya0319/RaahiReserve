@@ -1,5 +1,6 @@
 package com.fastturtle.redbusschemadesign.helpers;
 
+import com.fastturtle.redbusschemadesign.models.SeatType;
 import com.fastturtle.redbusschemadesign.repositories.BusRepository;
 import com.fastturtle.redbusschemadesign.repositories.BusSeatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import java.util.stream.IntStream;
 
 @Component
 public class RandomSeatNumberProvider {
+
+    private static final int[] SEAT_PATTERN = {1, 2, 2, 1};  // 1 - Window, 2 - Aisle
 
     private String busNo;
     private BusRepository busRepository;
@@ -54,6 +57,11 @@ public class RandomSeatNumberProvider {
 
         return availableSeats.get(randomIndex);
 
+    }
+
+    public SeatType getSeatTypeFromSeatNumber(int seatNumber) {
+        int position = (seatNumber - 1) % SEAT_PATTERN.length;
+        return SEAT_PATTERN[position] == 1 ? SeatType.WINDOW : SeatType.AISLE;
     }
 
 
