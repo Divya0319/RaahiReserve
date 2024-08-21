@@ -12,7 +12,7 @@ public class Passenger {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "passengerId")
-    private int passengerId;
+    private Integer passengerId;
 
     @ManyToMany(mappedBy = "passengers")
     @JsonIgnore
@@ -51,11 +51,11 @@ public class Passenger {
         this.bookings = new HashSet<>();
     }
 
-    public int getPassengerId() {
+    public Integer getPassengerId() {
         return passengerId;
     }
 
-    public void setPassengerId(int passengerId) {
+    public void setPassengerId(Integer passengerId) {
         this.passengerId = passengerId;
     }
 

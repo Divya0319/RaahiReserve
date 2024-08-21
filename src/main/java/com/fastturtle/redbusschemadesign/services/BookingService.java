@@ -102,7 +102,6 @@ public class BookingService {
         return response;
     }
 
-    @Transactional
     public ResponseEntity<?> doBookingFromPassengerForm(Integer userId, String source, String destination, List<Passenger> passengers) {
         if(source.equals(destination)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Source and destination cannot be same"));
@@ -148,6 +147,7 @@ public class BookingService {
         rsnpwp.setBusNo(busForBooking.getBusNo());
 
         for(Passenger p : passengers) {
+            p.setPassengerId(null);   // Ensure the ID is null, so JPA will treat it as a new entity.
             int assignedSeatForPassenger = rsnpwp.getRandomSeatNumberWithPreference(p.getBusSeat().getSeatType(), true);
             BusSeat busSeatForPassenger = new BusSeat();
             busSeatForPassenger.setBus(busForBooking);

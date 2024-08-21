@@ -130,10 +130,10 @@ public class BookingController {
     public String createBooking(@RequestParam(value = "userId", required = false) Integer userId,
                                 @RequestParam("source") String source,
                                 @RequestParam("destination") String destination,
-                                @ModelAttribute("passengers") ArrayList<Passenger> passengers, Model model) {
+                                @ModelAttribute("booking") Booking booking, Model model) {
 
-        ResponseEntity<?> response = bookingService.doBookingFromPassengerForm(userId, source, destination, passengers);
-        Booking booking;
+        // Here, booking.getPassengers() should return the list of passengers populated from the form
+        ResponseEntity<?> response = bookingService.doBookingFromPassengerForm(userId, source, destination, booking.getPassengers());
         if(response.getStatusCode() == HttpStatus.OK) {
             booking = (Booking) response.getBody();
             model.addAttribute("booking", booking);
