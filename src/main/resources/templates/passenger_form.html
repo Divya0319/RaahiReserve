@@ -12,7 +12,7 @@
             <h2 class="mt-4">Passenger Details</h2>
         </div>
         <div class="card-body bg-light text-dark">
-            <form th:action="@{/bookings/create}" method="post">
+            <form th:action="@{/bookings/checkRouteAvailability}" method="post">
 
                 <!-- User Selection Dropdown -->
                 <div class="form-group mt-2">
@@ -28,7 +28,11 @@
                     <label for="source">Select Source:</label>
                     <select class="form-control" name="source" id="source">
                         <option value="">No Source Selected</option>
-                        <option th:each="source : ${sources}" th:value="${source}" th:text="${source}"></option>
+                        <option
+                                th:each="source : ${sources}"
+                                th:value="${source}"
+                                th:text="${source}"
+                                th:selected="${source == selectedSource}"></option>
                     </select>
                 </div>
 
@@ -37,17 +41,26 @@
                     <label for="destination">Select Destination:</label>
                     <select class="form-control" name="destination" id="destination">
                         <option value="">No Destination Selected</option>
-                        <option th:each="destination : ${destinations}" th:value="${destination}" th:text="${destination}"></option>
+                        <option
+                                th:each="destination : ${destinations}"
+                                th:value="${destination}"
+                                th:text="${destination}"
+                                th:selected="${destination == selectedDestination}"></option>
                     </select>
                 </div>
 
+                <!-- Check Availability Button -->
+                <button type="submit" class="btn btn-warning mt-3">Check Availability</button>
+            </form>
+
                 <!-- Error message div -->
-                <div class="alert alert-danger mt-3" th:if="${errorMessage}" >
+                <div class="alert alert-danger mt-3" th:if="${errorMessage != null}" >
                     <p th:text="${errorMessage}"></p>
                 </div>
 
 
                 <!-- Passenger Forms -->
+            <form th:action="@{/bookings/create}" method="post">
                 <div id="passenger-forms">
                     <div class="form-group passenger-form mt-4">
                         <label for="name-0">Passenger Name:</label>

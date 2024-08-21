@@ -1,5 +1,6 @@
 package com.fastturtle.redbusschemadesign.services;
 
+import com.fastturtle.redbusschemadesign.models.Bus;
 import com.fastturtle.redbusschemadesign.models.Route;
 import com.fastturtle.redbusschemadesign.repositories.BusRepository;
 import com.fastturtle.redbusschemadesign.repositories.RouteRepository;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -34,5 +36,9 @@ public class BusService {
         }
 
         return response;
+    }
+
+    public List<Bus> findAvailableBusesBySourceAndDestination(String source, String destination) {
+        return busRepository.findAvailableBusesBySourceAndDestination(source, destination);
     }
 }

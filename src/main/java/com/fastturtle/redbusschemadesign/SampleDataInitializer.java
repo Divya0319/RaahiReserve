@@ -76,7 +76,7 @@ public class SampleDataInitializer {
 
         // Sample data for route
 
-        String[] source = {"Chattisgarh", "Mumbai", "Hyderabad", "Bangalore", "Goa"};
+        String[] source = {"Chhattisgarh", "Mumbai", "Hyderabad", "Bangalore", "Goa"};
         String[] destination = {"Mumbai", "Indore", "Chhattisgarh", "Punjab", "Mumbai"};
         Direction[] directions = {Direction.UP, Direction.DOWN, Direction.UP, Direction.UP, Direction.DOWN};
 

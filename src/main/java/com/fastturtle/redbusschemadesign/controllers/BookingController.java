@@ -4,6 +4,7 @@ import com.fastturtle.redbusschemadesign.dtos.BookingRequest;
 import com.fastturtle.redbusschemadesign.helpers.DateFormatConverter;
 import com.fastturtle.redbusschemadesign.models.*;
 import com.fastturtle.redbusschemadesign.services.BookingService;
+import com.fastturtle.redbusschemadesign.services.BusService;
 import com.fastturtle.redbusschemadesign.services.RouteService;
 import com.fastturtle.redbusschemadesign.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +26,14 @@ public class BookingController {
     private final BookingService bookingService;
     private final UserService userService;
     private final RouteService routeService;
+    private final BusService busService;
 
     @Autowired
-    public BookingController(BookingService bookingService, UserService userService, RouteService routeService) {
+    public BookingController(BookingService bookingService, UserService userService, RouteService routeService, BusService busService) {
         this.bookingService = bookingService;
         this.userService = userService;
         this.routeService = routeService;
+        this.busService = busService;
     }
 
     @PostMapping("/book")
@@ -123,25 +126,11 @@ public class BookingController {
         return "passenger_form";
     }
 
-//    @GetMapping("/submitPassengerDetails")
-//    public String submitPassengerDetails(@ModelAttribute("passengers") List<Passenger> passengers, Model model) {
-//        for (Passenger passenger : passengers) {
-//            System.out.println("Passenger: " + passenger.getName() + ", Age: " + passenger.getAge() +
-//                    ", Gender: " + passenger.getGender() + ", Seat Preference: " + passenger.getBusSeat().getSeatType());
-//        }
-//
-//        model.addAttribute("passengers", passengers);
-//        model.addAttribute("genders", Gender.values());
-//        model.addAttribute("seatPreferences", Arrays.asList("NO_PREFERENCE", SeatType.AISLE.name(), SeatType.WINDOW.name()));
-//
-//        return "passenger_form";
-//    }
-
     @PostMapping("/create")
     public String createBooking(@RequestParam("userId") Integer userId,
                                 @RequestParam("source") String source,
                                 @RequestParam("destination") String destination,
-                                @ModelAttribute("passengers") List<Passenger> passengers, Model model) {
+                                @ModelAttribute("passengers") ArrayList<Passenger> passengers, Model model) {
 
         ResponseEntity<?> response = bookingService.doBookingFromPassengerForm(userId, source, destination, passengers);
         Booking booking;
@@ -149,13 +138,44 @@ public class BookingController {
             booking = (Booking) response.getBody();
             model.addAttribute("booking", booking);
             model.addAttribute("passengers", passengers);
-        } else {
+        } else if(response.getStatusCode() == HttpStatus.BAD_REQUEST) {
             String errorMessage = ((Map<String, String>) response.getBody()).get("error");
             model.addAttribute("errorMessage", errorMessage);
         }
 
         return "bookingResult";
 
+    }
+
+    @PostMapping("/checkRouteAvailability")
+    public String checkAvailability(@RequestParam("source") String source,
+                                    @RequestParam("destination") String destination,
+                                    Model model) {
+        model.addAttribute("genders", Gender.values());
+        model.addAttribute("seatPreferences", Arrays.asList("NO_PREFERENCE", SeatType.AISLE.name(), SeatType.WINDOW.name()));
+        model.addAttribute("users", userService.findAll());
+        model.addAttribute("sources", routeService.findAllSources());
+        model.addAttribute("destinations", routeService.findAllDestinations());
+        model.addAttribute("selectedSource", source);
+        model.addAttribute("selectedDestination", destination);
+        if (source.equals(destination)) {
+            model.addAttribute("errorMessage", "Source and destination cannot be the same.");
+            return "passenger_form"; // Return to the same form view with an error message
+        } else {
+
+            // Add any additional logic to check availability if needed
+            List<Bus> availableBuses = busService.findAvailableBusesBySourceAndDestination(source, destination);
+
+            if (availableBuses.isEmpty()) {
+                model.addAttribute("errorMessage", "No available buses found for given source and destination.");
+                return "passenger_form";
+            }
+        }
+
+        // Clear any existing error message
+        model.addAttribute("errorMessage", null);
+
+        return "passenger_form"; // Return to the same form view
     }
 
     //TODO: create a complete bus booking flow
