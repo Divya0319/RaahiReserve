@@ -27,7 +27,7 @@ public class RandomSeatNumberProviderWithPreference extends RandomSeatNumberProv
         } else if(!availableSeats.isEmpty() && assignSeatIfPreferenceUnavailable) {
             return getRandomSeatFromList(availableSeats);
         } else {
-            throw new RuntimeException("No available seats");
+            return -1;
         }
     }
 

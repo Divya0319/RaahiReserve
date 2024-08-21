@@ -19,7 +19,10 @@
                     <label for="user">Select User to Add as passenger:</label>
                     <select class="form-control" name="userId" id="user">
                         <option value="">No User Selected</option>
-                        <option th:each="user : ${users}" th:value="${user.userId}" th:text="${user.userName}"></option>
+                        <option th:each="user : ${users}"
+                                th:value="${user.userId}"
+                                th:text="${user.userName}"
+                                th:selected="${user.userId == selectedUserId}"></option>
                     </select>
                 </div>
 
@@ -58,9 +61,19 @@
                     <p th:text="${errorMessage}"></p>
                 </div>
 
+                <!-- Success message div -->
+                <div class="alert alert-success mt-3" th:if="${successMessage != null}" >
+                    <p th:text="${successMessage}"></p>
+                </div>
+
 
                 <!-- Passenger Forms -->
             <form th:action="@{/bookings/create}" method="post">
+                <!-- Hidden Inputs -->
+                <input type="hidden" name="userId" th:value="${selectedUserId}">
+                <input type="hidden" name="source" th:value="${selectedSource}">
+                <input type="hidden" name="destination" th:value="${selectedDestination}">
+
                 <div id="passenger-forms">
                     <div class="form-group passenger-form mt-4">
                         <label for="name-0">Passenger Name:</label>

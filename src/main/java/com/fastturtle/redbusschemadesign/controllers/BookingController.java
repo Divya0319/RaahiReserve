@@ -127,7 +127,7 @@ public class BookingController {
     }
 
     @PostMapping("/create")
-    public String createBooking(@RequestParam("userId") Integer userId,
+    public String createBooking(@RequestParam(value = "userId", required = false) Integer userId,
                                 @RequestParam("source") String source,
                                 @RequestParam("destination") String destination,
                                 @ModelAttribute("passengers") ArrayList<Passenger> passengers, Model model) {
@@ -137,7 +137,6 @@ public class BookingController {
         if(response.getStatusCode() == HttpStatus.OK) {
             booking = (Booking) response.getBody();
             model.addAttribute("booking", booking);
-            model.addAttribute("passengers", passengers);
         } else if(response.getStatusCode() == HttpStatus.BAD_REQUEST) {
             String errorMessage = ((Map<String, String>) response.getBody()).get("error");
             model.addAttribute("errorMessage", errorMessage);
@@ -150,6 +149,7 @@ public class BookingController {
     @PostMapping("/checkRouteAvailability")
     public String checkAvailability(@RequestParam("source") String source,
                                     @RequestParam("destination") String destination,
+                                    @RequestParam(value = "userId", required = false) Integer userId,
                                     Model model) {
         model.addAttribute("genders", Gender.values());
         model.addAttribute("seatPreferences", Arrays.asList("NO_PREFERENCE", SeatType.AISLE.name(), SeatType.WINDOW.name()));
@@ -158,6 +158,7 @@ public class BookingController {
         model.addAttribute("destinations", routeService.findAllDestinations());
         model.addAttribute("selectedSource", source);
         model.addAttribute("selectedDestination", destination);
+        model.addAttribute("selectedUserId", userId);
         if (source.equals(destination)) {
             model.addAttribute("errorMessage", "Source and destination cannot be the same.");
             return "passenger_form"; // Return to the same form view with an error message
@@ -169,6 +170,8 @@ public class BookingController {
             if (availableBuses.isEmpty()) {
                 model.addAttribute("errorMessage", "No available buses found for given source and destination.");
                 return "passenger_form";
+            } else {
+                model.addAttribute("successMessage", "Hooray! Buses are available");
             }
         }
 

@@ -12,11 +12,14 @@
         </div>
         <div class="card-body bg-light text-dark">
             <p><strong>Booking ID:</strong> <span th:text="${booking.bookingId}"></span></p>
-            <p><strong>User:</strong> <span th:text="${booking.user.userName}"></span></p>
+            <p><strong>User:</strong>
+                <span th:if="${booking.user != null}" th:text="${booking.user.userName}"></span>
+                <span th:if="${booking.user == null}">No user Added to booking</span>
+            </p>
 
             <h3>Passengers</h3>
             <ul class="list-group">
-                <li class="list-group-item" th:each="passenger : ${passengers}">
+                <li class="list-group-item" th:each="passenger : ${booking.passengers}">
                     <span th:text="${passenger.name}"></span> - Seat: <span th:text="${passenger.busSeat.seatType}"></span>
                 </li>
             </ul>
