@@ -81,38 +81,6 @@ public class BookingController {
         return "findPassengersForBooking";
     }
 
-    @GetMapping("/selectBusType")
-    public String showBusTypeSelectionForm(Model model) {
-        model.addAttribute("busTypes", BusType.values());
-        return "selectBusType";
-    }
-
-    @PostMapping("/saveSelectedBusType")
-    public String saveSelectedBusType(@RequestParam("busType") String selectedBusType, Model model) {
-        System.out.println("Selected Bus Type: " + selectedBusType);
-
-        // Add the selected bus type back to the model if you want to display it on a new page.
-        model.addAttribute("selectedBusType", selectedBusType);
-
-        // Redirect or return a view name to avoid template resolution error.
-        return "result"; // Change "result" to the name of your success page template.
-    }
-
-    @GetMapping("/selectPaymentMode")
-    public String showPaymentModeSelectionForm(Model model) {
-        model.addAttribute("paymentModes", PaymentMethods.values());
-        return "doPayment";
-    }
-
-    @PostMapping("/saveSelectedPaymentMode")
-    public String saveSelectedPaymentMode(@RequestParam("paymentMode") String selectedPaymentMode, Model model) {
-        System.out.println("Selected Payment Mode: " + selectedPaymentMode);
-
-        model.addAttribute("selectedPaymentMode", selectedPaymentMode);
-
-        return "resultForPaymentModeSelection";
-    }
-
     @GetMapping("/create")
     public String showPassengerForm(Model model) {
         List<Passenger> passengers = new ArrayList<>();
