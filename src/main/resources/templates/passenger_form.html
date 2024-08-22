@@ -4,6 +4,29 @@
     <title>Passenger Details</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        /* Container for checkbox and label */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px; /* Adjust the spacing below the checkbox */
+        }
+
+        /* Checkbox style */
+        .checkbox-container input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            accent-color: green; /* Green tick color */
+            margin-right: 10px; /* Space between checkbox and label */
+        }
+
+        /* Label style */
+        .checkbox-container label {
+            font-size: 18px; /* Adjust label font size */
+            margin: 0; /* Ensure no margin is causing misalignment */
+        }
+    </style>
 </head>
 <body>
 <div class="container mt-5 mb-5">
@@ -24,6 +47,11 @@
                                 th:text="${user.userName}"
                                 th:selected="${user.userId == selectedUserId}"></option>
                     </select>
+                </div>
+
+                <div class="checkbox-container">
+                    <input type="checkbox" name="addUserAsPassenger" id="addUserAsPassenger">
+                    <label for="addUserAsPassenger">Add user as passenger</label>
                 </div>
 
                 <!-- Source Selection Dropdown -->
