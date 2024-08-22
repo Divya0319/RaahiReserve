@@ -203,4 +203,15 @@ public class BookingController {
     //TODO: 12. Then, from index page, there should be option to mark a passenger as traveled
     //TODO: 13. Input given will be passenger id, once it is given, those passengers in that booking will be marked as traveled.
 
+    //TODO: 14. Payment process
+    //TODO: 15. Whenever booking completes, from bookingResult page itself, there should be option,
+    //TODO: 16. To do payment now, or do later
+    //TODO: 17. If paying now, doPayment template should open, with bookingId passed to it from
+    //TODO: 18. Previous template, and payment mode to be there as radio buttons
+    //TODO: 19. And, payable amount should be loaded from booking data itself.
+    //TODO: 20. Mark payment as successful, or mark as failed, two buttons to be there(a dummy payment to be done)
+    //TODO: 21. After clicking any of them, on next page, payment sucessfully updated message should come, with status of payment, completed or failed, and mode of payment chosen should also be shown
+    //TODO: 22. In Booking result template, after user name who is booked, route of booking, bus no. and booking date should be shown.
+    //TODO: 23. And with each passenger, his age, his gender, his seat number, his seat type should be shown
+
 }
