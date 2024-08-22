@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Find Average Ticket Cost</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5 w-25">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2>Please log in to continue to booking</h2>
+        </div>
+        <div class="card-body bg-light text-dark">
+            <form th:action="@{/user/login}" method="post">
+                <div class="form-group d-flex flex-column align-items-center">
+                    <div class="w-75 mb-3">
+                        <label for="username">Enter Username:</label>
+                        <input type="text" id="username" name="username" class="form-control" required/>
+                    </div>
+
+                    <div class="w-75 mb-3">
+                        <label for="password">Enter Password:</label>
+                        <input type="password" id="password" name="password" class="form-control" required/>
+                    </div>
+
+                    <div class="w-75 d-flex justify-content-center">
+                        <button type="submit" class="btn btn-success btn-lg w-100">Login</button>
+                    </div>
+
+                    <div th:if="${errorMessage}" class="w-75 mb-3 alert alert-danger mt-3 ">
+                        <p th:text="${errorMessage}"></p>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+</div>
+</body>
+</html>
