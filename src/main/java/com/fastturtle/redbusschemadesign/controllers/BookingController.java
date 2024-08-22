@@ -2,6 +2,7 @@ package com.fastturtle.redbusschemadesign.controllers;
 
 import com.fastturtle.redbusschemadesign.dtos.BookingRequest;
 import com.fastturtle.redbusschemadesign.helpers.DateFormatConverter;
+import com.fastturtle.redbusschemadesign.helpers.SeatTypeEditor;
 import com.fastturtle.redbusschemadesign.models.*;
 import com.fastturtle.redbusschemadesign.services.BookingService;
 import com.fastturtle.redbusschemadesign.services.BusService;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -126,19 +128,16 @@ public class BookingController {
         return "passenger_form";
     }
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(SeatType.class, new SeatTypeEditor());
+    }
+
     @PostMapping("/create")
     public String createBooking(@RequestParam(value = "userId", required = false) Integer userId,
                                 @RequestParam("source") String source,
                                 @RequestParam("destination") String destination,
                                 @ModelAttribute("booking") Booking booking, Model model) {
-
-        System.out.println(booking.getPassengers().size());
-        for(Passenger p : booking.getPassengers()) {
-            if(p.getBusSeat() != null && "NO_PREFERENCE".equals(p.getBusSeat().getSeatType().name())) {
-                // Handle the "NO_PREFERENCE" case separately
-                p.getBusSeat().setSeatType(null);
-            }
-        }
 
         // Here, booking.getPassengers() should return the list of passengers populated from the form
         ResponseEntity<?> response = bookingService.doBookingFromPassengerForm(userId, source, destination, booking.getPassengers());
