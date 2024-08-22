@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -124,7 +123,7 @@ public class BookingService {
             booking.setUser(user);
             booking.setUserPassenger(true);
 
-            BusSeat busSeatForUser = getBusSeat(busForBooking);
+            BusSeat busSeatForUser = getBusSeatWithoutPreference(busForBooking);
             busSeatRepository.save(busSeatForUser);
 
             BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(busSeatForUser);
@@ -148,19 +147,27 @@ public class BookingService {
 
         for(Passenger p : passengers) {
             p.setPassengerId(null);   // Ensure the ID is null, so JPA will treat it as a new entity.
-            int assignedSeatForPassenger = rsnpwp.getRandomSeatNumberWithPreference(p.getBusSeat().getSeatType(), true);
-            BusSeat busSeatForPassenger = new BusSeat();
-            busSeatForPassenger.setBus(busForBooking);
-            busSeatForPassenger.setSeatNumber(assignedSeatForPassenger);
-            busSeatForPassenger.setSeatType(rsnpwp.getSeatTypeFromSeatNumber(assignedSeatForPassenger));
-            busSeatForPassenger.setOccupied(true);
-            busSeatRepository.save(busSeatForPassenger);
+            BusSeat seatForPassenger;
+            if(p.getBusSeat() != null && p.getBusSeat().getSeatType() != null) {
+                // Handle specific seat type preference
+                int assignedSeatForPassenger = rsnpwp.getRandomSeatNumberWithPreference(p.getBusSeat().getSeatType(), true);
+                seatForPassenger = new BusSeat();
+                seatForPassenger.setBus(busForBooking);
+                seatForPassenger.setSeatNumber(assignedSeatForPassenger);
+                seatForPassenger.setSeatType(rsnpwp.getSeatTypeFromSeatNumber(assignedSeatForPassenger));
+            } else {
+                // Handle "NO_PREFERENCE" case, assign any available seat
+                seatForPassenger = getBusSeatWithoutPreference(busForBooking);
+            }
+
+            seatForPassenger.setOccupied(true);
+            busSeatRepository.save(seatForPassenger);
 
             Float seatCostForUser = seatCostRepository.findCostByBusType(
-                    busSeatRepository.findBusTypeFromBusSeat(busSeatForPassenger));
+                    busSeatRepository.findBusTypeFromBusSeat(seatForPassenger));
             bookingCost += seatCostForUser;
 
-            p.setBusSeat(busSeatForPassenger);
+            p.setBusSeat(seatForPassenger);
             booking.addPassenger(p);
         }
 
@@ -181,7 +188,7 @@ public class BookingService {
         return ResponseEntity.ok(booking);
     }
 
-    private BusSeat getBusSeat(Bus busForBooking) {
+    private BusSeat getBusSeatWithoutPreference(Bus busForBooking) {
         RandomSeatNumberProvider rsnp = new RandomSeatNumberProvider(busRepository, busSeatRepository);
         rsnp.setBusNo(busForBooking.getBusNo());
 

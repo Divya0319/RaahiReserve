@@ -20,7 +20,7 @@ public class BusSeat {
     private int seatNumber;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "seatType", nullable = false)
+    @Column(name = "seatType")   // allow null for "NO_PREFERENCE"
     private SeatType seatType;
 
     @Column(name = "occupied")

@@ -132,6 +132,14 @@ public class BookingController {
                                 @RequestParam("destination") String destination,
                                 @ModelAttribute("booking") Booking booking, Model model) {
 
+        System.out.println(booking.getPassengers().size());
+        for(Passenger p : booking.getPassengers()) {
+            if(p.getBusSeat() != null && "NO_PREFERENCE".equals(p.getBusSeat().getSeatType().name())) {
+                // Handle the "NO_PREFERENCE" case separately
+                p.getBusSeat().setSeatType(null);
+            }
+        }
+
         // Here, booking.getPassengers() should return the list of passengers populated from the form
         ResponseEntity<?> response = bookingService.doBookingFromPassengerForm(userId, source, destination, booking.getPassengers());
         if(response.getStatusCode() == HttpStatus.OK) {
