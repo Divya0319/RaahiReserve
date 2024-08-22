@@ -156,6 +156,11 @@ public class BookingController {
         return "passenger_form"; // Return to the same form view
     }
 
+    @GetMapping("/login")
+    public String initiateLogin() {
+        return "login";
+    }
+
     //TODO: create a complete bus booking flow
     //TODO: 1. & person should be given option to select source and destination from dropdown
     //TODO: 2. & Put validation that source and destination should be different
