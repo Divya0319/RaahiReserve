@@ -1,0 +1,59 @@
+package com.fastturtle.redbusschemadesign.security;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    private final CustomUserDetailsService customUserDetailsService;
+
+    @Autowired
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
+        this.customUserDetailsService = customUserDetailsService;
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeHttpRequests(authorize -> {
+                    authorize.requestMatchers("/bookings/**", "/payments/**").authenticated();
+                    authorize.anyRequest().permitAll();
+
+                }).formLogin(formLogin -> formLogin
+                        .loginPage("/bookings/login")   // Custom login page URL
+                        .loginProcessingUrl("/bookings/login")
+                        .permitAll()
+                        .defaultSuccessUrl("/bookings/create", true)   // Redirect after successful login
+                        .failureUrl("/bookings/login?error=true")   // Redirect on login failure
+                ).logout(logout -> {
+                    logout
+                            .logoutSuccessUrl("/bookings/login?logout=true")   // Redirect after logout
+                            .permitAll();
+
+                });
+        http.csrf(csrf -> csrf.disable());
+
+        return http.build();
+    }
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(customUserDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
+}

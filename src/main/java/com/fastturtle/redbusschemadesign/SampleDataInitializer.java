@@ -7,6 +7,7 @@ import com.fastturtle.redbusschemadesign.repositories.*;
 import jakarta.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +15,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-//@Component
+@Component
 public class SampleDataInitializer {
     private final BusRouteRepository busRouteRepository;
     private final BusRepository busRepository;
@@ -25,9 +26,10 @@ public class SampleDataInitializer {
     private final SeatCostRepository seatCostRepository;
     private final TravelRepository travelRepository;
     private final PassengerRepository passengerRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-//    @Autowired
-    public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, TravelRepository travelRepository, PassengerRepository passengerRepository) {
+    @Autowired
+    public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, TravelRepository travelRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder) {
         this.busRepository = busRepository;
         this.routeRepository = routeRepository;
         this.busRouteRepository = busRouteRepository;
@@ -37,6 +39,7 @@ public class SampleDataInitializer {
         this.seatCostRepository = seatCostRepository;
         this.travelRepository = travelRepository;
         this.passengerRepository = passengerRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostConstruct
@@ -183,7 +186,7 @@ public class SampleDataInitializer {
 
             busRouteRepository.save(busRoute);
 
-            User user = new User(usernames[i], passwords[i], emails[i], userAges[i], userGenders[i], phNos[i]);
+            User user = new User(usernames[i], passwordEncoder.encode(passwords[i]), emails[i], userAges[i], userGenders[i], phNos[i]);
             userRepository.save(user);
 
         }

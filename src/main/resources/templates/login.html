@@ -15,21 +15,21 @@
             <form th:action="@{/bookings/login}" method="post">
                 <div class="form-group d-flex flex-column align-items-center">
                     <div class="w-75 mb-3">
-                        <label for="username">Enter Username:</label>
+                        <label for="username">Username:</label>
                         <input type="text" id="username" name="username" class="form-control" required/>
                     </div>
 
                     <div class="w-75 mb-3">
-                        <label for="password">Enter Password:</label>
+                        <label for="password">Password:</label>
                         <input type="password" id="password" name="password" class="form-control" required/>
                     </div>
 
                     <div class="w-75 d-flex justify-content-center">
-                        <button type="submit" class="btn btn-success btn-lg w-100">Login</button>
+                        <button type="submit" class="btn btn-success btn-lg w-100">LOGIN</button>
                     </div>
 
-                    <div th:if="${errorMessage}" class="w-75 mb-3 alert alert-danger mt-3 ">
-                        <p th:text="${errorMessage}"></p>
+                    <div th:if="${param.error}" class="alert alert-danger mt-3">
+                        Invalid username or password.
                     </div>
 
                 </div>
