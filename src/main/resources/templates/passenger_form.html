@@ -36,22 +36,23 @@
         </div>
         <div class="card-body bg-light text-dark">
             <form th:action="@{/bookings/checkRouteAvailability}" method="post">
+                <div class="form-group d-flex align-items-center">
+                    <div class="checkbox-container mr-3">
+                        <input type="checkbox" name="addUserAsPassenger" id="addUserAsPassenger">
+                        <label for="addUserAsPassenger">Add user as passenger</label>
+                    </div>
 
-                <!-- User Selection Dropdown -->
-                <div class="form-group mt-2">
-                    <label for="user">Select User to Add as passenger:</label>
-                    <select class="form-control" name="userId" id="user">
-                        <option value="">No User Selected</option>
-                        <option th:each="user : ${users}"
-                                th:value="${user.userId}"
-                                th:text="${user.userName}"
-                                th:selected="${user.userId == selectedUserId}"></option>
-                    </select>
-                </div>
-
-                <div class="checkbox-container">
-                    <input type="checkbox" name="addUserAsPassenger" id="addUserAsPassenger">
-                    <label for="addUserAsPassenger">Add user as passenger</label>
+                    <!-- User Selection Dropdown -->
+                    <div id="userDropdownContainer" class="flex-grow-1" style="display: none">
+                        <label for="user">Select User to Add as passenger:</label>
+                        <select class="form-control" name="userId" id="user">
+                            <option value="">No User Selected</option>
+                            <option th:each="user : ${users}"
+                                    th:value="${user.userId}"
+                                    th:text="${user.userName}"
+                                    th:selected="${user.userId == selectedUserId}"></option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- Source Selection Dropdown -->
@@ -161,6 +162,22 @@
 
         $('#passenger-forms').append(newForm);
         passengerIndex++;
+    });
+</script>
+
+<!-- JavaScript to toggle dropdown visibility -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const checkbox = document.getElementById("addUserAsPassenger");
+        const userDropdownContainer = document.getElementById("userDropdownContainer");
+
+        checkbox.addEventListener("change", function() {
+            if (checkbox.checked) {
+                userDropdownContainer.style.display = "block";
+            } else {
+                userDropdownContainer.style.display = "none";
+            }
+        });
     });
 </script>
 </body>
