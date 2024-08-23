@@ -13,7 +13,7 @@ public class BusSeat {
     private int busSeatId;
 
     @ManyToOne
-    @JoinColumn(name = "bus_id", nullable = false)
+    @JoinColumn(name = "busId", nullable = false)
     private Bus bus;
 
     @Column(name = "seatNumber", nullable = false)

@@ -31,8 +31,12 @@
 <body>
     <div class="container mt-5 mb-5">
         <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h2 class="mt-4">Passenger Details</h2>
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h2 class="mt-4">Passenger Details</h2>
+
+                <!-- Logout Link -->
+                <h5><a th:href="@{/logout}" class="text-danger">Logout</a></h5>
+
             </div>
             <div class="card-body bg-light text-dark">
 
