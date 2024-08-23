@@ -4,6 +4,7 @@ import com.fastturtle.redbusschemadesign.dtos.BookingRequest;
 import com.fastturtle.redbusschemadesign.helpers.DateFormatConverter;
 import com.fastturtle.redbusschemadesign.helpers.SeatTypeEditor;
 import com.fastturtle.redbusschemadesign.models.*;
+import com.fastturtle.redbusschemadesign.security.CustomUserDetails;
 import com.fastturtle.redbusschemadesign.services.BookingService;
 import com.fastturtle.redbusschemadesign.services.BusService;
 import com.fastturtle.redbusschemadesign.services.RouteService;
@@ -11,16 +12,15 @@ import com.fastturtle.redbusschemadesign.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/bookings")
@@ -93,7 +93,7 @@ public class BookingController {
         model.addAttribute("sources", routeService.findAllSources());
         model.addAttribute("destinations", routeService.findAllDestinations());
 
-        return "passenger_form";
+        return "bookingForm";
     }
 
     @InitBinder
@@ -102,10 +102,18 @@ public class BookingController {
     }
 
     @PostMapping("/create")
-    public String createBooking(@RequestParam(value = "userId", required = false) Integer userId,
+    public String createBooking(@RequestParam(value = "addUserAsPassenger", required = false) String addUserAsPassenger,
+                                Principal principal,
                                 @RequestParam("source") String source,
                                 @RequestParam("destination") String destination,
                                 @ModelAttribute("booking") Booking booking, Model model) {
+
+        // Check if the checkbox was checked
+        Integer userId = null;
+        if (principal != null && "on".equals(addUserAsPassenger)) {
+            CustomUserDetails userDetails = (CustomUserDetails) ((Authentication) principal).getPrincipal();
+            userId = userDetails.getUserId();
+        }
 
         // Here, booking.getPassengers() should return the list of passengers populated from the form
         ResponseEntity<?> response = bookingService.doBookingFromPassengerForm(userId, source, destination, booking.getPassengers());
@@ -124,7 +132,6 @@ public class BookingController {
     @PostMapping("/checkRouteAvailability")
     public String checkAvailability(@RequestParam("source") String source,
                                     @RequestParam("destination") String destination,
-                                    @RequestParam(value = "userId", required = false) Integer userId,
                                     Model model) {
         model.addAttribute("genders", Gender.values());
         model.addAttribute("seatPreferences", Arrays.asList("NO_PREFERENCE", SeatType.AISLE.name(), SeatType.WINDOW.name()));
@@ -133,10 +140,10 @@ public class BookingController {
         model.addAttribute("destinations", routeService.findAllDestinations());
         model.addAttribute("selectedSource", source);
         model.addAttribute("selectedDestination", destination);
-        model.addAttribute("selectedUserId", userId);
+
         if (source.equals(destination)) {
             model.addAttribute("errorMessage", "Source and destination cannot be the same.");
-            return "passenger_form"; // Return to the same form view with an error message
+            return "bookingForm"; // Return to the same form view with an error message
         } else {
 
             // Add any additional logic to check availability if needed
@@ -144,7 +151,7 @@ public class BookingController {
 
             if (availableBuses.isEmpty()) {
                 model.addAttribute("errorMessage", "No available buses found for given source and destination.");
-                return "passenger_form";
+                return "bookingForm";
             } else {
                 model.addAttribute("successMessage", "Hooray! Buses are available");
             }
@@ -153,12 +160,22 @@ public class BookingController {
         // Clear any existing error message
         model.addAttribute("errorMessage", null);
 
-        return "passenger_form"; // Return to the same form view
+        return "bookingForm"; // Return to the same form view
     }
 
     @GetMapping("/login")
     public String initiateLogin() {
         return "login";
+    }
+
+    @GetMapping("/check-auth")
+    public ResponseEntity<String> checkAuthStatus(Principal principal) {
+        if (principal != null) {
+            CustomUserDetails userDetails = (CustomUserDetails) ((Authentication) principal).getPrincipal();
+            return ResponseEntity.ok("Authenticated as: " + userDetails.getUsername());
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authenticated");
+        }
     }
 
     //TODO: create a complete bus booking flow

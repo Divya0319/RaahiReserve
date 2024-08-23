@@ -29,7 +29,6 @@ public class SecurityConfig {
 
                 }).formLogin(formLogin -> formLogin
                         .loginPage("/bookings/login")   // Custom login page URL
-                        .loginProcessingUrl("/bookings/login")
                         .permitAll()
                         .defaultSuccessUrl("/bookings/create", true)   // Redirect after successful login
                         .failureUrl("/bookings/login?error=true")   // Redirect on login failure
