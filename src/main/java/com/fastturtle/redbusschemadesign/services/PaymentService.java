@@ -3,6 +3,7 @@ package com.fastturtle.redbusschemadesign.services;
 import com.fastturtle.redbusschemadesign.dtos.PaymentRequest;
 import com.fastturtle.redbusschemadesign.models.Booking;
 import com.fastturtle.redbusschemadesign.models.Payment;
+import com.fastturtle.redbusschemadesign.models.PaymentMethods;
 import com.fastturtle.redbusschemadesign.models.PaymentStatus;
 import com.fastturtle.redbusschemadesign.repositories.BookingRepository;
 import com.fastturtle.redbusschemadesign.repositories.PaymentRepository;
@@ -11,7 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -66,6 +67,24 @@ public class PaymentService {
         } else {
             return ResponseEntity.ok().body(payment.get().getPaymentStatus());
         }
+
+    }
+
+    public void processPayment(int bookingId, PaymentMethods paymentMode, String action) {
+        Optional<Payment> optionalPayment = paymentRepository.findByBookingId(bookingId);
+        Booking booking = bookingRepository.findByBookingId(bookingId).get();
+
+        Payment payment = optionalPayment.get();
+        payment.setPaymentMethod(paymentMode);
+        payment.setAmount(booking.getPrice());
+        payment.setPaymentDate(LocalDate.now());
+
+        if("completed".equals(action)) {
+            payment.setPaymentStatus(PaymentStatus.COMPLETED);
+        } else if("failed".equals(action)) {
+            payment.setPaymentStatus(PaymentStatus.FAILED);
+        }
+        paymentRepository.save(payment);
 
     }
 }

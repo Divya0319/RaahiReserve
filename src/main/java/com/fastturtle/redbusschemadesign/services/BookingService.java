@@ -73,6 +73,10 @@ public class BookingService {
         return response;
     }
 
+    public Optional<Booking> findByBookingId(int bookingId) {
+        return bookingRepository.findByBookingId(bookingId);
+    }
+
     public ResponseEntity<?> getAverageCostOfTicketsOnDate(LocalDate date) {
         Double averageCost = bookingRepository.findAverageCostOfTicketsOnDate(date);
         ResponseEntity<?> response;

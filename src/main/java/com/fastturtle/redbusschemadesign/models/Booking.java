@@ -105,11 +105,11 @@ public class Booking {
         this.payment = payment;
     }
 
-    public Boolean isUserPassenger() {
+    public boolean isUserPassenger() {
         return isUserPassenger;
     }
 
-    public void setUserPassenger(Boolean userPassenger) {
+    public void setUserPassenger(boolean userPassenger) {
         isUserPassenger = userPassenger;
     }
 
