@@ -101,7 +101,7 @@ public class BookingService {
         return response;
     }
 
-    public ResponseEntity<?> doBookingFromPassengerForm(Integer userId, String source, String destination, List<Passenger> passengers) {
+    public ResponseEntity<?> doBookingFromPassengerForm(Integer userId, boolean isUserPassenger, String source, String destination, List<Passenger> passengers) {
         if(source.equals(destination)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Source and destination cannot be same"));
         }
@@ -118,7 +118,7 @@ public class BookingService {
         BusRoute busRouteForBooking = busRouteRepository.
                 findFirstBusRouteBySourceAndDestination(source, destination);
 
-        if (userId != null) {
+        if (userId != null && isUserPassenger) {
             User user = userRepository.findById(userId).orElse(null);
             booking.setUser(user);
             booking.setUserPassenger(true);
@@ -138,7 +138,8 @@ public class BookingService {
             userPassenger.setBusSeat(busSeatForUser);
             booking.addPassenger(userPassenger);
 
-        } else {
+        } else if(userId != null){
+            booking.setUser(userRepository.findById(userId).orElse(null));
             booking.setUserPassenger(false);
         }
 

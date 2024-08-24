@@ -1,7 +1,9 @@
 package com.fastturtle.redbusschemadesign.controllers;
 
 import com.fastturtle.redbusschemadesign.dtos.PaymentRequest;
+import com.fastturtle.redbusschemadesign.models.Booking;
 import com.fastturtle.redbusschemadesign.models.PaymentMethods;
+import com.fastturtle.redbusschemadesign.repositories.BookingRepository;
 import com.fastturtle.redbusschemadesign.services.PaymentService;
 //import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,15 +12,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @Controller
 @RequestMapping("/payments")
 public class PaymentController {
 
     private final PaymentService paymentService;
+    private final BookingRepository bookingRepository;
 
     @Autowired
-    public PaymentController(PaymentService paymentService) {
+    public PaymentController(PaymentService paymentService, BookingRepository bookingRepository) {
         this.paymentService = paymentService;
+        this.bookingRepository = bookingRepository;
     }
 
     @PostMapping("/pay")
@@ -37,8 +43,10 @@ public class PaymentController {
         return paymentService.getPaymentStatus(bookingId);
     }
 
-    @GetMapping("/selectPaymentMode")
-    public String showPaymentModeSelectionForm(Model model) {
+    @GetMapping("/doPayment")
+    public String showPaymentPage(@RequestParam("bookingId") int bookingId, Model model) {
+        Optional<Booking> booking = bookingRepository.findByBookingId(bookingId);
+        model.addAttribute("booking", booking.get());
         model.addAttribute("paymentModes", PaymentMethods.values());
         return "doPayment";
     }

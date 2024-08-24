@@ -24,6 +24,11 @@
                 </li>
             </ul>
 
+            <form class="mt-3" th:action="@{/payments/doPayment}" method="get">
+                <input type="hidden" name="bookingId" th:value="${booking.bookingId}" />
+                <button type="submit" class="btn btn-success">Proceed to Payment</button>
+            </form>
+
             <a href="/redbus/bookings/create" class="btn btn-primary mt-3">Create Another Booking</a>
         </div>
     </div>

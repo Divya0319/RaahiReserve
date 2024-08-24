@@ -110,13 +110,17 @@ public class BookingController {
 
         // Check if the checkbox was checked
         Integer userId = null;
-        if (principal != null && "on".equals(addUserAsPassenger)) {
+        boolean isUserPassenger = false;
+        if (principal != null) {
             CustomUserDetails userDetails = (CustomUserDetails) ((Authentication) principal).getPrincipal();
             userId = userDetails.getUserId();
         }
+        if("on".equals(addUserAsPassenger)) {
+            isUserPassenger = true;
+        }
 
         // Here, booking.getPassengers() should return the list of passengers populated from the form
-        ResponseEntity<?> response = bookingService.doBookingFromPassengerForm(userId, source, destination, booking.getPassengers());
+        ResponseEntity<?> response = bookingService.doBookingFromPassengerForm(userId, isUserPassenger, source, destination, booking.getPassengers());
         if(response.getStatusCode() == HttpStatus.OK) {
             booking = (Booking) response.getBody();
             model.addAttribute("booking", booking);
