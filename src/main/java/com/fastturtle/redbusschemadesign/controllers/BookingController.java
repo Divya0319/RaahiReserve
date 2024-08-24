@@ -101,38 +101,6 @@ public class BookingController {
         binder.registerCustomEditor(SeatType.class, new SeatTypeEditor());
     }
 
-    @PostMapping("/create")
-    public String createBooking(@RequestParam(value = "addUserAsPassenger", required = false) String addUserAsPassenger,
-                                Principal principal,
-                                @RequestParam("source") String source,
-                                @RequestParam("destination") String destination,
-                                @ModelAttribute("booking") Booking booking, Model model) {
-
-        // Check if the checkbox was checked
-        Integer userId = null;
-        boolean isUserPassenger = false;
-        if (principal != null) {
-            CustomUserDetails userDetails = (CustomUserDetails) ((Authentication) principal).getPrincipal();
-            userId = userDetails.getUserId();
-        }
-        if("on".equals(addUserAsPassenger)) {
-            isUserPassenger = true;
-        }
-
-        // Here, booking.getPassengers() should return the list of passengers populated from the form
-        ResponseEntity<?> response = bookingService.doBookingFromPassengerForm(userId, isUserPassenger, source, destination, booking.getPassengers());
-        if(response.getStatusCode() == HttpStatus.OK) {
-            booking = (Booking) response.getBody();
-            model.addAttribute("booking", booking);
-        } else if(response.getStatusCode() == HttpStatus.BAD_REQUEST) {
-            String errorMessage = ((Map<String, String>) response.getBody()).get("error");
-            model.addAttribute("errorMessage", errorMessage);
-        }
-
-        return "bookingResult";
-
-    }
-
     @PostMapping("/checkRouteAvailability")
     public String checkAvailability(@RequestParam("source") String source,
                                     @RequestParam("destination") String destination,
@@ -165,6 +133,51 @@ public class BookingController {
         model.addAttribute("errorMessage", null);
 
         return "bookingForm"; // Return to the same form view
+    }
+
+    @PostMapping("/create")
+    public String createBooking(@RequestParam(value = "addUserAsPassenger", required = false) String addUserAsPassenger,
+                                Principal principal,
+                                @RequestParam("source") String source,
+                                @RequestParam("destination") String destination,
+                                @ModelAttribute("booking") Booking booking, Model model) {
+
+        // Check if the checkbox was checked
+        Integer userId = null;
+        boolean isUserPassenger = false;
+        if (principal != null) {
+            CustomUserDetails userDetails = (CustomUserDetails) ((Authentication) principal).getPrincipal();
+            userId = userDetails.getUserId();
+        }
+        if("on".equals(addUserAsPassenger)) {
+            isUserPassenger = true;
+        }
+
+        // Here, booking.getPassengers() should return the list of passengers populated from the form
+        ResponseEntity<?> response = bookingService.doBookingFromPassengerForm(userId, isUserPassenger, source, destination, booking.getPassengers());
+        if(response.getStatusCode() == HttpStatus.OK) {
+            booking = (Booking) response.getBody();
+            model.addAttribute("booking", booking);
+        } else if(response.getStatusCode() == HttpStatus.BAD_REQUEST) {
+            String errorMessage = ((Map<String, String>) response.getBody()).get("error");
+            model.addAttribute("errorMessage", errorMessage);
+        }
+
+        return "bookingResult";
+
+    }
+
+    @GetMapping("/bookingResult")
+    public String showBookingResult(@RequestParam("bookingId") int bookingId, Model model) {
+        // Fetch the booking from the database using the bookingId
+        Booking booking = bookingService.findByBookingId(bookingId).get();
+
+        System.out.println(booking.getUser().getUserName());
+
+        // Add the booking to the model
+        model.addAttribute("booking", booking);
+
+        return "bookingResult";
     }
 
     @GetMapping("/login")

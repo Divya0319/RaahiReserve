@@ -65,7 +65,7 @@ public class PaymentController {
         redirectAttributes.addFlashAttribute("message", "Payment marked as " + action + " successfully.");
 
         // Redirect to a confirmation page or back to the booking result
-        return "redirect:/bookingResult?bookingId=" + bookingId;
+        return "redirect:/bookings/bookingResult?bookingId=" + bookingId;
     }
 
     @PostMapping("/saveSelectedPaymentMode")
