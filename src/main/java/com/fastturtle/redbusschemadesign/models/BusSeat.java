@@ -2,9 +2,13 @@ package com.fastturtle.redbusschemadesign.models;
 
 import jakarta.persistence.*;
 
+import java.time.ZonedDateTime;
+
 @Entity
-@Table(name = "busSeat", uniqueConstraints =
-@UniqueConstraint(columnNames = {"bus_id", "seat_number"}))
+@Table(name = "busSeat"
+//        , uniqueConstraints =
+//@UniqueConstraint(columnNames = {"bus_id", "seat_number", "createdAt"})
+)
 public class BusSeat {
 
     @Id
@@ -25,6 +29,9 @@ public class BusSeat {
 
     @Column(name = "occupied")
     private boolean occupied = false;
+
+    @Column(name = "createdAt")
+    private ZonedDateTime createdAt;
 
     public int getBusSeatId() {
         return busSeatId;
@@ -64,5 +71,13 @@ public class BusSeat {
 
     public void setOccupied(boolean occupied) {
         this.occupied = occupied;
+    }
+
+    public ZonedDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(ZonedDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

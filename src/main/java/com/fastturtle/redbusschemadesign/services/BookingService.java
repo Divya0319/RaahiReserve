@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Service
@@ -160,6 +162,8 @@ public class BookingService {
                 seatForPassenger.setBus(busForBooking);
                 seatForPassenger.setSeatNumber(assignedSeatForPassenger);
                 seatForPassenger.setSeatType(rsnpwp.getSeatTypeFromSeatNumber(assignedSeatForPassenger));
+                seatForPassenger.setOccupied(true);
+                seatForPassenger.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")));
             } else {
                 // Handle "NO_PREFERENCE" case, assign any available seat
                 seatForPassenger = getBusSeatWithoutPreference(busForBooking);
@@ -203,6 +207,7 @@ public class BookingService {
         busSeatForUser.setSeatNumber(assignedSeatForUser);
         busSeatForUser.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatForUser));
         busSeatForUser.setOccupied(true);
+        busSeatForUser.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")));
         return busSeatForUser;
     }
 }

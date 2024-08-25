@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -228,6 +230,7 @@ public class SampleDataInitializer {
             busSeatForUser.setSeatNumber(assignedSeatForUser);
             busSeatForUser.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatForUser));
             busSeatForUser.setOccupied(true);
+            busSeatForUser.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")));
             busSeatRepository.save(busSeatForUser);
 
             BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(busSeatForUser);
@@ -251,6 +254,7 @@ public class SampleDataInitializer {
         busSeat1.setSeatNumber(assignedSeatNo1);
         busSeat1.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatNo1));
         busSeat1.setOccupied(true);
+        busSeat1.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")));
 
         busSeatRepository.save(busSeat1);
 
@@ -263,6 +267,7 @@ public class SampleDataInitializer {
         busSeat2.setSeatNumber(assignedSeatNo2);
         busSeat2.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatNo2));
         busSeat2.setOccupied(true);
+        busSeat2.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")));
 
         busSeatRepository.save(busSeat2);
 
@@ -304,6 +309,7 @@ public class SampleDataInitializer {
         busSeat3.setSeatNumber(assignedSeatNo3);
         busSeat3.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatNo3));
         busSeat3.setOccupied(true);
+        busSeat3.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")));
 
         busSeatRepository.save(busSeat3);
 
@@ -341,6 +347,7 @@ public class SampleDataInitializer {
             busSeatForUser.setSeatNumber(assignedSeatForUser);
             busSeatForUser.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatForUser));
             busSeatForUser.setOccupied(true);
+            busSeatForUser.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")));
             busSeatRepository.save(busSeatForUser);
 
             BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(busSeatForUser);
@@ -364,6 +371,7 @@ public class SampleDataInitializer {
         busSeat4.setSeatNumber(assignedSeatNo4);
         busSeat4.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatNo4));
         busSeat4.setOccupied(true);
+        busSeat4.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")));
 
         busSeatRepository.save(busSeat4);
 

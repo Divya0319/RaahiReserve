@@ -62,7 +62,7 @@ public class PaymentController {
         paymentService.processPayment(bookingId, paymentMode, action);
 
         // Add success message
-        redirectAttributes.addFlashAttribute("message", "Payment marked as " + action + " successfully.");
+        redirectAttributes.addFlashAttribute("message", "Payment marked as " + action.toUpperCase() + " successfully.");
 
         // Redirect to a confirmation page or back to the booking result
         return "redirect:/bookings/bookingResult?bookingId=" + bookingId;

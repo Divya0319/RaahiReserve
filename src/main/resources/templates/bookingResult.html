@@ -29,8 +29,11 @@
 
                 <form class="mt-3" th:action="@{/payments/doPayment}" method="get">
                     <input type="hidden" name="bookingId" th:value="${booking.bookingId}" />
-                    <button type="submit" class="btn btn-success">Proceed to Payment</button>
+                    <button type="submit" class="btn btn-success">Pay Now</button>
                 </form>
+
+                <a href="/redbus/bookings/create" class="btn btn-primary mt-3">Pay Later</a>
+
             </div>
 
             <div th:if="${message != null}" class="alert alert-success mt-3" role="alert">
