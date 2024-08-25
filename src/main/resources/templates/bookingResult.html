@@ -34,6 +34,8 @@
 
                 <a href="/redbus/bookings/create" class="btn btn-primary mt-3">Pay Later</a>
 
+
+
             </div>
 
             <div th:if="${message != null}" class="alert alert-success mt-3" role="alert">
@@ -43,6 +45,11 @@
             <div th:if="${message != null}">
                 <a href="/redbus/bookings/create" class="btn btn-primary mt-3">Create Another Booking</a>
             </div>
+            <div th:if="${message != null}">
+                <a href="/redbus" class="btn btn-secondary mt-3">Back to Home</a>
+            </div>
+
+
         </div>
     </div>
 </div>

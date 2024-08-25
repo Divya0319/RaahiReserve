@@ -37,7 +37,7 @@ public class Passenger {
     private BusSeat busSeat;
 
     @Column(name = "traveled")
-    private boolean traveled;
+    private boolean traveled = false;
 
     public Passenger(String name, int age, Gender gender, BusSeat busSeat) {
         this.name = name;
