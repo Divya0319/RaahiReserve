@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -29,8 +30,8 @@ public class SecurityConfig {
 
                 }).formLogin(formLogin -> formLogin
                         .loginPage("/bookings/login")   // Custom login page URL
+                        .successHandler(new SavedRequestAwareAuthenticationSuccessHandler()) // This will handle the redirect
                         .permitAll()
-                        .defaultSuccessUrl("/bookings/create", true)   // Redirect after successful login
                         .failureUrl("/bookings/login?error=true")   // Redirect on login failure
                 ).logout(logout -> {
                     logout

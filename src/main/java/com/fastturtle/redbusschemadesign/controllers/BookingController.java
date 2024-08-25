@@ -81,6 +81,11 @@ public class BookingController {
         return "findPassengersForBooking";
     }
 
+    @GetMapping("/countOfPassengersTravelledOnDate")
+    public String numberOfPassengersTravelledOnDate() {
+        return "countOfPassengersTravelledOnDate";
+    }
+
     @GetMapping("/create")
     public String showPassengerForm(Model model) {
         List<Passenger> passengers = new ArrayList<>();

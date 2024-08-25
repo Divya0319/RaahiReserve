@@ -45,16 +45,40 @@ public class PaymentController {
         return paymentService.getPaymentStatus(bookingId);
     }
 
-    @GetMapping("/doPayment")
-    public String showPaymentPage(@RequestParam("bookingId") int bookingId, Model model) {
+    @PostMapping("/fetchBookingDetails")
+    public String fetchBookingDetails(@RequestParam("bookingId") Integer bookingId, Model model) {
         Optional<Booking> booking = bookingService.findByBookingId(bookingId);
-        model.addAttribute("booking", booking.get());
+        if (booking.isPresent()) {
+            model.addAttribute("booking", booking.get());
+        } else {
+            model.addAttribute("error", "Invalid Booking ID");
+        }
+
         model.addAttribute("paymentModes", PaymentMethods.values());
+        model.addAttribute("isBookingIdPresent", true);
+        return "doPayment";
+    }
+
+    @GetMapping("/doPayment")
+    public String showPaymentPage(@RequestParam(value = "bookingId", required = false) Integer bookingId, Model model) {
+
+        if(bookingId != null) {
+            Optional<Booking> booking = bookingService.findByBookingId(bookingId);
+            if (booking.isPresent()) {
+                model.addAttribute("booking", booking.get());
+                model.addAttribute("paymentModes", PaymentMethods.values());
+            } else {
+                model.addAttribute("error", "Invalid Booking ID");
+                return "doPayment";  // or redirect to an error page
+            }
+        }
+
+        model.addAttribute("isBookingIdPresent", bookingId != null);
         return "doPayment";
     }
 
     @PostMapping("/doPayment")
-    public String processPayment(@RequestParam("bookingId") int bookingId,
+    public String processPayment(@RequestParam("bookingId") Integer bookingId,
                                  @RequestParam("paymentMode") PaymentMethods paymentMode,
                                  @RequestParam("action") String action,
                                  RedirectAttributes redirectAttributes) {
