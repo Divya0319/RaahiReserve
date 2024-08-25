@@ -1,10 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Find Count of Passengers travelled</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <h2>Find Count of Passengers travelled</h2>
+        </div>
+        <div class="card-body bg-light text-dark">
+            <form th:action="@{/bookings/countOfPassengersTravelledOnDate}" method="post">
+                <div class="form-group">
+                    <label for="date" class="form-label">Enter Date (dd/MM/yyyy):</label>
+                    <input type="text" id="date" name="date" placeholder="dd/MM/yyyy" class="form-control" required/>
+                </div>
+                <button type="submit" class="btn btn-primary">Get Count of Passengers</button>
+
+                <div th:if="${errorMessage}" class="alert alert-danger mt-3">
+                    <p th:text="${errorMessage}"></p>
+                </div>
+
+                <div class="text-dark mt-3">Passengers Travelled on this date are: </div>
+                <ul class="list-group">
+                    <li class="list-group-item" th:each="passenger : ${booking.passengers}">
+                        <span class="text-primary" th:text="${passenger.name}"></span> - Seat: <span class="text-primary" th:text="${passenger.busSeat.seatType}"></span>
+                    </li>
+                </ul>
+            </form>
+
+            <div th:if="${count != null}" class="text-success">
+                <p>Passenger Count: <strong><span th:text="${count}"></span></strong></p>
+            </div>
+
+
+            <!--Back button -->
+            <a href="/redbus" class="btn btn-secondary">Back to Home</a>
+        </div>
+
+    </div>
+</div>
 </body>
 </html>

@@ -82,7 +82,12 @@ public class BookingController {
     }
 
     @GetMapping("/countOfPassengersTravelledOnDate")
-    public String numberOfPassengersTravelledOnDate() {
+    public String showCountOfPassengersTravelledOnDateForm() {
+        return "countOfPassengersTravelledOnDate";
+    }
+
+    @PostMapping("/countOfPassengersTravelledOnDate")
+    public String findNumberOfPassengersTravelledOnDate() {
         return "countOfPassengersTravelledOnDate";
     }
 
