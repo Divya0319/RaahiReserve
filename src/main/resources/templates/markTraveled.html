@@ -55,7 +55,7 @@
                             <li class="list-group-item" th:each="passenger : ${booking.passengers}">
                                 <div class="checkbox-container mt-3">
                                     <input type="checkbox" th:value="${passenger.passengerId}" name="passengerIds" />
-                                    <span th:text="${passenger.name}"></span> - <span th:text="${passenger.age}"></span>
+                                    <span th:text="${passenger.name}"></span> - <span class="text-primary" th:text="${passenger.age}"></span>
                                 </div>
                             </li>
                         </ul>

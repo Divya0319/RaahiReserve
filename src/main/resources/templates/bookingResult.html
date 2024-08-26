@@ -21,7 +21,8 @@
             <h3 class="mt-4">Passengers</h3>
             <ul class="list-group">
                 <li class="list-group-item" th:each="passenger : ${booking.passengers}">
-                    <span th:text="${passenger.name}"></span> - Seat: <span th:text="${passenger.busSeat.seatType}"></span>
+                    <span class="text-primary" th:text="${passenger.name}"></span> - Seat: <span class="text-primary" th:text="${passenger.busSeat.seatType}"></span>
+                    - Seat no: <span class="text-primary" th:text="${passenger.busSeat.seatNumber}"></span>
                 </li>
             </ul>
 
