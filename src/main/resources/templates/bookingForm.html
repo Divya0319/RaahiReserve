@@ -70,27 +70,6 @@
                         </div>
                     </div>
 
-                    <div class="form-group row mt-4">
-                        <div class="col-md-6">
-                            <label for="busType">Select Bus Type:</label>
-                            <select class="form-control" name="busType" id="busType">
-                                <option value="">--Select--</option>
-                                <option
-                                        th:each="busType : ${busTypes}"
-                                        th:value="${busType}"
-                                        th:text="${busType}"
-                                        th:selected="${busType == selectedBusType}"></option>
-                            </select>
-
-                        </div>
-
-                        <div class="col-md-6">
-                            <label for="travelDate">Choose Travel Date: </label>
-                            <input type="date" id="travelDate" name="travelDate" class="form-control" th:min="${T(java.time.LocalDate).now()}" required/>
-                        </div>
-
-                    </div>
-
                     <div class="d-flex align-items-center mt-3">
                         <!-- Check Availability Button -->
                         <button type="submit" class="btn btn-warning">Check Availability</button>
@@ -106,6 +85,28 @@
                         </div>
                     </div>
 
+                    <div class="form-group row mt-2">
+                        <div class="col-md-6">
+                            <label for="busType">Select Bus Type:</label>
+                            <select class="form-control" name="busType" id="busType">
+                                <option value="">--Select--</option>
+                                <option
+                                        th:each="busType : ${busTypes}"
+                                        th:value="${busType}"
+                                        th:text="${busType}"
+                                        th:selected="${busType == selectedBusType}">
+                                </option>
+                            </select>
+
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="travelDate">Choose Travel Date: </label>
+                            <input type="date" id="travelDate" name="travelDate" class="form-control" th:min="${T(java.time.LocalDate).now()}"/>
+                        </div>
+
+                    </div>
+
                 </form>
 
                 <!-- Passenger Forms -->
@@ -113,8 +114,7 @@
                     <!-- Hidden Inputs -->
                     <input type="hidden" name="source" th:value="${selectedSource}">
                     <input type="hidden" name="destination" th:value="${selectedDestination}">
-                    <input type="hidden" name="busType" th:value="${busType}">
-                    <input type="hidden" name="travelDate" th:value="${travelDate}">
+                    <input type="hidden" name="busType" th:value="${selectedBusType}">
 
                     <div class="checkbox-container mt-3">
                         <input type="checkbox" id="addUserAsPassengerCheckBox" name="addUserAsPassenger">

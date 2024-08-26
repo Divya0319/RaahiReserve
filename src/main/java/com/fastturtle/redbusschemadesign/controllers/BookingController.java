@@ -89,7 +89,6 @@ public class BookingController {
         model.addAttribute("passengers", passengers);
         model.addAttribute("genders", Gender.values());
         model.addAttribute("seatPreferences", Arrays.asList("NO_PREFERENCE", SeatType.AISLE.name(), SeatType.WINDOW.name()));
-        model.addAttribute("users", userService.findAll());
         model.addAttribute("sources", routeService.findAllSources());
         model.addAttribute("destinations", routeService.findAllDestinations());
 
@@ -104,6 +103,8 @@ public class BookingController {
     @PostMapping("/checkRouteAvailability")
     public String checkAvailability(@RequestParam("source") String source,
                                     @RequestParam("destination") String destination,
+                                    @RequestParam("busType") String busType,
+                                    @RequestParam("travelDate") String travelDate,
                                     Model model) {
         model.addAttribute("genders", Gender.values());
         model.addAttribute("seatPreferences", Arrays.asList("NO_PREFERENCE", SeatType.AISLE.name(), SeatType.WINDOW.name()));
@@ -112,6 +113,8 @@ public class BookingController {
         model.addAttribute("destinations", routeService.findAllDestinations());
         model.addAttribute("selectedSource", source);
         model.addAttribute("selectedDestination", destination);
+        model.addAttribute("selectedBusType", busType);
+        model.addAttribute("selectedTravelDate", travelDate);
 
         if (source.equals(destination)) {
             model.addAttribute("errorMessage", "Source and destination cannot be the same.");
@@ -125,7 +128,12 @@ public class BookingController {
                 model.addAttribute("errorMessage", "No available buses found for given source and destination.");
                 return "bookingForm";
             } else {
+                Set<BusType> availableBusTypes = new HashSet<>();
+                for(Bus bus : availableBuses) {
+                    availableBusTypes.add(bus.getBusType());
+                }
                 model.addAttribute("successMessage", "Hooray! Buses are available");
+                model.addAttribute("busTypes", availableBusTypes);
             }
         }
 
@@ -140,6 +148,8 @@ public class BookingController {
                                 Principal principal,
                                 @RequestParam("source") String source,
                                 @RequestParam("destination") String destination,
+                                @RequestParam("busType") BusType busType,
+                                @RequestParam("travelDate") String travelDate,
                                 @ModelAttribute("booking") Booking booking, Model model) {
 
         // Check if the checkbox was checked
@@ -154,7 +164,7 @@ public class BookingController {
         }
 
         // Here, booking.getPassengers() should return the list of passengers populated from the form
-        ResponseEntity<?> response = bookingService.doBookingFromPassengerForm(userId, isUserPassenger, source, destination, booking.getPassengers());
+        ResponseEntity<?> response = bookingService.doBookingFromPassengerForm(userId, isUserPassenger, source, destination, busType, booking.getPassengers());
         if(response.getStatusCode() == HttpStatus.OK) {
             booking = (Booking) response.getBody();
             model.addAttribute("booking", booking);
