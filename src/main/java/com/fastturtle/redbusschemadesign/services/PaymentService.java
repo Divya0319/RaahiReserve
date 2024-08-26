@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -85,6 +86,30 @@ public class PaymentService {
             payment.setPaymentStatus(PaymentStatus.FAILED);
         }
         paymentRepository.save(payment);
+
+    }
+
+    public ResponseEntity<?> checkPaymentStatusAndReturnBookingForBookingId(int bookingId) {
+        ResponseEntity<?> response;
+        Optional<Booking> booking = bookingRepository.findByBookingId(bookingId);
+
+        if(booking.isEmpty()) {
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Booking not found for booking id " + bookingId));
+            return response;
+        } else {
+            Optional<Payment> optionalPayment = paymentRepository.findByBookingId(bookingId);
+
+            Payment payment = optionalPayment.get();
+
+            if(payment.getPaymentStatus() == PaymentStatus.COMPLETED) {
+                response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("warning", "Payment is Already Completed for booking id " + bookingId));
+                return response;
+            }
+
+            response = ResponseEntity.ok(booking.get());
+        }
+
+        return response;
 
     }
 }
