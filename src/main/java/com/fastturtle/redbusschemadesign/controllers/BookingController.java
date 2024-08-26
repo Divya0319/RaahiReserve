@@ -81,16 +81,6 @@ public class BookingController {
         return "findPassengersForBooking";
     }
 
-    @GetMapping("/countOfPassengersTravelledOnDate")
-    public String showCountOfPassengersTravelledOnDateForm() {
-        return "countOfPassengersTravelledOnDate";
-    }
-
-    @PostMapping("/countOfPassengersTravelledOnDate")
-    public String findNumberOfPassengersTravelledOnDate() {
-        return "countOfPassengersTravelledOnDate";
-    }
-
     @GetMapping("/create")
     public String showPassengerForm(Model model) {
         List<Passenger> passengers = new ArrayList<>();
@@ -213,21 +203,21 @@ public class BookingController {
     //TODO: 5. & Then give option to input passenger details
     //TODO: 6. & Also give option to add more passengers, then depending on it, again load that passenger detail form below.every passenger detail should have dropdown for preference of seat(aisle, window, no preference)
     //TODO: 7. & After its done, button should be there to save passengers(it saves passengers and booking as well)
-    //TODO: 8. ---- Then, Give total payable amount option on next page, depending on seat type chosen
-    //TODO: 9. ---- Then, this page will be payment page(a dummy one), where there should be three radio buttons(loaded from enum created in models), and options will be cash, credit card, wallet and debit card
-    //TODO: 10.---- Then, there should be three buttons below, mark as pending, mark as completed, or mark as failed, which saves payment accordingly.
-    //TODO: 11.---- Once it is done, payment status with amount is saved to database.
-    //TODO: 12.---- Then, from index page, there should be option to mark a passenger as traveled
-    //TODO: 13.---- Input given will be passenger id, once it is given, those passengers in that booking will be marked as traveled.
+    //TODO: 8. & Then, Give total payable amount option on next page, depending on seat type chosen
+    //TODO: 9. & Then, this page will be payment page(a dummy one), where there should be three radio buttons(loaded from enum created in models), and options will be cash, credit card, wallet and debit card
+    //TODO: 10.& Then, there should be three buttons below, mark as pending, mark as completed, or mark as failed, which saves payment accordingly.
+    //TODO: 11.& Once it is done, payment status with amount is saved to database.
+    //TODO: 12.& Then, from index page, there should be option to mark a passenger as traveled
+    //TODO: 13.& Input given will be passenger id, once it is given, those passengers in that booking will be marked as traveled.
 
-    //TODO: 14. ---- Payment process
-    //TODO: 15. ---- Whenever booking completes, from bookingResult page itself, there should be option,
-    //TODO: 16. ---- To do payment now, or do later
-    //TODO: 17. ---- If paying now, doPayment template should open, with bookingId passed to it from
-    //TODO: 18. ---- Previous template, and payment mode to be there as radio buttons
-    //TODO: 19. ---- And, payable amount should be loaded from booking data itself.
-    //TODO: 20. ---- Mark payment as successful, or mark as failed, two buttons to be there(a dummy payment to be done)
-    //TODO: 21. ---- After clicking any of them, on next page, payment sucessfully updated message should come, with status of payment, completed or failed, and mode of payment chosen should also be shown
+    //TODO: 14. & Payment process
+    //TODO: 15. & Whenever booking completes, from bookingResult page itself, there should be option,
+    //TODO: 16. & To do payment now, or do later
+    //TODO: 17. & If paying now, doPayment template should open, with bookingId passed to it from
+    //TODO: 18. & Previous template, and payment mode to be there as radio buttons
+    //TODO: 19. & And, payable amount should be loaded from booking data itself.
+    //TODO: 20. & Mark payment as successful, or mark as failed, two buttons to be there(a dummy payment to be done)
+    //TODO: 21. & After clicking any of them, on next page, payment sucessfully updated message should come, with status of payment, completed or failed, and mode of payment chosen should also be shown
     //TODO: 22. ---- In Booking result template, after user name who is booked, route of booking, bus no. and booking date should be shown.
     //TODO: 23. ---- And with each passenger, his age, his gender, his seat number, his seat type should be shown
 

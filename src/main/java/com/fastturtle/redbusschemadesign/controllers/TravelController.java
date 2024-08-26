@@ -1,6 +1,7 @@
 package com.fastturtle.redbusschemadesign.controllers;
 
 import com.fastturtle.redbusschemadesign.dtos.TravelRequest;
+import com.fastturtle.redbusschemadesign.helpers.DateFormatConverter;
 import com.fastturtle.redbusschemadesign.models.Booking;
 import com.fastturtle.redbusschemadesign.models.Passenger;
 import com.fastturtle.redbusschemadesign.services.BookingService;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/travels")
@@ -73,5 +75,30 @@ public class TravelController {
 
         redirectAttributes.addFlashAttribute("successMessage", "Passengers Marked as Traveled successfully");
         return "redirect:/travels/markTraveled";
+    }
+
+    @GetMapping("/findPassengersTraveledOnDate")
+    public String showFindPassengersTravelledOnDatePage() {
+        return "findPassengersTraveledOnDate";
+    }
+
+    @PostMapping("/findPassengersTraveledOnDate")
+    public String findNumberOfPassengersTravelledOnDate(@RequestParam("travelDate") String travelDate, Model model) {
+        Optional<List<Passenger>> passengers = travelService.findPassengersTraveledOnDate(LocalDate.parse(
+                new DateFormatConverter().convertDateFormat(travelDate)));
+
+        if(passengers.isPresent()) {
+            int count = passengers.get().size();
+            model.addAttribute("passengers", passengers.get());
+            model.addAttribute("count", passengers.get().size());
+            if(count == 0) {
+                model.addAttribute("errorMessage", "No Passengers found travelling on this date");
+            }
+        } else {
+            model.addAttribute("errorMessage", "No Passengers found travelling on this date");
+
+        }
+
+        return "findPassengersTraveledOnDate";
     }
 }

@@ -13,10 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class TravelService {
@@ -65,5 +62,9 @@ public class TravelService {
         travel.setTravelDate(LocalDate.now());
 
         return ResponseEntity.ok().body(travelRepository.save(travel));
+    }
+
+    public Optional<List<Passenger>> findPassengersTraveledOnDate(LocalDate travelDate) {
+        return passengerRepository.findPassengersByTravelDate(travelDate);
     }
 }
