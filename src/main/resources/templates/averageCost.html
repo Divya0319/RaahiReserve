@@ -14,8 +14,8 @@
             <div class="card-body bg-light text-dark">
                 <form th:action="@{/bookings/averageCostOnDate}" method="post">
                     <div class="form-group">
-                        <label for="date">Enter Date (dd/MM/yyyy):</label>
-                        <input type="text" id="date" name="date" placeholder="dd/MM/yyyy" class="form-control" required/>
+                        <label for="date">Choose Date: </label>
+                        <input type="date" id="date" name="date" class="form-control" th:max="${T(java.time.LocalDate).now()}" required/>
                     </div>
                     <button type="submit" class="btn btn-primary">Get Average Cost</button>
                 </form>
@@ -24,13 +24,13 @@
                     <p th:text="${errorMessage}"></p>
                 </div>
 
-                <div th:if="${averageCost != null}" class="text-primary">
+                <div th:if="${averageCost != null}" class="text-primary mt-1">
                     <p>Average Ticket Cost: <span th:text="${averageCost}"></span></p>
                 </div>
 
 
                 <!--Back button -->
-                <a href="/redbus" class="btn btn-secondary mt-3">Back to Home</a>
+                <a href="/redbus" class="btn btn-secondary mt-1">Back to Home</a>
             </div>
 
         </div>
