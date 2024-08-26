@@ -4,6 +4,7 @@ import com.fastturtle.redbusschemadesign.dtos.TravelRequest;
 import com.fastturtle.redbusschemadesign.helpers.DateFormatConverter;
 import com.fastturtle.redbusschemadesign.models.Booking;
 import com.fastturtle.redbusschemadesign.models.Passenger;
+import com.fastturtle.redbusschemadesign.models.Travel;
 import com.fastturtle.redbusschemadesign.services.BookingService;
 import com.fastturtle.redbusschemadesign.services.PassengerService;
 import com.fastturtle.redbusschemadesign.services.TravelService;
@@ -63,15 +64,18 @@ public class TravelController {
     }
 
     @PostMapping("/markAsTraveled")
-    public String markAsTraveled(@RequestParam("bookingId") Long bookingId,
+    public String markAsTraveled(@RequestParam("bookingId") Integer bookingId,
                                  @RequestParam("passengerIds") List<Integer> passengerIds,
                                  RedirectAttributes redirectAttributes) {
 
+        Booking booking = bookingService.findByBookingId(bookingId).orElse(null);
         List<Passenger> passengers = passengerService.findAllPassengersById(passengerIds);
         for (Passenger passenger : passengers) {
-            passenger.setTraveled(true); // Assuming you have a `traveled` field in your `Passenger` entity
+            passenger.setTraveled(true);
         }
         passengerService.saveAllPassengers(passengers);
+
+        travelService.saveTravelForPassengers(booking, passengers);
 
         redirectAttributes.addFlashAttribute("successMessage", "Passengers Marked as Traveled successfully");
         return "redirect:/travels/markTraveled";

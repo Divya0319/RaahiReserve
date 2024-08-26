@@ -67,4 +67,16 @@ public class TravelService {
     public Optional<List<Passenger>> findPassengersTraveledOnDate(LocalDate travelDate) {
         return passengerRepository.findPassengersByTravelDate(travelDate);
     }
+
+    public void saveTravelForPassengers(Booking booking, List<Passenger> passengers) {
+        Travel travel = new Travel();
+        travel.setTravelDate(LocalDate.now());
+        travel.setBooking(booking);
+
+        for(Passenger passenger : passengers) {
+            travel.addPassenger(passenger);
+        }
+
+        travelRepository.save(travel);
+    }
 }
