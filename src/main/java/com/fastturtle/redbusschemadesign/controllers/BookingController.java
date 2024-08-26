@@ -1,7 +1,7 @@
 package com.fastturtle.redbusschemadesign.controllers;
 
 import com.fastturtle.redbusschemadesign.dtos.BookingRequest;
-import com.fastturtle.redbusschemadesign.helpers.DateFormatConverter;
+import com.fastturtle.redbusschemadesign.helpers.DateUtils;
 import com.fastturtle.redbusschemadesign.helpers.SeatTypeEditor;
 import com.fastturtle.redbusschemadesign.models.*;
 import com.fastturtle.redbusschemadesign.security.CustomUserDetails;
@@ -50,8 +50,8 @@ public class BookingController {
 
     @PostMapping("/averageCostOnDate")
     public String getAverageCostOfTicketsOnDate(@RequestParam String date, Model model) {
-        ResponseEntity<?> response = bookingService.getAverageCostOfTicketsOnDate(LocalDate.parse
-                (new DateFormatConverter().convertDateFormat(date)));
+        ResponseEntity<?> response = bookingService.getAverageCostOfTicketsOnDate(
+                LocalDate.parse(date));
 
         if (response.getStatusCode() == HttpStatus.OK) {
             Double averageCost = (Double) response.getBody();
@@ -171,8 +171,6 @@ public class BookingController {
     public String showBookingResult(@RequestParam("bookingId") int bookingId, Model model) {
         // Fetch the booking from the database using the bookingId
         Booking booking = bookingService.findByBookingId(bookingId).get();
-
-        System.out.println(booking.getUser().getUserName());
 
         // Add the booking to the model
         model.addAttribute("booking", booking);

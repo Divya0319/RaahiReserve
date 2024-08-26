@@ -1,10 +1,9 @@
 package com.fastturtle.redbusschemadesign.controllers;
 
 import com.fastturtle.redbusschemadesign.dtos.TravelRequest;
-import com.fastturtle.redbusschemadesign.helpers.DateFormatConverter;
+import com.fastturtle.redbusschemadesign.helpers.DateUtils;
 import com.fastturtle.redbusschemadesign.models.Booking;
 import com.fastturtle.redbusschemadesign.models.Passenger;
-import com.fastturtle.redbusschemadesign.models.Travel;
 import com.fastturtle.redbusschemadesign.services.BookingService;
 import com.fastturtle.redbusschemadesign.services.PassengerService;
 import com.fastturtle.redbusschemadesign.services.TravelService;
@@ -89,7 +88,7 @@ public class TravelController {
     @PostMapping("/findPassengersTraveledOnDate")
     public String findNumberOfPassengersTravelledOnDate(@RequestParam("travelDate") String travelDate, Model model) {
         Optional<List<Passenger>> passengers = travelService.findPassengersTraveledOnDate(LocalDate.parse(
-                new DateFormatConverter().convertDateFormat(travelDate)));
+                new DateUtils().convertDateFormat(travelDate)));
 
         if(passengers.isPresent()) {
             int count = passengers.get().size();
