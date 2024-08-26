@@ -215,8 +215,8 @@ public class BookingController {
     //TODO: 18. & Previous template, and payment mode to be there as radio buttons
     //TODO: 19. & And, payable amount should be loaded from booking data itself.
     //TODO: 20. & Mark payment as successful, or mark as failed, two buttons to be there(a dummy payment to be done)
-    //TODO: 21. & After clicking any of them, on next page, payment sucessfully updated message should come, with status of payment, completed or failed, and mode of payment chosen should also be shown
+    //TODO: 21. & After clicking any of them, on next page, payment successfully updated message should come, with status of payment, completed or failed, and mode of payment chosen should also be shown
     //TODO: 22. ---- In Booking result template, after user name who is booked, route of booking, bus no. and booking date should be shown.
-    //TODO: 23. ---- And with each passenger, his age, his gender, his seat number, his seat type should be shown
+    //TODO: 23. & And with each passenger, his age, his gender, his seat number, his seat type should be shown
 
 }
