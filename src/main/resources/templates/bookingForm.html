@@ -42,30 +42,52 @@
 
                 <form th:action="@{/bookings/checkRouteAvailability}" method="post">
 
-                    <!-- Source Selection Dropdown -->
-                    <div class="form-group mt-2">
-                        <label for="source">Select Source:</label>
-                        <select class="form-control" name="source" id="source">
-                            <option value="">No Source Selected</option>
-                            <option
-                                    th:each="source : ${sources}"
-                                    th:value="${source}"
-                                    th:text="${source}"
-                                    th:selected="${source == selectedSource}"></option>
-                        </select>
+                    <div class="row mt-2">
+                        <!-- Source Selection Dropdown -->
+                        <div class="col-md-6">
+                            <label for="source">Select Source:</label>
+                            <select class="form-control" name="source" id="source">
+                                <option value="">No Source Selected</option>
+                                <option
+                                        th:each="source : ${sources}"
+                                        th:value="${source}"
+                                        th:text="${source}"
+                                        th:selected="${source == selectedSource}"></option>
+                            </select>
+                        </div>
+
+                        <!-- Destination Selection Dropdown -->
+                        <div class="col-md-6">
+                            <label for="destination">Select Destination:</label>
+                            <select class="form-control" name="destination" id="destination">
+                                <option value="">No Destination Selected</option>
+                                <option
+                                        th:each="destination : ${destinations}"
+                                        th:value="${destination}"
+                                        th:text="${destination}"
+                                        th:selected="${destination == selectedDestination}"></option>
+                            </select>
+                        </div>
                     </div>
 
-                    <!-- Destination Selection Dropdown -->
-                    <div class="form-group mt-2">
-                        <label for="destination">Select Destination:</label>
-                        <select class="form-control" name="destination" id="destination">
-                            <option value="">No Destination Selected</option>
-                            <option
-                                    th:each="destination : ${destinations}"
-                                    th:value="${destination}"
-                                    th:text="${destination}"
-                                    th:selected="${destination == selectedDestination}"></option>
-                        </select>
+                    <div class="form-group row mt-4">
+                        <div class="col-md-6">
+                            <label for="busType">Select Bus Type:</label>
+                            <select class="form-control" name="busType" id="busType">
+                                <option value="">--Select--</option>
+                                <option
+                                        th:each="busType : ${busTypes}"
+                                        th:value="${busType}"
+                                        th:text="${busType}"
+                                        th:selected="${busType == selectedBusType}"></option>
+                            </select>
+
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="travelDate">Choose Travel Date: </label>
+                            <input type="date" id="travelDate" name="travelDate" class="form-control" th:min="${T(java.time.LocalDate).now()}" required/>
+                        </div>
 
                     </div>
 
@@ -91,6 +113,8 @@
                     <!-- Hidden Inputs -->
                     <input type="hidden" name="source" th:value="${selectedSource}">
                     <input type="hidden" name="destination" th:value="${selectedDestination}">
+                    <input type="hidden" name="busType" th:value="${busType}">
+                    <input type="hidden" name="travelDate" th:value="${travelDate}">
 
                     <div class="checkbox-container mt-3">
                         <input type="checkbox" id="addUserAsPassengerCheckBox" name="addUserAsPassenger">
