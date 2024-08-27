@@ -107,7 +107,7 @@ public class BookingService {
         return response;
     }
 
-    public ResponseEntity<?> doBookingFromPassengerForm(Integer userId, boolean isUserPassenger, String source, String destination, BusType busType, List<Passenger> passengers) {
+    public ResponseEntity<?> doBookingFromPassengerForm(Integer userId, boolean isUserPassenger, String source, String destination, String busType, List<Passenger> passengers) {
         if(source.equals(destination)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Source and destination cannot be same"));
         }
@@ -115,7 +115,7 @@ public class BookingService {
         Booking booking = new Booking();
         Float bookingCost = 0.0f;
 
-        List<Bus> busesForBooking = busRepository.findAvailableBusesBySourceAndDestinationAndBusType(source, destination, busType);
+        List<Bus> busesForBooking = busRepository.findAvailableBusesBySourceAndDestinationAndBusType(source, destination, BusType.valueOf(busType));
         if(busesForBooking.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "No buses found for given source and destination"));
         }

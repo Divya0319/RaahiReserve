@@ -148,8 +148,8 @@ public class BookingController {
                                 Principal principal,
                                 @RequestParam("source") String source,
                                 @RequestParam("destination") String destination,
-                                @RequestParam("busType") BusType busType,
-                                @RequestParam("travelDate") String travelDate,
+                                @RequestParam(value = "busType", required = false) BusType busType,
+                                @RequestParam(value = "travelDate", required = false) String travelDate,
                                 @ModelAttribute("booking") Booking booking, Model model) {
 
         // Check if the checkbox was checked
@@ -163,14 +163,22 @@ public class BookingController {
             isUserPassenger = true;
         }
 
+        if(busType == null) {
+            model.addAttribute("errorMessage", "No bus type selected.");
+            return "bookingForm";
+        }
+
+        String busTypeString = busType.name();
+
         // Here, booking.getPassengers() should return the list of passengers populated from the form
-        ResponseEntity<?> response = bookingService.doBookingFromPassengerForm(userId, isUserPassenger, source, destination, busType, booking.getPassengers());
+        ResponseEntity<?> response = bookingService.doBookingFromPassengerForm(userId, isUserPassenger, source, destination, busTypeString, booking.getPassengers());
         if(response.getStatusCode() == HttpStatus.OK) {
             booking = (Booking) response.getBody();
             model.addAttribute("booking", booking);
         } else if(response.getStatusCode() == HttpStatus.BAD_REQUEST) {
             String errorMessage = ((Map<String, String>) response.getBody()).get("error");
             model.addAttribute("errorMessage", errorMessage);
+            return "bookingForm";
         }
 
         return "bookingResult";
