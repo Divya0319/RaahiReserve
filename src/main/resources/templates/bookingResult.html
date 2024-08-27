@@ -11,12 +11,22 @@
             <h2>Booking Confirmation</h2>
         </div>
         <div class="card-body bg-light text-dark">
-            <p><strong>Booking ID:</strong> <span th:text="${booking.bookingId}"></span></p>
-            <p><strong>User:</strong>
-                <span th:text="${booking.user.userName}"></span>
-                <span th:if="${booking.userPassenger}" class="text-success">(Added as Passenger)</span>
-                <span th:if="${!booking.userPassenger}" class="text-muted">(Not added as Passenger)</span>
-            </p>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <p><strong>Booking ID:</strong> <span th:text="${booking.bookingId}"></span></p>
+                    <p><strong>User:</strong>
+                        <span th:text="${booking.user.userName}"></span>
+                        <span th:if="${booking.userPassenger}" class="text-success">(Added as Passenger)</span>
+                        <span th:if="${!booking.userPassenger}" class="text-muted">(Not added as Passenger)</span>
+                    </p>
+                </div>
+
+                <div class="text-end">
+                    <p><strong>Route:</strong> <span th:text="${booking.busRoute.route.source}"></span> -> <span th:text="${booking.busRoute.route.destination}"></span></p>
+                    <p><strong>Booking Date:</strong> <span th:text="${booking.bookingDate}"></span>&nbsp; <strong>Travel Date:</strong> <span th:text="${booking.travelDate}"></span></p>
+                </div>
+
+            </div>
 
             <!-- Passengers Table -->
             <h3 class="mt-4">Passengers</h3>

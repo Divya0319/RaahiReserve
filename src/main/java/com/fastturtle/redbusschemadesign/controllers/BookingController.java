@@ -187,7 +187,7 @@ public class BookingController {
         String busTypeString = busType.name();
 
         // Here, booking.getPassengers() should return the list of passengers populated from the form
-        ResponseEntity<?> response = bookingService.doBookingFromPassengerForm(userId, isUserPassenger, source, destination, busTypeString, booking.getPassengers());
+        ResponseEntity<?> response = bookingService.doBookingFromPassengerForm(userId, isUserPassenger, source, destination, travelDate, busTypeString, booking.getPassengers());
         if(response.getStatusCode() == HttpStatus.OK) {
             booking = (Booking) response.getBody();
             model.addAttribute("booking", booking);
@@ -295,8 +295,8 @@ public class BookingController {
     //TODO: create a complete bus booking flow
     //TODO: 1. & person should be given option to select source and destination from dropdown
     //TODO: 2. & Put validation that source and destination should be different
-    //TODO: 3. ---- Give option to choose date(or type date, whichever is feasible)
-    //TODO: 4. ---- Give option to choose type of bus(if bus is available on chosen route)
+    //TODO: 3. & Give option to choose date(or type date, whichever is feasible)
+    //TODO: 4. & Give option to choose type of bus(if bus is available on chosen route)
     //TODO: 5. & Then give option to input passenger details
     //TODO: 6. & Also give option to add more passengers, then depending on it, again load that passenger detail form below.every passenger detail should have dropdown for preference of seat(aisle, window, no preference)
     //TODO: 7. & After its done, button should be there to save passengers(it saves passengers and booking as well)
@@ -315,7 +315,7 @@ public class BookingController {
     //TODO: 19. & And, payable amount should be loaded from booking data itself.
     //TODO: 20. & Mark payment as successful, or mark as failed, two buttons to be there(a dummy payment to be done)
     //TODO: 21. & After clicking any of them, on next page, payment successfully updated message should come, with status of payment, completed or failed, and mode of payment chosen should also be shown
-    //TODO: 22. ---- In Booking result template, after user name who is booked, route of booking, bus no. and booking date should be shown.
+    //TODO: 22. & In Booking result template, after user name who is booked, route of booking, bus no. and booking date should be shown.
     //TODO: 23. & And with each passenger, his age, his gender, his seat number, his seat type should be shown
 
 }

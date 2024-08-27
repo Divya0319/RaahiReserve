@@ -110,7 +110,7 @@ public class BookingService {
         return response;
     }
 
-    public ResponseEntity<?> doBookingFromPassengerForm(Integer userId, boolean isUserPassenger, String source, String destination, String busType, List<Passenger> passengers) {
+    public ResponseEntity<?> doBookingFromPassengerForm(Integer userId, boolean isUserPassenger, String source, String destination, String travelDate, String busType, List<Passenger> passengers) {
         if(source.equals(destination)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Source and destination cannot be same"));
         }
@@ -186,6 +186,7 @@ public class BookingService {
         }
 
         booking.setPrice(bookingCost);
+        booking.setTravelDate(LocalDate.parse(travelDate));
         booking.setBookingDate(LocalDate.now());
         booking.setBusRoute(busRouteForBooking);
 
