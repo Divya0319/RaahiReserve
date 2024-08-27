@@ -103,7 +103,6 @@ public class BookingController {
     @PostMapping("/checkRouteAvailability")
     public String checkAvailability(@RequestParam("source") String source,
                                     @RequestParam("destination") String destination,
-                                    @RequestParam("busType") String busType,
                                     @RequestParam("travelDate") String travelDate,
                                     Model model) {
         model.addAttribute("genders", Gender.values());
@@ -113,7 +112,6 @@ public class BookingController {
         model.addAttribute("destinations", routeService.findAllDestinations());
         model.addAttribute("selectedSource", source);
         model.addAttribute("selectedDestination", destination);
-        model.addAttribute("selectedBusType", busType);
         model.addAttribute("selectedTravelDate", travelDate);
 
         if (source.equals(destination)) {
@@ -165,6 +163,23 @@ public class BookingController {
 
         if(busType == null) {
             model.addAttribute("errorMessage", "No bus type selected.");
+            model.addAttribute("genders", Gender.values());
+            model.addAttribute("seatPreferences", Arrays.asList("NO_PREFERENCE", SeatType.AISLE.name(), SeatType.WINDOW.name()));
+            model.addAttribute("sources", routeService.findAllSources());
+            model.addAttribute("destinations", routeService.findAllDestinations());
+
+            List<Bus> availableBuses = busService.findAvailableBusesBySourceAndDestination(source, destination);
+
+            Set<BusType> availableBusTypes = new HashSet<>();
+            for(Bus bus : availableBuses) {
+                availableBusTypes.add(bus.getBusType());
+            }
+            model.addAttribute("busTypes", availableBusTypes);
+
+            model.addAttribute("selectedSource", source);
+            model.addAttribute("selectedDestination", destination);
+            model.addAttribute("selectedTravelDate", travelDate);
+
             return "bookingForm";
         }
 

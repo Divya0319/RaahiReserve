@@ -52,7 +52,9 @@
                                         th:each="source : ${sources}"
                                         th:value="${source}"
                                         th:text="${source}"
-                                        th:selected="${source == selectedSource}"></option>
+                                        th:selected="${source == selectedSource}">
+
+                                </option>
                             </select>
                         </div>
 
@@ -65,7 +67,9 @@
                                         th:each="destination : ${destinations}"
                                         th:value="${destination}"
                                         th:text="${destination}"
-                                        th:selected="${destination == selectedDestination}"></option>
+                                        th:selected="${destination == selectedDestination}">
+
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -87,14 +91,13 @@
 
                     <div class="form-group row mt-2">
                         <div class="col-md-6">
-                            <label for="busType">Select Bus Type:</label>
-                            <select class="form-control" name="busType" id="busType">
-                                <option value="">--Select--</option>
+                            <label for="busTypeDropdown">Select Bus Type:</label>
+                            <select class="form-control" name="busType" id="busTypeDropdown">
+                                <option value="">No Bus Type Selected</option>
                                 <option
                                         th:each="busType : ${busTypes}"
                                         th:value="${busType}"
-                                        th:text="${busType}"
-                                        th:selected="${busType == selectedBusType}">
+                                        th:text="${busType}">
                                 </option>
                             </select>
 
@@ -102,7 +105,9 @@
 
                         <div class="col-md-6">
                             <label for="travelDate">Choose Travel Date: </label>
-                            <input type="date" id="travelDate" name="travelDate" class="form-control" th:min="${T(java.time.LocalDate).now()}"/>
+                            <input type="date" id="travelDate" name="travelDate" class="form-control"
+                                   th:min="${T(java.time.LocalDate).now()}"
+                            th:value="${selectedTravelDate}"/>
                         </div>
 
                     </div>
@@ -114,7 +119,8 @@
                     <!-- Hidden Inputs -->
                     <input type="hidden" name="source" th:value="${selectedSource}">
                     <input type="hidden" name="destination" th:value="${selectedDestination}">
-                    <input type="hidden" name="busType" th:value="${selectedBusType}">
+                    <input type="hidden" name="busType" th:value="''">
+                    <input type="hidden" name="travelDate" th:value="${selectedTravelDate}">
 
                     <div class="checkbox-container mt-3">
                         <input type="checkbox" id="addUserAsPassengerCheckBox" name="addUserAsPassenger">
@@ -184,6 +190,12 @@
             passengerIndex++;
         });
 
+    </script>
+
+    <script>
+        document.getElementById("busTypeDropdown").addEventListener("change", function() {
+            document.querySelector('input[name="busType"]').value = this.value;
+        });
     </script>
 
 </body>

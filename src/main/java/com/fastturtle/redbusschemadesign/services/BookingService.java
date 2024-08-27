@@ -120,7 +120,9 @@ public class BookingService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "No buses found for given source and destination"));
         }
 
-        Bus busForBooking = busesForBooking.get(0);
+        Random random = new Random();
+        int randomIndex = random.nextInt(busesForBooking.size());
+        Bus busForBooking = busesForBooking.get(randomIndex);
         BusRoute busRouteForBooking = busRouteRepository.
                 findFirstBusRouteBySourceAndDestination(source, destination);
 
