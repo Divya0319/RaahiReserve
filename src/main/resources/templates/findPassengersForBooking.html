@@ -30,12 +30,21 @@
                 <div th:if="${passengers}">
                     <h4 class="mt-4">Passengers:</h4>
                     <ul class="list-group">
-                        <li th:each="passenger : ${passengers}" class="list-group-item d-flex align-items-center">
-                            <span class="text-primary me-3" th:text="${passenger.name}"></span>
-                            <span class="text-primary me-3" th:text="${passenger.age} + ' yr'"></span>
-                            <span class="text-primary me-3" th:text="('(' + passenger.gender + ')')"></span>
-                            <span class="text-primary me-3" th:text="${passenger.busSeat.seatNumber}"></span>
-                            <span class="text-primary" th:text="('(' + passenger.busSeat.seatType + ')')"></span>
+                        <li th:each="passenger : ${passengers}" class="list-group-item">
+                            <div class="row">
+                                <div class="col text-start">
+                                    <span th:text="${passenger.name}"></span>
+                                </div>
+
+                                <div class="col text-center">
+                                    <span th:text="${passenger.age} + ' yrs'"></span>(<span th:text="${passenger.gender}"></span>)
+                                </div>
+
+                                <div class="col text-end">
+                                    <span th:text="${passenger.busSeat.seatNumber}"></span>(<span th:text="${passenger.busSeat.seatType}"></span>)
+                                </div>
+
+                            </div>
                         </li>
                     </ul>
                 </div>

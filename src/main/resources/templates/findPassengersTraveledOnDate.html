@@ -27,28 +27,34 @@
                     <p th:text="${errorMessage}"></p>
                 </div>
 
-                <div th:if="${errorMessage == null}" class="text-dark mt-3">Passengers Travelled on this date are:
-                    <div class="list-group-item d-flex align-items-center">
-                        <ul class="list-group">
-                            <li th:each="passenger : ${passengers}">
-                                <span class="text-primary me-3" th:text="${passenger.name}"></span>
-                                <span class="text-primary me-3" th:text="   ${passenger.age} + ' yr'"></span>
-                                <span class="text-primary me-3" th:text="('(' + ${passenger.gender} + ')')"></span>
-                                <span class="text-primary me-3" th:text="   ${passenger.busSeat.seatNumber}"></span>
-                                <span class="text-primary" th:text="('(' + ${passenger.busSeat.seatType} + ')')"></span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                <div th:if="${passengers != null && errorMessage == null}" class="text-dark mt-3">Passengers Travelled on this date are: </div>
+                <ul class="list-group">
+                    <li class="list-group-item" th:each="passenger : ${passengers}">
+                        <div class="row">
+                            <div class="col text-start">
+                                <span th:text="${passenger.name}"></span>
+                            </div>
+
+                            <div class="col text-center">
+                                <span th:text="${passenger.age} + ' yrs'"></span>(<span th:text="${passenger.gender}"></span>)
+                            </div>
+
+                            <div class="col text-end">
+                                <span th:text="${passenger.busSeat.seatNumber}"></span>(<span th:text="${passenger.busSeat.seatType}"></span>)
+                            </div>
+
+                        </div>
+                    </li>
+                </ul>
             </form>
 
-            <div th:if="${count != null && errorMessage == null}" class="text-success">
+            <div th:if="${passengers != null && errorMessage == null}" class="text-success">
                 <p>Passenger Count: <strong><span th:text="${count}"></span></strong></p>
             </div>
 
 
             <!--Back button -->
-            <a href="/redbus" class="btn btn-secondary">Back to Home</a>
+            <a href="/redbus" class="btn btn-secondary mt-3">Back to Home</a>
         </div>
 
     </div>
