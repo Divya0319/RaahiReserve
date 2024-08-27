@@ -8,7 +8,9 @@
         .checkbox-container {
             display: flex;
             align-items: center;
+            justify-content: space-between; /* Spread items evenly across the width */
             margin-bottom: 10px; /* Adjust the spacing below the checkbox */
+            width: 100%; /* Ensure the container uses the full width */
         }
 
         /* Checkbox style */
@@ -23,7 +25,27 @@
         .checkbox-container label {
             font-size: 18px; /* Adjust label font size */
             margin: 0; /* Ensure no margin is causing misalignment */
+            flex: 1; /* Allow the label to take up remaining space */
+            white-space: nowrap; /* Prevent text from breaking to the next line */
+            overflow: hidden; /* Hide overflowing text */
+            text-overflow: ellipsis; /* Show ellipsis for overflowing text */
         }
+
+        /* Additional styling for text alignment */
+        .checkbox-container .name {
+            flex: 2; /* Make the name take up more space */
+        }
+
+        .checkbox-container .age-gender {
+            text-align: center;
+            flex: 1;
+        }
+
+        .checkbox-container .seat-info {
+            text-align: right;
+            flex: 1;
+        }
+
     </style>
 </head>
 <body>
@@ -57,20 +79,10 @@
                         <ul class="list-group">
                             <li class="list-group-item" th:each="passenger : ${booking.passengers}">
                                 <div class="checkbox-container mt-3">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <input type="checkbox" th:value="${passenger.passengerId}" name="passengerIds" />
-                                            <span th:text="${passenger.name}"></span>
-                                        </div>
-                                        <div class="col-md-4 text-center">
-                                            <span th:text="${passenger.age} + ' yrs'"></span>
-                                            (<span th:text="${passenger.gender}"></span>)
-                                        </div>
-                                        <div class="col-md-4 text-end">
-                                            <span th:text="${passenger.busSeat.seatNumber}"></span>
-                                            (<span th:text="${passenger.busSeat.seatType}"></span>)
-                                        </div>
-                                    </div>
+                                    <input type="checkbox" th:value="${passenger.passengerId}" name="passengerIds" />
+                                    <span class="name" th:text="${passenger.name}"></span>
+                                    <span class="age-gender" th:text="${passenger.age} + 'yrs(' + ${passenger.gender} + ')'"></span>
+                                    <span class="seat-info" th:text="${passenger.busSeat.seatNumber} + '(' + ${passenger.busSeat.seatType} + ')'"></span>
                                 </div>
                             </li>
                         </ul>
