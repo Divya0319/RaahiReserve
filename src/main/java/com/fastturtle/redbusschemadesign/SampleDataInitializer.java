@@ -91,27 +91,27 @@ public class SampleDataInitializer {
         Gender[] userGenders = {Gender.MALE, Gender.FEMALE, Gender.MALE, Gender.OTHER, Gender.MALE};
         String[] phNos = {"9898976767", "7878765656", "8989877665", "9988656543", "8987967578"};
 
-        LocalDate[] bookingDates = {LocalDate.parse(new DateUtils().convertDateFormat("02/09/2023")),
-                LocalDate.parse(new DateUtils().convertDateFormat("03/09/2023")),
-                LocalDate.parse(new DateUtils().convertDateFormat("10/09/2023")),
-                LocalDate.parse(new DateUtils().convertDateFormat("12/12/2023")),
-                LocalDate.parse(new DateUtils().convertDateFormat("08/08/2024"))
+        LocalDate[] bookingDates = {LocalDate.parse(DateUtils.convertDateFormat("02/09/2023")),
+                LocalDate.parse(DateUtils.convertDateFormat("03/09/2023")),
+                LocalDate.parse(DateUtils.convertDateFormat("10/09/2023")),
+                LocalDate.parse(DateUtils.convertDateFormat("12/12/2023")),
+                LocalDate.parse(DateUtils.convertDateFormat("08/08/2024"))
         };
 
         LocalDate[] paymentDates = {
-                LocalDate.parse(new DateUtils().convertDateFormat("08/09/2023")),
-                LocalDate.parse(new DateUtils().convertDateFormat("08/10/2023")),
-                LocalDate.parse(new DateUtils().convertDateFormat("15/09/2023")),
-                LocalDate.parse(new DateUtils().convertDateFormat("12/12/2023")),
-                LocalDate.parse(new DateUtils().convertDateFormat("15/08/2024"))
+                LocalDate.parse(DateUtils.convertDateFormat("08/09/2023")),
+                LocalDate.parse(DateUtils.convertDateFormat("08/10/2023")),
+                LocalDate.parse(DateUtils.convertDateFormat("15/09/2023")),
+                LocalDate.parse(DateUtils.convertDateFormat("12/12/2023")),
+                LocalDate.parse(DateUtils.convertDateFormat("15/08/2024"))
         };
 
         LocalDate[] travelDates = {
-                LocalDate.parse(new DateUtils().convertDateFormat("03/10/2023")),
-                LocalDate.parse(new DateUtils().convertDateFormat("10/10/2023")),
-                LocalDate.parse(new DateUtils().convertDateFormat("15/09/2023")),
-                LocalDate.parse(new DateUtils().convertDateFormat("03/01/2024")),
-                LocalDate.parse(new DateUtils().convertDateFormat("25/08/2024"))
+                LocalDate.parse(DateUtils.convertDateFormat("03/10/2023")),
+                LocalDate.parse(DateUtils.convertDateFormat("10/10/2023")),
+                LocalDate.parse(DateUtils.convertDateFormat("15/09/2023")),
+                LocalDate.parse(DateUtils.convertDateFormat("03/01/2024")),
+                LocalDate.parse(DateUtils.convertDateFormat("25/08/2024"))
         };
         PaymentMethods[] paymentMethods = {
                 PaymentMethods.CASH,

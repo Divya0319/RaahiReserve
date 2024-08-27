@@ -2,6 +2,8 @@ package com.fastturtle.redbusschemadesign.helpers;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class DateUtils {
@@ -11,7 +13,7 @@ public class DateUtils {
     private static final SimpleDateFormat TARGET_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
     // Method to convert date format
-    public String convertDateFormat(String sourceDate) {
+    public static String convertDateFormat(String sourceDate) {
         try {
             // Parse the date from the source format
             Date date = SOURCE_DATE_FORMAT.parse(sourceDate);
@@ -22,6 +24,27 @@ public class DateUtils {
             System.err.println("Invalid date format: " + sourceDate);
             return null;
         }
+    }
+
+    public static String formatWithOrdinalSuffix(LocalDate sourceDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy");
+        String formattedDate = sourceDate.format(formatter);
+        int day = sourceDate.getDayOfMonth();
+
+        String suffix;
+        if(day >= 11 && day <= 13) {
+            suffix = "th";
+        } else {
+            switch (day % 10) {
+                case 1: suffix = "st"; break;
+                case 2: suffix = "nd"; break;
+                case 3: suffix = "rd"; break;
+                default: suffix = "th"; break;
+            }
+        }
+
+        return formattedDate.replaceFirst("\\d+", day + suffix);
+
     }
 
 }

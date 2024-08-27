@@ -104,8 +104,8 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label for="travelDate">Choose Travel Date: </label>
-                            <input type="date" id="travelDate" name="travelDate" class="form-control"
+                            <label for="travelDatePicker">Choose Travel Date: </label>
+                            <input type="date" id="travelDatePicker" name="travelDate" class="form-control"
                                    th:min="${T(java.time.LocalDate).now()}"
                             th:value="${selectedTravelDate}"/>
                         </div>
@@ -115,12 +115,12 @@
                 </form>
 
                 <!-- Passenger Forms -->
-                <form th:action="@{/bookings/create}" method="post">
+                <form th:action="@{/bookings/create}" method="post">Date
                     <!-- Hidden Inputs -->
                     <input type="hidden" name="source" th:value="${selectedSource}">
                     <input type="hidden" name="destination" th:value="${selectedDestination}">
                     <input type="hidden" name="busType" th:value="''">
-                    <input type="hidden" name="travelDate" th:value="${selectedTravelDate}">
+                    <input type="hidden" name="travelDate" th:value="''" id="hiddenTravelDate">
 
                     <div class="checkbox-container mt-3">
                         <input type="checkbox" id="addUserAsPassengerCheckBox" name="addUserAsPassenger">
@@ -195,6 +195,10 @@
     <script>
         document.getElementById("busTypeDropdown").addEventListener("change", function() {
             document.querySelector('input[name="busType"]').value = this.value;
+        });
+
+        document.getElementById("travelDatePicker").addEventListener("change", function() {
+            document.getElementById("hiddenTravelDate").value = this.value;
         });
     </script>
 

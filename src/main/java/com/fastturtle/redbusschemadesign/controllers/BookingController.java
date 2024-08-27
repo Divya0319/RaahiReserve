@@ -191,6 +191,16 @@ public class BookingController {
         if(response.getStatusCode() == HttpStatus.OK) {
             booking = (Booking) response.getBody();
             model.addAttribute("booking", booking);
+            // Format dates with ordinal suffixes
+            if(booking != null) {
+                String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.getBookingDate());
+                String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.getTravelDate());
+
+                // Add formatted dates to the model
+                model.addAttribute("formattedBookingDate", formattedBookingDate);
+                model.addAttribute("formattedTravelDate", formattedTravelDate);
+            }
+
         } else if(response.getStatusCode() == HttpStatus.BAD_REQUEST) {
             String errorMessage = ((Map<String, String>) response.getBody()).get("error");
             model.addAttribute("errorMessage", errorMessage);
