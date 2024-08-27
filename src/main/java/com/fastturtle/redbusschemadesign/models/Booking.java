@@ -27,6 +27,9 @@ public class Booking {
     @Column(name = "bookingDate")
     private LocalDate bookingDate;
 
+    @Column(name = "travelDate")
+    private LocalDate travelDate;
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable
             (name = "booking_passenger",
@@ -45,10 +48,11 @@ public class Booking {
     @Column(name = "price")
     private float price;
 
-    public Booking(User user, BusRoute busRoute, LocalDate bookingDate) {
+    public Booking(User user, BusRoute busRoute, LocalDate bookingDate, LocalDate travelDate) {
         this.user = user;
         this.busRoute = busRoute;
         this.bookingDate = bookingDate;
+        this.travelDate = travelDate;
         this.passengers = new ArrayList<>();
     }
 
@@ -86,6 +90,14 @@ public class Booking {
 
     public void setBookingDate(LocalDate bookingDate) {
         this.bookingDate = bookingDate;
+    }
+
+    public LocalDate getTravelDate() {
+        return travelDate;
+    }
+
+    public void setTravelDate(LocalDate travelDate) {
+        this.travelDate = travelDate;
     }
 
     public List<Passenger> getPassengers() {

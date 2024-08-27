@@ -26,12 +26,11 @@ public class SampleDataInitializer {
     private final BusSeatRepository busSeatRepository;
     private final BookingRepository bookingRepository;
     private final SeatCostRepository seatCostRepository;
-    private final TravelRepository travelRepository;
     private final PassengerRepository passengerRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
 //    @Autowired
-    public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, TravelRepository travelRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder) {
+    public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder) {
         this.busRepository = busRepository;
         this.routeRepository = routeRepository;
         this.busRouteRepository = busRouteRepository;
@@ -39,7 +38,6 @@ public class SampleDataInitializer {
         this.busSeatRepository = busSeatRepository;
         this.bookingRepository = bookingRepository;
         this.seatCostRepository = seatCostRepository;
-        this.travelRepository = travelRepository;
         this.passengerRepository = passengerRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -212,7 +210,7 @@ public class SampleDataInitializer {
         // Create and save new Booking
         BusRoute busRouteForBooking1 = busRouteRepository.findById(4).get();
 
-        Booking booking1 = new Booking(userRepository.findById(4).get(), busRouteForBooking1, bookingDates[0]);
+        Booking booking1 = new Booking(userRepository.findById(4).get(), busRouteForBooking1, bookingDates[0], travelDates[0]);
 
         booking1.setUserPassenger(true);
 
@@ -297,7 +295,7 @@ public class SampleDataInitializer {
 
         BusRoute busRouteForBooking2 = busRouteRepository.findById(3).get();
 
-        Booking booking2 = new Booking(userRepository.findById(3).get(), busRouteForBooking2, bookingDates[1]);
+        Booking booking2 = new Booking(userRepository.findById(3).get(), busRouteForBooking2, bookingDates[1], travelDates[1]);
 
         Bus busForBooking2 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking2).get(0);
         rsnp.setBusNo(busForBooking2.getBusNo());
@@ -332,7 +330,7 @@ public class SampleDataInitializer {
         bookingRepository.save(booking2);
 
         BusRoute busRouteForBooking3 = busRouteRepository.findById(2).get();
-        Booking booking3 = new Booking(userRepository.findById(2).get(), busRouteForBooking3, bookingDates[3]);
+        Booking booking3 = new Booking(userRepository.findById(2).get(), busRouteForBooking3, bookingDates[3], travelDates[3]);
         booking3.setUserPassenger(true);
 
         Bus busForBooking3 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking3).get(0);
@@ -396,10 +394,6 @@ public class SampleDataInitializer {
         bookingRepository.save(booking3);
 
         // Initiating travel from here
-        Travel travel1 = new Travel();
-        travel1.setTravelDate(travelDates[0]);
-        travel1.setBooking(booking1);
-
 
         List<Passenger> listOfPassengersInB1 = bookingRepository.findAllPassengersInBooking(booking1);
         List<Passenger> travellingPassengersB1 = new ArrayList<>();
@@ -412,24 +406,13 @@ public class SampleDataInitializer {
         // Updating all passenger's travel status belonging to a booking
         passengerRepository.saveAll(listOfPassengersInB1);
 
-        for(Passenger p : travellingPassengersB1) {
-            travel1.addPassenger(p);
-        }
-        travelRepository.save(travel1);
-
-        Booking bookingForTravel1 = travelRepository.findBookingForTravel(travel1);
-
-        List<Passenger> passengersInBooking1 = bookingRepository.findAllPassengersInBooking(bookingForTravel1);
+        List<Passenger> passengersInBooking1 = bookingRepository.findAllPassengersInBooking(booking1);
 
         for(Passenger p : passengersInBooking1) {
             BusSeat busSeat = p.getBusSeat();
             busSeat.setOccupied(false);
             busSeatRepository.save(busSeat);
         }
-
-        Travel travel2 = new Travel();
-        travel2.setTravelDate(travelDates[1]);
-        travel2.setBooking(booking2);
 
         List<Passenger> listOfPassengersInB2 = bookingRepository.findAllPassengersInBooking(booking2);
         List<Passenger> travellingPassengersB2 = new ArrayList<>();
@@ -441,26 +424,15 @@ public class SampleDataInitializer {
 
         passengerRepository.saveAll(listOfPassengersInB2);
 
-        for(Passenger p : travellingPassengersB2) {
-            travel2.addPassenger(p);
-        }
-
-        travelRepository.save(travel2);
-
         // TODO: Bus seat vacating after travel is done
-        Booking bookingForTravel2 = travelRepository.findBookingForTravel(travel2);
 
-        List<Passenger> passengersInBooking2 = bookingRepository.findAllPassengersInBooking(bookingForTravel2);
+        List<Passenger> passengersInBooking2 = bookingRepository.findAllPassengersInBooking(booking2);
 
         for(Passenger p : passengersInBooking2) {
             BusSeat busSeat = p.getBusSeat();
             busSeat.setOccupied(false);
             busSeatRepository.save(busSeat);
         }
-
-        Travel travel3 = new Travel();
-        travel3.setTravelDate(travelDates[3]);
-        travel3.setBooking(booking3);
 
         List<Passenger> listOfPassengersInB3 = bookingRepository.findAllPassengersInBooking(booking3);
         List<Passenger> travellingPassengersB3 = new ArrayList<>();
@@ -472,15 +444,7 @@ public class SampleDataInitializer {
 
         passengerRepository.saveAll(listOfPassengersInB3);
 
-        for (Passenger p : travellingPassengersB3) {
-            travel3.addPassenger(p);
-
-        }
-        travelRepository.save(travel3);
-
-        Booking bookingForTravel3 = travelRepository.findBookingForTravel(travel3);
-
-        List<Passenger> passengersInBooking3 = bookingRepository.findAllPassengersInBooking(bookingForTravel3);
+        List<Passenger> passengersInBooking3 = bookingRepository.findAllPassengersInBooking(booking3);
         for(Passenger p : passengersInBooking3) {
             BusSeat busSeat = p.getBusSeat();
             busSeat.setOccupied(false);

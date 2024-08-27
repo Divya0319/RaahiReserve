@@ -19,4 +19,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     @Query("SELECT p FROM Booking b JOIN b.passengers p WHERE b = :booking")
     List<Passenger> findAllPassengersInBooking(@Param("booking") Booking booking);
+
+    @Query("SELECT COUNT(p) FROM Booking b JOIN b.passengers p WHERE b.travelDate = :date")
+    long countByTraveledDate(@Param("date") LocalDate date);
 }

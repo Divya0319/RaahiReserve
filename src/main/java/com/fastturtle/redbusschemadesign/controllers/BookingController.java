@@ -1,14 +1,12 @@
 package com.fastturtle.redbusschemadesign.controllers;
 
 import com.fastturtle.redbusschemadesign.dtos.BookingRequest;
+import com.fastturtle.redbusschemadesign.dtos.TravelRequest;
 import com.fastturtle.redbusschemadesign.helpers.DateUtils;
 import com.fastturtle.redbusschemadesign.helpers.SeatTypeEditor;
 import com.fastturtle.redbusschemadesign.models.*;
 import com.fastturtle.redbusschemadesign.security.CustomUserDetails;
-import com.fastturtle.redbusschemadesign.services.BookingService;
-import com.fastturtle.redbusschemadesign.services.BusService;
-import com.fastturtle.redbusschemadesign.services.RouteService;
-import com.fastturtle.redbusschemadesign.services.UserService;
+import com.fastturtle.redbusschemadesign.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.time.LocalDate;
@@ -29,13 +28,15 @@ public class BookingController {
     private final UserService userService;
     private final RouteService routeService;
     private final BusService busService;
+    private final PassengerService passengerService;
 
     @Autowired
-    public BookingController(BookingService bookingService, UserService userService, RouteService routeService, BusService busService) {
+    public BookingController(BookingService bookingService, UserService userService, RouteService routeService, BusService busService, PassengerService passengerService) {
         this.bookingService = bookingService;
         this.userService = userService;
         this.routeService = routeService;
         this.busService = busService;
+        this.passengerService = passengerService;
     }
 
     @PostMapping("/book")
@@ -224,6 +225,71 @@ public class BookingController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not authenticated");
         }
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<?> updateTravel(@RequestBody TravelRequest travelRequest) {
+        return bookingService.updateTravelStatus(travelRequest);
+    }
+
+    @GetMapping("/markTraveled")
+    public String markTraveled() {
+
+        return "markTraveled";
+    }
+
+    @PostMapping("/markTraveled")
+    public String loadPassengers(@RequestParam("bookingId") Integer bookingId, Model model) {
+        Booking booking = bookingService.findByBookingId(bookingId).orElse(null);
+
+        if (booking == null) {
+            model.addAttribute("errorMessage", "Booking ID not found");
+            return "markTraveled";
+        }
+
+        model.addAttribute("booking", booking);
+        return "markTraveled";
+    }
+
+    @PostMapping("/markAsTraveled")
+    public String markAsTraveled(@RequestParam("bookingId") Integer bookingId,
+                                 @RequestParam("passengerIds") List<Integer> passengerIds,
+                                 RedirectAttributes redirectAttributes) {
+
+        Booking booking = bookingService.findByBookingId(bookingId).orElse(null);
+        List<Passenger> passengers = passengerService.findAllPassengersById(passengerIds);
+        for (Passenger passenger : passengers) {
+            passenger.setTraveled(true);
+        }
+        passengerService.saveAllPassengers(passengers);
+
+        redirectAttributes.addFlashAttribute("successMessage", "Passengers Marked as Traveled successfully");
+        return "redirect:/bookings/markTraveled";
+    }
+
+    @GetMapping("/findPassengersTraveledOnDate")
+    public String showFindPassengersTravelledOnDatePage() {
+        return "findPassengersTraveledOnDate";
+    }
+
+    @PostMapping("/findPassengersTraveledOnDate")
+    public String findNumberOfPassengersTravelledOnDate(@RequestParam("travelDate") String travelDate, Model model) {
+        Optional<List<Passenger>> passengers = bookingService.findPassengersTraveledOnDate(LocalDate.parse(
+                new DateUtils().convertDateFormat(travelDate)));
+
+        if(passengers.isPresent()) {
+            int count = passengers.get().size();
+            model.addAttribute("passengers", passengers.get());
+            model.addAttribute("count", passengers.get().size());
+            if(count == 0) {
+                model.addAttribute("errorMessage", "No Passengers found travelling on this date");
+            }
+        } else {
+            model.addAttribute("errorMessage", "No Passengers found travelling on this date");
+
+        }
+
+        return "findPassengersTraveledOnDate";
     }
 
     //TODO: create a complete bus booking flow

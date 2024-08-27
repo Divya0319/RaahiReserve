@@ -18,10 +18,6 @@ public class Passenger {
     @JsonIgnore
     private Set<Booking> bookings;
 
-    @ManyToMany(mappedBy = "passengers")
-    @JsonIgnore
-    private Set<Travel> travels;
-
     @Column(name = "name")
     private String name;
 
@@ -66,14 +62,6 @@ public class Passenger {
     public void addBooking(Booking booking) {
         this.bookings.add(booking);
         booking.getPassengers().add(this);
-    }
-
-    public Set<Travel> getTravels() {
-        return travels;
-    }
-
-    public void setTravels(Set<Travel> travels) {
-        this.travels = travels;
     }
 
     public String getName() {

@@ -38,7 +38,7 @@
 
             <div class="card-body bg-light text-dark">
 
-                <form th:action="@{/travels/markTraveled}" method="post">
+                <form th:action="@{/bookings/markTraveled}" method="post">
                     <div class="form-group">
                         <label for="bookingId">Enter Booking ID:</label>
                         <input type="text" class="form-control" id="bookingId" name="bookingId" required>
@@ -52,7 +52,7 @@
 
                 <div th:if="${booking != null}">
                     <h5>Passengers for Booking ID: <span th:text="${booking.bookingId}"></span></h5>
-                    <form th:action="@{/travels/markAsTraveled}" method="post">
+                    <form th:action="@{/bookings/markAsTraveled}" method="post">
                         <input type="hidden" name="bookingId" th:value="${booking.bookingId}" />
                         <ul class="list-group">
                             <li class="list-group-item" th:each="passenger : ${booking.passengers}">

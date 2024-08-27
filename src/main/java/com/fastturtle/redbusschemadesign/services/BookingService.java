@@ -1,6 +1,7 @@
 package com.fastturtle.redbusschemadesign.services;
 
 import com.fastturtle.redbusschemadesign.dtos.BookingRequest;
+import com.fastturtle.redbusschemadesign.dtos.TravelRequest;
 import com.fastturtle.redbusschemadesign.helpers.RandomSeatNumberProvider;
 import com.fastturtle.redbusschemadesign.helpers.RandomSeatNumberProviderWithPreference;
 import com.fastturtle.redbusschemadesign.models.*;
@@ -27,15 +28,17 @@ public class BookingService {
     private final BusRepository busRepository;
     private final BusSeatRepository busSeatRepository;
     private final SeatCostRepository seatCostRepository;
+    private final PassengerRepository passengerRepository;
 
     @Autowired
-    public BookingService(BookingRepository bookingRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusRepository busRepository, BusSeatRepository busSeatRepository, SeatCostRepository seatCostRepository) {
+    public BookingService(BookingRepository bookingRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusRepository busRepository, BusSeatRepository busSeatRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository) {
         this.bookingRepository = bookingRepository;
         this.busRouteRepository = busRouteRepository;
         this.userRepository = userRepository;
         this.busRepository = busRepository;
         this.busSeatRepository = busSeatRepository;
         this.seatCostRepository = seatCostRepository;
+        this.passengerRepository = passengerRepository;
     }
 
     public ResponseEntity<?> bookBus(BookingRequest bookingRequest) {
@@ -212,4 +215,29 @@ public class BookingService {
         busSeatForUser.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")));
         return busSeatForUser;
     }
+
+    public ResponseEntity<?> updateTravelStatus(TravelRequest travelRequest) {
+        Optional<Booking> booking = bookingRepository.findById(travelRequest.getBookingId());
+        if (booking.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Booking not found"));
+        }
+
+        Set<Passenger> passengers = new HashSet<>();
+
+        for(Integer passengerId : travelRequest.getPassengerIds()) {
+            Optional<Passenger> passenger = passengerRepository.findById(passengerId);
+            passenger.ifPresent(passengers::add);
+        }
+
+        for(Passenger p : passengers) {
+            p.setTraveled(true);
+        }
+
+        return ResponseEntity.ok().body(passengerRepository.saveAll(passengers));
+    }
+
+    public Optional<List<Passenger>> findPassengersTraveledOnDate(LocalDate travelDate) {
+        return passengerRepository.findPassengersByTravelDate(travelDate);
+    }
+
 }

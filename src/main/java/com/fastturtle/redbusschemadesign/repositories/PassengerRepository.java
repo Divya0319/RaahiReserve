@@ -11,6 +11,6 @@ import java.util.Optional;
 
 public interface PassengerRepository extends JpaRepository<Passenger, Integer> {
 
-    @Query("SELECT p FROM Travel t JOIN t.passengers p WHERE t.travelDate = :travelDate")
+    @Query("SELECT p FROM Booking b JOIN b.passengers p WHERE b.travelDate = :travelDate")
     Optional<List<Passenger>> findPassengersByTravelDate(@Param("travelDate") LocalDate travelDate);
 }
