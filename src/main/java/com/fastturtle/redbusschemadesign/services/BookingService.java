@@ -112,7 +112,7 @@ public class BookingService {
         return response;
     }
 
-    public ResponseEntity<?> doBookingFromPassengerForm(Integer userId, boolean isUserPassenger, String source, String destination, String travelDate, String busType, List<Passenger> passengers) {
+    public ResponseEntity<?> doBookingFromPassengerForm(Integer userId, boolean isUserPassenger, SeatType seatTypeForUser, String source, String destination, String travelDate, String busType, List<Passenger> passengers) {
         if(source.equals(destination)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Source and destination cannot be same"));
         }
@@ -131,15 +131,30 @@ public class BookingService {
         BusRoute busRouteForBooking = busRouteRepository.
                 findFirstBusRouteBySourceAndDestination(source, destination);
 
+        RandomSeatNumberProviderWithPreference rsnpwp = new RandomSeatNumberProviderWithPreference(busRepository, busSeatRepository);
+        rsnpwp.setBusNo(busForBooking.getBusNo());
+
         if (userId != null && isUserPassenger) {
             User user = userRepository.findById(userId).orElse(null);
             booking.setUser(user);
             booking.setUserPassenger(true);
 
-            BusSeat busSeatForUser = getBusSeatWithoutPreference(busForBooking);
-            busSeatRepository.save(busSeatForUser);
+            BusSeat seatForUser;
+            if(seatTypeForUser != null) {
+                int assignedSeatForUer = rsnpwp.getRandomSeatNumberWithPreference(seatTypeForUser, true);
+                seatForUser = new BusSeat();
+                seatForUser.setBus(busForBooking);
+                seatForUser.setSeatNumber(assignedSeatForUer);
+                seatForUser.setSeatType(rsnpwp.getSeatTypeFromSeatNumber(assignedSeatForUer));
+                seatForUser.setOccupied(true);
+                seatForUser.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")));
+            } else {
+                // Handle "NO_PREFERENCE" case, assign any available seat
+                seatForUser = getBusSeatWithoutPreference(busForBooking);
+            }
+            busSeatRepository.save(seatForUser);
 
-            BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(busSeatForUser);
+            BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(seatForUser);
             Float seatCostForUser = seatCostRepository.findCostByBusType(busTypeForUser);
 
             bookingCost += seatCostForUser;
@@ -148,7 +163,7 @@ public class BookingService {
             userPassenger.setName(booking.getUser().getUserName());
             userPassenger.setAge(booking.getUser().getAge());
             userPassenger.setGender(booking.getUser().getGender());
-            userPassenger.setBusSeat(busSeatForUser);
+            userPassenger.setBusSeat(seatForUser);
             booking.addPassenger(userPassenger);
 
         } else if(userId != null){
@@ -156,8 +171,6 @@ public class BookingService {
             booking.setUserPassenger(false);
         }
 
-        RandomSeatNumberProviderWithPreference rsnpwp = new RandomSeatNumberProviderWithPreference(busRepository, busSeatRepository);
-        rsnpwp.setBusNo(busForBooking.getBusNo());
 
         for(Passenger p : passengers) {
             p.setPassengerId(null);   // Ensure the ID is null, so JPA will treat it as a new entity.
@@ -176,7 +189,6 @@ public class BookingService {
                 seatForPassenger = getBusSeatWithoutPreference(busForBooking);
             }
 
-            seatForPassenger.setOccupied(true);
             busSeatRepository.save(seatForPassenger);
 
             Float seatCostForUser = seatCostRepository.findCostByBusType(

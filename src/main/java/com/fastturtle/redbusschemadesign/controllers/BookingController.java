@@ -148,6 +148,7 @@ public class BookingController {
                                 @RequestParam("source") String source,
                                 @RequestParam("destination") String destination,
                                 @RequestParam(value = "busType", required = false) BusType busType,
+                                @RequestParam(value = "seatTypeForUser", required = false) SeatType seatTypeForUser,
                                 @RequestParam(value = "travelDate", required = false) String travelDate,
                                 @ModelAttribute("booking") Booking booking, Model model) {
 
@@ -187,7 +188,7 @@ public class BookingController {
         String busTypeString = busType.name();
 
         // Here, booking.getPassengers() should return the list of passengers populated from the form
-        ResponseEntity<?> response = bookingService.doBookingFromPassengerForm(userId, isUserPassenger, source, destination, travelDate, busTypeString, booking.getPassengers());
+        ResponseEntity<?> response = bookingService.doBookingFromPassengerForm(userId, isUserPassenger, seatTypeForUser, source, destination, travelDate, busTypeString, booking.getPassengers());
         if(response.getStatusCode() == HttpStatus.OK) {
             booking = (Booking) response.getBody();
             model.addAttribute("booking", booking);

@@ -115,7 +115,7 @@
                 </form>
 
                 <!-- Passenger Forms -->
-                <form th:action="@{/bookings/create}" method="post">Date
+                <form th:action="@{/bookings/create}" method="post">
                     <!-- Hidden Inputs -->
                     <input type="hidden" name="source" th:value="${selectedSource}">
                     <input type="hidden" name="destination" th:value="${selectedDestination}">
@@ -127,20 +127,25 @@
                         <label for="addUserAsPassengerCheckBox">Add User as passenger</label>
                     </div>
 
+                    <label id="labelForUserSeatType" for="seatTypeForUserDropDown" class="form-label mt-1" style="display: none;">Seat Preference For User:</label>
+                    <select id="seatTypeForUserDropDown" class="form-control" name="seatTypeForUser" style="display: none;">
+                        <option th:each="seatPref : ${seatPreferences}" th:value="${seatPref}" th:text="${seatPref}">Seat Preference</option>
+                    </select>
+
                     <div id="passenger-forms">
                         <div class="form-group passenger-form mt-4">
                             <label for="name-0">Passenger Name:</label>
                             <input type="text" class="form-control" name="passengers[0].name" id="name-0" required>
 
-                            <label for="age-0">Age:</label>
+                            <label for="age-0" class="mt-3">Age:</label>
                             <input type="number" class="form-control" name="passengers[0].age" id="age-0" required>
 
-                            <label for="gender-0">Gender:</label>
+                            <label for="gender-0" class="mt-3">Gender:</label>
                             <select class="form-control" name="passengers[0].gender" id="gender-0">
                                 <option th:each="gender : ${genders}" th:value="${gender}" th:text="${gender}">Gender</option>
                             </select>
 
-                            <label for="seatPreference-0">Seat Preference:</label>
+                            <label for="seatPreference-0" class="mt-3">Seat Preference:</label>
                             <select class="form-control" name="passengers[0].busSeat.seatType" id="seatPreference-0">
                                 <option th:each="seatPref : ${seatPreferences}" th:value="${seatPref}" th:text="${seatPref}">Seat Preference</option>
                             </select>
@@ -171,15 +176,15 @@
                     <label for="name-${passengerIndex}">Passenger Name:</label>
                     <input type="text" class="form-control" name="passengers[${passengerIndex}].name" id="name-${passengerIndex}" required>
 
-                    <label for="age-${passengerIndex}">Age:</label>
+                    <label for="age-${passengerIndex}" class="mt-3">Age:</label>
                     <input type="number" class="form-control" name="passengers[${passengerIndex}].age" id="age-${passengerIndex}" required>
 
-                    <label for="gender-${passengerIndex}">Gender:</label>
+                    <label for="gender-${passengerIndex}" class="mt-3">Gender:</label>
                     <select class="form-control" name="passengers[${passengerIndex}].gender" id="gender-${passengerIndex}">
                         ${genders.map(gender => `<option value="${gender}">${gender}</option>`).join('')}
                     </select>
 
-                    <label for="seatPreference-${passengerIndex}">Seat Preference:</label>
+                    <label for="seatPreference-${passengerIndex}" class="mt-3">Seat Preference:</label>
                     <select class="form-control" name="passengers[${passengerIndex}].busSeat.seatType" id="seatPreference-${passengerIndex}">
                         ${seatPreferences.map(seatPref => `<option value="${seatPref}">${seatPref}</option>`).join('')}
                     </select>
@@ -199,6 +204,18 @@
 
         document.getElementById("travelDatePicker").addEventListener("change", function() {
             document.getElementById("hiddenTravelDate").value = this.value;
+        });
+
+        document.getElementById("addUserAsPassengerCheckBox").addEventListener("change", function() {
+            let dropdown = document.getElementById("seatTypeForUserDropDown");
+            let labelDropDown = document.getElementById("labelForUserSeatType")
+            if (this.checked) {
+                dropdown.style.display = "inline-block"; // Show the dropdown
+                labelDropDown.style.display = "inline-block";
+            } else {
+                dropdown.style.display = "none"; // Hide the dropdown
+                labelDropDown.style.display = "none";
+            }
         });
     </script>
 
