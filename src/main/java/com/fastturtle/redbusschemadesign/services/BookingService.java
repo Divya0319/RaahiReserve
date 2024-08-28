@@ -88,7 +88,9 @@ public class BookingService {
         if(averageCost == null) {
             response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "No bookings for given date"));
         } else {
-            response = ResponseEntity.ok(averageCost);
+            String formattedAverageString = String.format("%.2f", averageCost);
+            Double averageCost2DecPlaces = Double.parseDouble(formattedAverageString);
+            response = ResponseEntity.ok(averageCost2DecPlaces);
         }
         return response;
     }

@@ -17,7 +17,7 @@
             <div class="card-body bg-light text-dark">
                 <form th:action="@{/bookings/fetchPassengersForBooking}" method="get">
                     <div class="form-group">
-                        <label for="bookingId">Enter Booking ID:</label>
+                        <label for="bookingId" class="form-label">Enter Booking ID:</label>
                         <input type="text" id="bookingId" name="bookingId" class="form-control" placeholder="Booking ID" required/>
                     </div>
                     <button type="submit" class="btn btn-primary">Fetch Passengers</button>

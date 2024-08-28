@@ -62,7 +62,7 @@
 
                 <form th:action="@{/bookings/markTraveled}" method="post">
                     <div class="form-group">
-                        <label for="bookingId">Enter Booking ID:</label>
+                        <label for="bookingId" class="form-label">Enter Booking ID:</label>
                         <input type="text" class="form-control" id="bookingId" name="bookingId" required>
                         <button type="submit" class="btn btn-primary mt-3">Load Passengers</button>
                     </div>
@@ -72,7 +72,7 @@
                     <p th:text="${errorMessage}" class="alert alert-danger mt-3"></p>
                 </div>
 
-                <div th:if="${booking != null}">
+                <div th:if="${booking != null}" class="mt-3">
                     <h5>Passengers for Booking ID: <span th:text="${booking.bookingId}"></span></h5>
                     <form th:action="@{/bookings/markAsTraveled}" method="post">
                         <input type="hidden" name="bookingId" th:value="${booking.bookingId}" />
@@ -81,8 +81,8 @@
                                 <div class="checkbox-container mt-3">
                                     <input type="checkbox" th:value="${passenger.passengerId}" name="passengerIds" />
                                     <span class="name" th:text="${passenger.name}"></span>
-                                    <span class="age-gender" th:text="${passenger.age} + 'yrs(' + ${passenger.gender} + ')'"></span>
-                                    <span class="seat-info" th:text="${passenger.busSeat.seatNumber} + '(' + ${passenger.busSeat.seatType} + ')'"></span>
+                                    <span class="age-gender" th:text="${passenger.age} + ' yrs(' + ${passenger.gender} + ')'"></span>
+                                    <span class="seat-info" th:text="${passenger.busSeat.seatNumber} + ' (' + ${passenger.busSeat.seatType} + ')'"></span>
                                 </div>
                             </li>
                         </ul>

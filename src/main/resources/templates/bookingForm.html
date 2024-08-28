@@ -45,7 +45,7 @@
                     <div class="row mt-2">
                         <!-- Source Selection Dropdown -->
                         <div class="col-md-6">
-                            <label for="source">Select Source:</label>
+                            <label for="source" class="form-label">Select Source:</label>
                             <select class="form-control" name="source" id="source">
                                 <option value="">No Source Selected</option>
                                 <option
@@ -60,7 +60,7 @@
 
                         <!-- Destination Selection Dropdown -->
                         <div class="col-md-6">
-                            <label for="destination">Select Destination:</label>
+                            <label for="destination" class="form-label">Select Destination:</label>
                             <select class="form-control" name="destination" id="destination">
                                 <option value="">No Destination Selected</option>
                                 <option
@@ -91,7 +91,7 @@
 
                     <div class="form-group row mt-2">
                         <div class="col-md-6">
-                            <label for="busTypeDropdown">Select Bus Type:</label>
+                            <label for="busTypeDropdown" class="form-label">Select Bus Type:</label>
                             <select class="form-control" name="busType" id="busTypeDropdown">
                                 <option value="">No Bus Type Selected</option>
                                 <option
@@ -104,7 +104,7 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label for="travelDatePicker">Choose Travel Date: </label>
+                            <label for="travelDatePicker" class="form-label">Choose Travel Date: </label>
                             <input type="date" id="travelDatePicker" name="travelDate" class="form-control"
                                    th:min="${T(java.time.LocalDate).now()}"
                             th:value="${selectedTravelDate}"/>

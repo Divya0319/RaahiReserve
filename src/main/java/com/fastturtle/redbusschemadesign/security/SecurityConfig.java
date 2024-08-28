@@ -29,14 +29,14 @@ public class SecurityConfig {
                     authorize.anyRequest().permitAll();
 
                 }).formLogin(formLogin -> formLogin
-                        .loginPage("/bookings/login")   // Custom login page URL
+                        .loginPage("/login")   // Custom login page URL
                         .successHandler(new SavedRequestAwareAuthenticationSuccessHandler()) // This will handle the redirect
                         .permitAll()
-                        .failureUrl("/bookings/login?error=true")   // Redirect on login failure
+                        .failureUrl("/login?error=true")   // Redirect on login failure
                 ).logout(logout -> {
                     logout
                             .logoutUrl("/logout")
-                            .logoutSuccessUrl("/bookings/login?logout=true")   // Redirect after logout
+                            .logoutSuccessUrl("/login?logout=true")   // Redirect after logout
                             .invalidateHttpSession(true) // Invalidate the session
                             .deleteCookies("JSESSIONID") // Delete the session cookie
                             .permitAll();

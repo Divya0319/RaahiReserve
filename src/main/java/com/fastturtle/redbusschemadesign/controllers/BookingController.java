@@ -52,7 +52,7 @@ public class BookingController {
     @PostMapping("/averageCostOnDate")
     public String getAverageCostOfTicketsOnDate(@RequestParam String date, Model model) {
         ResponseEntity<?> response = bookingService.getAverageCostOfTicketsOnDate(
-                LocalDate.parse(date));
+                LocalDate.parse(DateUtils.convertDateFormat(date)));
 
         if (response.getStatusCode() == HttpStatus.OK) {
             Double averageCost = (Double) response.getBody();
@@ -220,11 +220,6 @@ public class BookingController {
         model.addAttribute("booking", booking);
 
         return "bookingResult";
-    }
-
-    @GetMapping("/login")
-    public String initiateLogin() {
-        return "login";
     }
 
     @GetMapping("/check-auth")

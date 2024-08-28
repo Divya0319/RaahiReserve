@@ -45,7 +45,7 @@
 
                     <input type="hidden" th:if="${isBookingIdPresent}" th:name="bookingId" th:value="${booking.bookingId}"/>
                     <div th:if="${isBookingIdPresent}" class="mb-3">
-                        <label for="paymentMode">Select Payment Mode</label>
+                        <label for="paymentMode" class="form-label">Select Payment Mode</label>
                         <div id="paymentMode">
                             <div th:each="paymentMode : ${paymentModes}" class="form-check">
                                 <input class="form-check-input" type="radio"
