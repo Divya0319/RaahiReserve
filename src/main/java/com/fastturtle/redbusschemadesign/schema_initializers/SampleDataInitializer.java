@@ -1,4 +1,4 @@
-package com.fastturtle.redbusschemadesign;
+package com.fastturtle.redbusschemadesign.schema_initializers;
 
 import com.fastturtle.redbusschemadesign.helpers.DateUtils;
 import com.fastturtle.redbusschemadesign.helpers.RandomSeatNumberProviderWithPreference;
