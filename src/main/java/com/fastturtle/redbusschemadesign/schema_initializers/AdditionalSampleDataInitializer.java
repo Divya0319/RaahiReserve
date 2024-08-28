@@ -11,14 +11,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Component
+//@Component
 public class AdditionalSampleDataInitializer {
 
     private final BusRepository busRepository;
     private final RouteRepository routeRepository;
     private final BusRouteRepository busRouteRepository;
 
-    @Autowired
+//    @Autowired
     public AdditionalSampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository) {
         this.busRepository = busRepository;
         this.routeRepository = routeRepository;
