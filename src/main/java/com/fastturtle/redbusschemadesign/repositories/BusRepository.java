@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface BusRepository extends JpaRepository<Bus, Integer> {
@@ -43,4 +44,7 @@ public interface BusRepository extends JpaRepository<Bus, Integer> {
     )
     List<Bus> findAvailableBusesBySourceAndDestinationAndBusType(@Param("source") String source, @Param("destination") String destination,
                                                                  @Param("busType") BusType busType);
+
+    @Query("SELECT b.busType FROM Bus b")
+    Set<BusType> getAllBusTypes();
 }

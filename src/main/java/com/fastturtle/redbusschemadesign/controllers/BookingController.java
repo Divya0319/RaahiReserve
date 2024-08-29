@@ -87,6 +87,15 @@ public class BookingController {
         List<Passenger> passengers = new ArrayList<>();
         passengers.add(new Passenger());
 
+        Set<BusType> busTypes = busService.getAllBusTypes();
+        List<BusType> busTypeList = new ArrayList<>(busTypes);
+
+        Map<BusType, List<Bus>> busesByType = busService.getAllBusesGroupedByType();
+
+        model.addAttribute("busTypesForFilter", busTypeList);
+        model.addAttribute("busesByType", busesByType);
+
+
         model.addAttribute("passengers", passengers);
         model.addAttribute("genders", Gender.values());
         model.addAttribute("seatPreferences", Arrays.asList("NO_PREFERENCE", SeatType.AISLE.name(), SeatType.WINDOW.name()));

@@ -1,6 +1,7 @@
 package com.fastturtle.redbusschemadesign.services;
 
 import com.fastturtle.redbusschemadesign.models.Bus;
+import com.fastturtle.redbusschemadesign.models.BusType;
 import com.fastturtle.redbusschemadesign.models.Route;
 import com.fastturtle.redbusschemadesign.repositories.BusRepository;
 import com.fastturtle.redbusschemadesign.repositories.RouteRepository;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class BusService {
@@ -40,5 +43,14 @@ public class BusService {
 
     public List<Bus> findAvailableBusesBySourceAndDestination(String source, String destination) {
         return busRepository.findAvailableBusesBySourceAndDestination(source, destination);
+    }
+
+    public Set<BusType> getAllBusTypes() {
+        return busRepository.getAllBusTypes();
+    }
+
+    public Map<BusType, List<Bus>> getAllBusesGroupedByType() {
+        List<Bus> buses = busRepository.findAll();
+        return buses.stream().collect(Collectors.groupingBy(Bus::getBusType));
     }
 }

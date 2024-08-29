@@ -26,6 +26,11 @@
             font-size: 18px; /* Adjust label font size */
             margin: 0; /* Ensure no margin is causing misalignment */
         }
+
+        .bus-container {
+            display: none; /* Initially hide all bus containers */
+        }
+
     </style>
 </head>
 <body>
@@ -108,6 +113,17 @@
                             <input type="date" id="travelDatePicker" name="travelDate" class="form-control"
                                    th:min="${T(java.time.LocalDate).now()}"
                             th:value="${selectedTravelDate}"/>
+                        </div>
+
+                        <div class="ml-3" th:each="entry : ${busesByType}">
+                            <h4 th:text="${entry.key}">Bus Type</h4>
+                            <div th:each="bus : ${entry.value}">
+                                <label>
+                                    <input type="radio" name="bus" th:value="${bus.busId}"/>
+                                    <span th:text="${bus.busNo}">Bus Number</span>
+                                    <span th:text="${bus.busTiming}">Bus Time</span>
+                                </label>
+                            </div>
                         </div>
 
                     </div>
@@ -198,10 +214,6 @@
     </script>
 
     <script>
-        document.getElementById("busTypeDropdown").addEventListener("change", function() {
-            document.querySelector('input[name="busType"]').value = this.value;
-        });
-
         document.getElementById("travelDatePicker").addEventListener("change", function() {
             document.getElementById("hiddenTravelDate").value = this.value;
         });
@@ -217,6 +229,25 @@
                 labelDropDown.style.display = "none";
             }
         });
+
+        document.getElementById("busTypeDropdown").addEventListener("change", function() {
+            const selectedType = this.value; // Get selected bus type
+            const busContainers = document.querySelectorAll(".bus-container"); // All bus containers
+
+            document.querySelector('input[name="busType"]').value = this.value;
+
+            // Display the bus containers for the selected type
+            busContainers.forEach(function(container) {
+                const busTypeHeading = container.querySelector("h4").textContent.trim();
+                if (selectedType === "" || selectedType !== busTypeHeading) {
+                    container.style.display = "none"; // Hide non-matching or no selection
+                } else {
+                    container.style.display = "block"; // Show matching buses
+                }
+            });
+
+        });
+
     </script>
 
 </body>
