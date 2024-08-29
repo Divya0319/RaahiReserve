@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -76,6 +77,14 @@ public class SampleDataInitializer {
                            BusType.NON_AC,
                            BusType.NON_AC,
                            BusType.SLEEPER};
+
+        LocalTime[] busTiming = {
+                LocalTime.parse("07:00:00"),
+                LocalTime.parse("09:00:00"),
+                LocalTime.parse("12:00:00"),
+                LocalTime.parse("17:00:00"),
+                LocalTime.parse("21:00:00"),
+        };
 
         // Sample data for route
 
@@ -173,7 +182,7 @@ public class SampleDataInitializer {
         for (int i = 0; i < busNos.length; i++) {
             // Create and save Bus
             Bus bus = new Bus(busNos[i], busCompanyNames[i], totalSeats[i], availableSeats[i],
-            busType[i]);
+            busType[i], busTiming[i]);
             busRepository.save(bus);
 
             // Create and save Route

@@ -3,6 +3,7 @@ package com.fastturtle.redbusschemadesign.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.time.LocalTime;
 import java.util.Set;
 
 @Entity
@@ -33,13 +34,17 @@ public class Bus {
     @JsonIgnore
     private Set<BusRoute> busRoutes;
 
+    @Column(name = "busTiming")
+    private LocalTime busTiming;
+
     public Bus(String busNo, String companyName, int totalSeats,
-               int availableSeats, BusType busType) {
+               int availableSeats, BusType busType, LocalTime busTiming) {
         this.busNo = busNo;
         this.companyName = companyName;
         this.totalSeats = totalSeats;
         this.availableSeats = availableSeats;
         this.busType = busType;
+        this.busTiming = busTiming;
     }
 
     public Bus() {
@@ -100,5 +105,13 @@ public class Bus {
 
     public void setBusRoutes(Set<BusRoute> busRoutes) {
         this.busRoutes = busRoutes;
+    }
+
+    public LocalTime getBusTiming() {
+        return busTiming;
+    }
+
+    public void setBusTiming(LocalTime busTiming) {
+        this.busTiming = busTiming;
     }
 }

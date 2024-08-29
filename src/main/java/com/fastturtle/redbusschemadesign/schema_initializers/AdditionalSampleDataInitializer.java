@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalTime;
 import java.util.List;
 
 //@Component
@@ -76,6 +77,19 @@ public class AdditionalSampleDataInitializer {
                 BusType.AC
         };
 
+        LocalTime[] busTiming = {
+                LocalTime.parse("07:00:00"),
+                LocalTime.parse("09:00:00"),
+                LocalTime.parse("12:00:00"),
+                LocalTime.parse("17:00:00"),
+                LocalTime.parse("12:00:00"),
+                LocalTime.parse("07:00:00"),
+                LocalTime.parse("09:00:00"),
+                LocalTime.parse("17:00:00"),
+                LocalTime.parse("07:00:00"),
+                LocalTime.parse("12:00:00")
+        };
+
         // Sample data for route
 
         String[] source = {"Chhattisgarh", "Mumbai", "Hyderabad", "Bangalore", "Goa", "Chhattisgarh", "Mumbai", "Hyderabad", "Bangalore", "Goa"};
@@ -85,7 +99,7 @@ public class AdditionalSampleDataInitializer {
         for (int i = 0; i < busNos.length; i++) {
             // Create and save Bus
             Bus bus = new Bus(busNos[i], busCompanyNames[i], totalSeats[i], availableSeats[i],
-                    busType[i]);
+                    busType[i], busTiming[i]);
             busRepository.save(bus);
 
             // Create and save Route
