@@ -3,6 +3,7 @@ package com.fastturtle.redbusschemadesign.helpers;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
@@ -45,6 +46,11 @@ public class DateUtils {
 
         return formattedDate.replaceFirst("\\d+", day + suffix);
 
+    }
+
+    public static String formatTimeTo12HrFormat(LocalTime time) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mm a");
+        return time.format(formatter);
     }
 
 }

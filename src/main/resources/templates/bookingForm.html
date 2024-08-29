@@ -115,8 +115,7 @@
                             th:value="${selectedTravelDate}"/>
                         </div>
 
-                        <div class="ml-3" th:each="entry : ${busesByType}">
-                            <h4 th:text="${entry.key}">Bus Type</h4>
+                        <div class="bus-container ml-3 mt-2" th:each="entry : ${busesByType}" th:data-type="${entry.key}">
                             <div th:each="bus : ${entry.value}">
                                 <label>
                                     <input type="radio" name="bus" th:value="${bus.busId}"/>
@@ -214,39 +213,45 @@
     </script>
 
     <script>
-        document.getElementById("travelDatePicker").addEventListener("change", function() {
-            document.getElementById("hiddenTravelDate").value = this.value;
-        });
 
-        document.getElementById("addUserAsPassengerCheckBox").addEventListener("change", function() {
-            let dropdown = document.getElementById("seatTypeForUserDropDown");
-            let labelDropDown = document.getElementById("labelForUserSeatType")
-            if (this.checked) {
-                dropdown.style.display = "inline-block"; // Show the dropdown
-                labelDropDown.style.display = "inline-block";
-            } else {
-                dropdown.style.display = "none"; // Hide the dropdown
-                labelDropDown.style.display = "none";
-            }
-        });
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("travelDatePicker").addEventListener("change", function () {
+                document.getElementById("hiddenTravelDate").value = this.value;
+            });
 
-        document.getElementById("busTypeDropdown").addEventListener("change", function() {
-            const selectedType = this.value; // Get selected bus type
-            const busContainers = document.querySelectorAll(".bus-container"); // All bus containers
-
-            document.querySelector('input[name="busType"]').value = this.value;
-
-            // Display the bus containers for the selected type
-            busContainers.forEach(function(container) {
-                const busTypeHeading = container.querySelector("h4").textContent.trim();
-                if (selectedType === "" || selectedType !== busTypeHeading) {
-                    container.style.display = "none"; // Hide non-matching or no selection
+            document.getElementById("addUserAsPassengerCheckBox").addEventListener("change", function () {
+                let dropdown = document.getElementById("seatTypeForUserDropDown");
+                let labelDropDown = document.getElementById("labelForUserSeatType")
+                if (this.checked) {
+                    dropdown.style.display = "inline-block"; // Show the dropdown
+                    labelDropDown.style.display = "inline-block";
                 } else {
-                    container.style.display = "block"; // Show matching buses
+                    dropdown.style.display = "none"; // Hide the dropdown
+                    labelDropDown.style.display = "none";
                 }
             });
 
+            document.getElementById("busTypeDropdown").addEventListener("change", function () {
+                const selectedType = this.value; // Get selected bus type
+
+                const busContainers = document.querySelectorAll(".bus-container"); // All bus containers
+
+                document.querySelector('input[name="busType"]').value = selectedType;
+
+                // Display the bus containers for the selected type
+                busContainers.forEach(function (container) {
+                    const containerType = container.getAttribute("data-type"); // Get the bus type from data attribute
+                    if (selectedType === "") {
+                        container.style.display = "none"; // Hide all containers if no bus type selected
+                    } else if (selectedType === containerType) {
+                        container.style.display = "block"; // Show matching buses
+                    } else {
+                        container.style.display = "none"; // Hide non-matching buses
+                    }
+                });
+            });
         });
+
 
     </script>
 

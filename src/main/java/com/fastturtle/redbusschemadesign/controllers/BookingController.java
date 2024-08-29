@@ -89,9 +89,7 @@ public class BookingController {
 
         Set<BusType> busTypes = busService.getAllBusTypes();
         List<BusType> busTypeList = new ArrayList<>(busTypes);
-
         Map<BusType, List<Bus>> busesByType = busService.getAllBusesGroupedByType();
-
         model.addAttribute("busTypesForFilter", busTypeList);
         model.addAttribute("busesByType", busesByType);
 
@@ -115,6 +113,13 @@ public class BookingController {
                                     @RequestParam("destination") String destination,
                                     @RequestParam("travelDate") String travelDate,
                                     Model model) {
+
+        Set<BusType> busTypes = busService.getAllBusTypes();
+        List<BusType> busTypeList = new ArrayList<>(busTypes);
+        Map<BusType, List<Bus>> busesByType = busService.getAllBusesGroupedByType();
+        model.addAttribute("busTypesForFilter", busTypeList);
+        model.addAttribute("busesByType", busesByType);
+
         model.addAttribute("genders", Gender.values());
         model.addAttribute("seatPreferences", Arrays.asList("NO_PREFERENCE", SeatType.AISLE.name(), SeatType.WINDOW.name()));
         model.addAttribute("users", userService.findAll());
