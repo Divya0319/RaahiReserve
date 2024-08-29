@@ -25,6 +25,7 @@
                     <p><strong>Route:</strong> <span th:text="${booking.busRoute.route.source}"></span> -> <span th:text="${booking.busRoute.route.destination}"></span></p>
                     <p th:if="${formattedBookingDate != null}"><strong>Booking Date:</strong> <span th:text="${formattedBookingDate}"></span>&nbsp; <strong>Travel Date:</strong> <span th:text="${formattedTravelDate}"></span></p>
                     <p th:if="${formattedBookingDate == null}"><strong>Booking Date:</strong> <span th:text="${#temporals.format(booking.bookingDate, 'd MMMM yyyy')}"></span>&nbsp; <strong>Travel Date:</strong> <span th:text="${#temporals.format(booking.travelDate, 'd MMMM yyyy')}"></span></p>
+                    <p><strong>Bus No. </strong> -> <span th:text="${booking.busRoute.bus.busNo}"></span></p>
 
                 </div>
 
