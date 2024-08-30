@@ -174,6 +174,7 @@ public class BookingController {
                                 @RequestParam(value = "busType", required = false) BusType busType,
                                 @RequestParam(value = "seatTypeForUser", required = false) SeatType seatTypeForUser,
                                 @RequestParam(value = "travelDate", required = false) String travelDate,
+                                @RequestParam("busId") int selectedBusId,
                                 @ModelAttribute("booking") Booking booking, Model model) {
 
         // Check if the checkbox was checked
@@ -215,15 +216,20 @@ public class BookingController {
         ResponseEntity<?> response = bookingService.doBookingFromPassengerForm(userId, isUserPassenger, seatTypeForUser, source, destination, travelDate, busTypeString, booking.getPassengers());
         if(response.getStatusCode() == HttpStatus.OK) {
             booking = (Booking) response.getBody();
-            model.addAttribute("booking", booking);
-            // Format dates with ordinal suffixes
-            if(booking != null) {
-                String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.getBookingDate());
-                String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.getTravelDate());
 
-                // Add formatted dates to the model
-                model.addAttribute("formattedBookingDate", formattedBookingDate);
-                model.addAttribute("formattedTravelDate", formattedTravelDate);
+            if(booking != null) {
+            String formattedBusNumber = DateUtils.formatBusNumber(booking.getBusRoute().getBus().getBusNo());
+            booking.getBusRoute().getBus().setFormattedBusNumber(formattedBusNumber);
+
+            model.addAttribute("booking", booking);
+
+            // Format dates with ordinal suffixes
+            String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.getBookingDate());
+            String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.getTravelDate());
+
+            // Add formatted dates to the model
+            model.addAttribute("formattedBookingDate", formattedBookingDate);
+            model.addAttribute("formattedTravelDate", formattedTravelDate);
             }
 
         } else if(response.getStatusCode() == HttpStatus.BAD_REQUEST) {

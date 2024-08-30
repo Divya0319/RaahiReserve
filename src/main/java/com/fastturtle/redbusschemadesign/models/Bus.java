@@ -40,6 +40,9 @@ public class Bus {
     @Transient
     private String formattedBusTiming;
 
+    @Transient
+    private String formattedBusNumber;
+
     public Bus(String busNo, String companyName, int totalSeats,
                int availableSeats, BusType busType, LocalTime busTiming) {
         this.busNo = busNo;
@@ -125,4 +128,13 @@ public class Bus {
     public void setFormattedBusTiming(String formattedBusTiming) {
         this.formattedBusTiming = formattedBusTiming;
     }
+
+    public String getFormattedBusNumber() {
+        return formattedBusNumber;
+    }
+
+    public void setFormattedBusNumber(String formattedBusNumber) {
+        this.formattedBusNumber = formattedBusNumber;
+    }
+
 }
