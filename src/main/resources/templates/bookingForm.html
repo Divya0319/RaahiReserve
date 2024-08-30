@@ -118,7 +118,7 @@
                             <div th:each="bus : ${entry.value}">
                                 <label>
                                     <input type="radio" name="busId" th:value="${bus.busId}" onclick="updateSelectedBusId(this)" />
-                                    <span th:text="${bus.busNo} + ', ' + ${bus.formattedBusTiming} + ' Daily'"></span>
+                                    <span th:text="${bus.companyName} + ', ' + ${bus.busNo} + ', ' + ${bus.formattedBusTiming} + ', Daily'"></span>
                                 </label>
                             </div>
                         </div>

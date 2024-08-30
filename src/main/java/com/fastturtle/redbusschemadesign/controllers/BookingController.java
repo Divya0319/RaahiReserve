@@ -218,18 +218,22 @@ public class BookingController {
             booking = (Booking) response.getBody();
 
             if(booking != null) {
-            String formattedBusNumber = DateUtils.formatBusNumber(booking.getBusRoute().getBus().getBusNo());
-            booking.getBusRoute().getBus().setFormattedBusNumber(formattedBusNumber);
 
-            model.addAttribute("booking", booking);
+                // Formatted bus no. and bus timing
+                String formattedBusNumber = DateUtils.formatBusNumber(booking.getBusRoute().getBus().getBusNo());
+                booking.getBusRoute().getBus().setFormattedBusNumber(formattedBusNumber);
+                String formattedBusTiming = DateUtils.formatBusTiming(booking.getBusRoute().getBus().getBusTiming());
+                booking.getBusRoute().getBus().setFormattedBusTiming(formattedBusTiming);
 
-            // Format dates with ordinal suffixes
-            String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.getBookingDate());
-            String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.getTravelDate());
+                model.addAttribute("booking", booking);
 
-            // Add formatted dates to the model
-            model.addAttribute("formattedBookingDate", formattedBookingDate);
-            model.addAttribute("formattedTravelDate", formattedTravelDate);
+                // Formatted dates with ordinal suffixes
+                String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.getBookingDate());
+                String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.getTravelDate());
+
+                // Added formatted dates to the model
+                model.addAttribute("formattedBookingDate", formattedBookingDate);
+                model.addAttribute("formattedTravelDate", formattedTravelDate);
             }
 
         } else if(response.getStatusCode() == HttpStatus.BAD_REQUEST) {
