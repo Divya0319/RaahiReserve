@@ -17,6 +17,19 @@ public interface BusRouteRepository extends JpaRepository<BusRoute, Integer> {
         return findBusRoutesBySourceAndDestination(source, destination).stream().findFirst().orElse(null);
     }
 
+    @Query("SELECT br FROM BusRoute br " +
+            " JOIN br.route r " +
+            " JOIN br.bus b " +
+            " WHERE r.source = :source " +
+            "AND r.destination = :destination" +
+            " AND b.busId = :busId"
+    )
+    List<BusRoute> findBusRoutesBySourceAndDestinationAndBus(@Param("source") String source, @Param("destination") String destination, @Param("busId") Integer busId);
+
+    default BusRoute findFirstBusRouteBySourceAndDestinationAndBus(String source, String destination, Integer busId) {
+        return findBusRoutesBySourceAndDestinationAndBus(source, destination, busId).stream().findFirst().orElse(null);
+    }
+
     @Query("SELECT b FROM Bus b JOIN b.busRoutes br " +
             "WHERE br = :busRoute AND b.availableSeats > 0 " +
             "ORDER BY b.busId ASC"

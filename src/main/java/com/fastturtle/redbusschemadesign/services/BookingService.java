@@ -125,7 +125,7 @@ public class BookingService {
 
         Bus busForBooking = busRepository.findByBusId(selectedBusId);
         BusRoute busRouteForBooking = busRouteRepository.
-                findFirstBusRouteBySourceAndDestination(source, destination);
+                findFirstBusRouteBySourceAndDestinationAndBus(source, destination, selectedBusId);
 
         RandomSeatNumberProviderWithPreference rsnpwp = new RandomSeatNumberProviderWithPreference(busRepository, busSeatRepository);
         rsnpwp.setBusNo(busForBooking.getBusNo());
