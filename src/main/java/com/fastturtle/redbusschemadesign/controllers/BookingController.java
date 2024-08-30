@@ -15,11 +15,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.*;
 
 @Controller
@@ -29,15 +27,13 @@ public class BookingController {
     private final UserService userService;
     private final RouteService routeService;
     private final BusService busService;
-    private final PassengerService passengerService;
 
     @Autowired
-    public BookingController(BookingService bookingService, UserService userService, RouteService routeService, BusService busService, PassengerService passengerService) {
+    public BookingController(BookingService bookingService, UserService userService, RouteService routeService, BusService busService) {
         this.bookingService = bookingService;
         this.userService = userService;
         this.routeService = routeService;
         this.busService = busService;
-        this.passengerService = passengerService;
     }
 
     @PostMapping("/book")
@@ -210,10 +206,8 @@ public class BookingController {
             return "bookingForm";
         }
 
-        String busTypeString = busType.name();
-
         // Here, booking.getPassengers() should return the list of passengers populated from the form
-        ResponseEntity<?> response = bookingService.doBookingFromPassengerForm(userId, isUserPassenger, seatTypeForUser, source, destination, travelDate, busTypeString, booking.getPassengers());
+        ResponseEntity<?> response = bookingService.doBookingFromPassengerForm(userId, isUserPassenger, seatTypeForUser, source, destination, travelDate, selectedBusId, booking.getPassengers());
         if(response.getStatusCode() == HttpStatus.OK) {
             booking = (Booking) response.getBody();
 
@@ -270,41 +264,6 @@ public class BookingController {
     @PostMapping("/update")
     public ResponseEntity<?> updateTravel(@RequestBody TravelRequest travelRequest) {
         return bookingService.updateTravelStatus(travelRequest);
-    }
-
-    @GetMapping("/markTraveled")
-    public String markTraveled() {
-
-        return "markTraveled";
-    }
-
-    @PostMapping("/markTraveled")
-    public String loadPassengers(@RequestParam("bookingId") Integer bookingId, Model model) {
-        Booking booking = bookingService.findByBookingId(bookingId).orElse(null);
-
-        if (booking == null) {
-            model.addAttribute("errorMessage", "Booking ID not found");
-            return "markTraveled";
-        }
-
-        model.addAttribute("booking", booking);
-        return "markTraveled";
-    }
-
-    @PostMapping("/markAsTraveled")
-    public String markAsTraveled(@RequestParam("bookingId") Integer bookingId,
-                                 @RequestParam("passengerIds") List<Integer> passengerIds,
-                                 RedirectAttributes redirectAttributes) {
-
-        Booking booking = bookingService.findByBookingId(bookingId).orElse(null);
-        List<Passenger> passengers = passengerService.findAllPassengersById(passengerIds);
-        for (Passenger passenger : passengers) {
-            passenger.setTraveled(true);
-        }
-        passengerService.saveAllPassengers(passengers);
-
-        redirectAttributes.addFlashAttribute("successMessage", "Passengers Marked as Traveled successfully");
-        return "redirect:/bookings/markTraveled";
     }
 
     @GetMapping("/findPassengersTraveledOnDate")

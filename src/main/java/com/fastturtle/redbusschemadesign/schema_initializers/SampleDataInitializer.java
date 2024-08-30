@@ -300,6 +300,11 @@ public class SampleDataInitializer {
         booking1.setPayment(payment1);
 
         // Saving booking1
+
+        busForBooking1.setAvailableSeats(busForBooking1.getAvailableSeats() -
+                booking1.getPassengers().size());
+        busRepository.save(busForBooking1);
+
         bookingRepository.save(booking1);
 
         BusRoute busRouteForBooking2 = busRouteRepository.findById(3).get();
@@ -334,6 +339,10 @@ public class SampleDataInitializer {
         payment2.setAmount(booking2.getPrice());
         payment2.setPaymentDate(paymentDates[3]);
         booking2.setPayment(payment2);
+
+        busForBooking2.setAvailableSeats(busForBooking2.getAvailableSeats() -
+                booking2.getPassengers().size());
+        busRepository.save(busForBooking2);
 
         // Saving booking2
         bookingRepository.save(booking2);
@@ -399,6 +408,11 @@ public class SampleDataInitializer {
         payment3.setPaymentDate(paymentDates[2]);
         booking3.setPayment(payment3);
 
+
+        busForBooking3.setAvailableSeats(busForBooking3.getAvailableSeats() -
+                booking3.getPassengers().size());
+        busRepository.save(busForBooking3);
+
         // Saving booking3
         bookingRepository.save(booking3);
 
@@ -423,6 +437,9 @@ public class SampleDataInitializer {
             busSeatRepository.save(busSeat);
         }
 
+        busForBooking1.setAvailableSeats(busForBooking1.getAvailableSeats() + passengersInBooking1.size());
+        busRepository.save(busForBooking1);
+
         List<Passenger> listOfPassengersInB2 = bookingRepository.findAllPassengersInBooking(booking2);
         List<Passenger> travellingPassengersB2 = new ArrayList<>();
         travellingPassengersB2.add(listOfPassengersInB2.get(0));
@@ -433,8 +450,6 @@ public class SampleDataInitializer {
 
         passengerRepository.saveAll(listOfPassengersInB2);
 
-        // TODO: Bus seat vacating after travel is done
-
         List<Passenger> passengersInBooking2 = bookingRepository.findAllPassengersInBooking(booking2);
 
         for(Passenger p : passengersInBooking2) {
@@ -442,6 +457,9 @@ public class SampleDataInitializer {
             busSeat.setOccupied(false);
             busSeatRepository.save(busSeat);
         }
+
+        busForBooking2.setAvailableSeats(busForBooking2.getAvailableSeats() + passengersInBooking2.size());
+        busRepository.save(busForBooking2);
 
         List<Passenger> listOfPassengersInB3 = bookingRepository.findAllPassengersInBooking(booking3);
         List<Passenger> travellingPassengersB3 = new ArrayList<>();
@@ -459,6 +477,9 @@ public class SampleDataInitializer {
             busSeat.setOccupied(false);
             busSeatRepository.save(busSeat);
         }
+
+        busForBooking3.setAvailableSeats(busForBooking3.getAvailableSeats() + passengersInBooking3.size());
+        busRepository.save(busForBooking3);
 
     }
 

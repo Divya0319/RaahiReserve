@@ -44,4 +44,7 @@ public interface BusRepository extends JpaRepository<Bus, Integer> {
     List<Bus> findAvailableBusesBySourceAndDestinationAndBusType(@Param("source") String source, @Param("destination") String destination,
                                                                  @Param("busType") BusType busType);
 
+
+    Bus findByBusId(Integer busId);
+
 }

@@ -112,7 +112,9 @@ public class BookingService {
         return response;
     }
 
-    public ResponseEntity<?> doBookingFromPassengerForm(Integer userId, boolean isUserPassenger, SeatType seatTypeForUser, String source, String destination, String travelDate, String busType, List<Passenger> passengers) {
+    public ResponseEntity<?> doBookingFromPassengerForm(Integer userId, boolean isUserPassenger,
+                                                        SeatType seatTypeForUser, String source,
+                                                        String destination, String travelDate, int selectedBusId, List<Passenger> passengers) {
         if(source.equals(destination)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Source and destination cannot be same"));
         }
@@ -120,14 +122,8 @@ public class BookingService {
         Booking booking = new Booking();
         Float bookingCost = 0.0f;
 
-        List<Bus> busesForBooking = busRepository.findAvailableBusesBySourceAndDestinationAndBusType(source, destination, BusType.valueOf(busType));
-        if(busesForBooking.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "No buses found for given source and destination"));
-        }
 
-        Random random = new Random();
-        int randomIndex = random.nextInt(busesForBooking.size());
-        Bus busForBooking = busesForBooking.get(randomIndex);
+        Bus busForBooking = busRepository.findByBusId(selectedBusId);
         BusRoute busRouteForBooking = busRouteRepository.
                 findFirstBusRouteBySourceAndDestination(source, destination);
 
@@ -212,6 +208,10 @@ public class BookingService {
         payment.setPaymentDate(null);
         booking.setPayment(payment);
 
+        busForBooking.setAvailableSeats(busForBooking.getAvailableSeats() -
+                booking.getPassengers().size());
+
+        busRepository.save(busForBooking);
         bookingRepository.save(booking);
         
         return ResponseEntity.ok(booking);
