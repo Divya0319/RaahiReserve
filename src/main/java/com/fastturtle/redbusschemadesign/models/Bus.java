@@ -37,6 +37,9 @@ public class Bus {
     @Column(name = "busTiming")
     private LocalTime busTiming;
 
+    @Transient
+    private String formattedBusTiming;
+
     public Bus(String busNo, String companyName, int totalSeats,
                int availableSeats, BusType busType, LocalTime busTiming) {
         this.busNo = busNo;
@@ -113,5 +116,13 @@ public class Bus {
 
     public void setBusTiming(LocalTime busTiming) {
         this.busTiming = busTiming;
+    }
+
+    public String getFormattedBusTiming() {
+        return formattedBusTiming;
+    }
+
+    public void setFormattedBusTiming(String formattedBusTiming) {
+        this.formattedBusTiming = formattedBusTiming;
     }
 }

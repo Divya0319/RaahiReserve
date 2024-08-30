@@ -12,15 +12,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class BusService {
 
-    private BusRepository busRepository;
+    private final BusRepository busRepository;
 
-    private RouteRepository routeRepository;
+    private final RouteRepository routeRepository;
 
     @Autowired
     public BusService(BusRepository busRepository, RouteRepository routeRepository) {
@@ -45,12 +44,8 @@ public class BusService {
         return busRepository.findAvailableBusesBySourceAndDestination(source, destination);
     }
 
-    public Set<BusType> getAllBusTypes() {
-        return busRepository.getAllBusTypes();
-    }
-
-    public Map<BusType, List<Bus>> getAllBusesGroupedByType() {
-        List<Bus> buses = busRepository.findAll();
+    public Map<BusType, List<Bus>> getAllBusesGroupedByTypeFilterBySourceAndDestination(String source, String destination) {
+        List<Bus> buses = busRepository.findAvailableBusesBySourceAndDestination(source, destination);
         return buses.stream().collect(Collectors.groupingBy(Bus::getBusType));
     }
 }

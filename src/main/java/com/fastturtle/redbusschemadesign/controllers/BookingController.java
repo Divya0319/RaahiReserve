@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 
 @Controller
@@ -87,10 +88,7 @@ public class BookingController {
         List<Passenger> passengers = new ArrayList<>();
         passengers.add(new Passenger());
 
-        Set<BusType> busTypes = busService.getAllBusTypes();
-        List<BusType> busTypeList = new ArrayList<>(busTypes);
-        Map<BusType, List<Bus>> busesByType = busService.getAllBusesGroupedByType();
-        model.addAttribute("busTypesForFilter", busTypeList);
+        Map<BusType, List<Bus>> busesByType = new HashMap<>();
         model.addAttribute("busesByType", busesByType);
 
 
@@ -114,10 +112,22 @@ public class BookingController {
                                     @RequestParam("travelDate") String travelDate,
                                     Model model) {
 
-        Set<BusType> busTypes = busService.getAllBusTypes();
-        List<BusType> busTypeList = new ArrayList<>(busTypes);
-        Map<BusType, List<Bus>> busesByType = busService.getAllBusesGroupedByType();
-        model.addAttribute("busTypesForFilter", busTypeList);
+        Map<BusType, List<Bus>> busesByType = busService.getAllBusesGroupedByTypeFilterBySourceAndDestination(source, destination);
+
+        //  // Format bus number and bus timing for each bus
+        for(Map.Entry<BusType, List<Bus>> entry : busesByType.entrySet()) {
+            List<Bus> buses = entry.getValue();
+
+            for(Bus b : buses) {
+                String formattedBusNo = DateUtils.formatBusNumber(b.getBusNo());
+                String formattedBusTime = DateUtils.formatBusTiming(b.getBusTiming());
+
+                b.setBusNo(formattedBusNo);
+                b.setFormattedBusTiming(formattedBusTime);
+            }
+
+        }
+
         model.addAttribute("busesByType", busesByType);
 
         model.addAttribute("genders", Gender.values());

@@ -119,8 +119,7 @@
                             <div th:each="bus : ${entry.value}">
                                 <label>
                                     <input type="radio" name="bus" th:value="${bus.busId}"/>
-                                    <span th:text="${bus.busNo}">Bus Number</span>
-                                    <span th:text="${bus.busTiming}">Bus Time</span>
+                                    <span th:text="${bus.busNo} + ', ' + ${bus.formattedBusTiming} + ' Daily'"></span>
                                 </label>
                             </div>
                         </div>
