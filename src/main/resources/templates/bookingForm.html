@@ -98,7 +98,6 @@
                         <div class="col-md-6">
                             <label for="busTypeDropdown" class="form-label">Select Bus Type:</label>
                             <select class="form-control" name="busType" id="busTypeDropdown">
-                                <option value="">No Bus Type Selected</option>
                                 <option
                                         th:each="busType : ${busTypes}"
                                         th:value="${busType}"
@@ -116,7 +115,6 @@
                         </div>
 
                         <div class="bus-container ml-3 mt-2" th:each="entry : ${busesByType}" th:data-type="${entry.key}">
-                            <h6 id="availableBusesHeading" style="display: none;">Available buses</h6>
                             <div th:each="bus : ${entry.value}">
                                 <label>
                                     <input type="radio" name="busId" th:value="${bus.busId}" onclick="updateSelectedBusId(this)" />
@@ -236,19 +234,18 @@
                 const selectedType = this.value; // Get selected bus type
 
                 const busContainers = document.querySelectorAll(".bus-container"); // All bus containers
-                const heading = document.getElementById("availableBusesHeading"); // Heading element
                 const selectedBusIdInput = document.getElementById("selectedBusId"); // Hidden input for bus ID
+
+                selectedBusIdInput.value = "";
 
                 document.querySelector('input[name="busType"]').value = selectedType;
 
                 if (selectedType === "") {
-                    heading.style.display = "none"; // Hiding heading
                     busContainers.forEach(function (container) {
                         container.style.display = "none"; // Hiding all containers if no bus type selected
                     });
                     selectedBusIdInput.value = "";
                 } else {
-                    heading.style.display = "block"; // Showing heading
                     busContainers.forEach(function (container) {
                         const containerType = container.getAttribute("data-type"); // Getting the bus type from data attribute
                         if (selectedType === containerType) {
@@ -259,6 +256,14 @@
                     });
                 }
             });
+
+            // Triggering the change event programmatically to update the hidden input on page load
+            const busTypeDropdown = document.getElementById("busTypeDropdown");
+
+            if (busTypeDropdown) {
+                busTypeDropdown.dispatchEvent(new Event("change")); // Trigger the change event
+            }
+
         });
 
         function updateSelectedBusId(radio) {
