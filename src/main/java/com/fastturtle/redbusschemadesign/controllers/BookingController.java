@@ -121,11 +121,22 @@ public class BookingController {
             List<Bus> buses = entry.getValue();
 
             for(Bus b : buses) {
+                double percentageAvailable = (double) (b.getAvailableSeats() * 100) / b.getTotalSeats();
                 String formattedBusNo = DateUtils.formatBusNumber(b.getBusNo());
                 String formattedBusTime = DateUtils.formatBusTiming(b.getBusTiming());
 
                 b.setBusNo(formattedBusNo);
                 b.setFormattedBusTiming(formattedBusTime);
+                
+                if(b.getAvailableSeats() <= 5 || percentageAvailable <= 10) {
+                    b.setStyleClass("red-text");
+                } else if(b.getAvailableSeats() > 5 && percentageAvailable > 10 && percentageAvailable <= 40) {
+                    b.setStyleClass("yellow-text");
+                } else if(percentageAvailable > 40) {
+                    b.setStyleClass("green-text");
+                } else {
+                    b.setStyleClass("");
+                }
             }
 
         }

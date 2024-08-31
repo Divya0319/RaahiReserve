@@ -43,6 +43,9 @@ public class Bus {
     @Transient
     private String formattedBusNumber;
 
+    @Transient
+    private String styleClass;
+
     public Bus(String busNo, String companyName, int totalSeats,
                int availableSeats, BusType busType, LocalTime busTiming) {
         this.busNo = busNo;
@@ -137,4 +140,11 @@ public class Bus {
         this.formattedBusNumber = formattedBusNumber;
     }
 
+    public String getStyleClass() {
+        return styleClass;
+    }
+
+    public void setStyleClass(String styleClass) {
+        this.styleClass = styleClass;
+    }
 }

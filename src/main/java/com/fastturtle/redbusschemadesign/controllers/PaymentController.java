@@ -49,7 +49,7 @@ public class PaymentController {
     }
 
     @PostMapping("/fetchBookingDetails")
-    public String fetchBookingDetails(@RequestParam("bookingId") Integer bookingId, Model model) {
+    public String fetchBookingDetails(@RequestParam("bookingId") Integer bookingId, Model model, Principal principal) {
         ResponseEntity<?> response = paymentService.checkPaymentStatusAndReturnBookingForBookingId(bookingId);
         if (response.getStatusCode() == HttpStatus.OK) {
             model.addAttribute("booking", response.getBody());
@@ -63,6 +63,7 @@ public class PaymentController {
             model.addAttribute("isBookingIdPresent", false);
         }
 
+        model.addAttribute("loggedInUserName", principal.getName());
         model.addAttribute("paymentModes", PaymentMethods.values());
         return "doPayment";
     }
