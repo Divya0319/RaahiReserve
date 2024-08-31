@@ -80,7 +80,7 @@
                     <p th:text="${errorMessage}" class="alert alert-danger mt-3"></p>
                 </div>
 
-                <div th:if="${booking != null}" class="mt-3">
+                <div th:if="${booking != null && alreadyTraveledMessage == null}" class="mt-3">
                     <h5>Passengers for Booking ID: <span th:text="${booking.bookingId}"></span></h5>
                     <form th:action="@{/passengers/markAsTraveled}" method="post">
                         <input type="hidden" name="bookingId" th:value="${booking.bookingId}" />
@@ -100,6 +100,10 @@
 
                 <div th:if="${successMessage != null}">
                     <p th:text="${successMessage}" class="alert alert-success mt-3"></p>
+                </div>
+
+                <div th:if="${alreadyTraveledMessage != null}">
+                    <p th:text="${alreadyTraveledMessage}" class="alert alert-success mt-3"></p>
                 </div>
 
                 <a href="/redbus" class="btn btn-secondary mt-3">Back to Home</a>

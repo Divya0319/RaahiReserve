@@ -1,6 +1,7 @@
 package com.fastturtle.redbusschemadesign.controllers;
 
 import com.fastturtle.redbusschemadesign.models.Booking;
+import com.fastturtle.redbusschemadesign.models.Passenger;
 import com.fastturtle.redbusschemadesign.services.BookingService;
 import com.fastturtle.redbusschemadesign.services.PassengerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,17 @@ public class PassengerController {
         if (booking == null) {
             model.addAttribute("errorMessage", "Booking ID not found");
             return "markTraveled";
+        } else {
+
+            boolean allTraveled = booking.getPassengers().stream().allMatch(Passenger::isTraveled);
+            if (allTraveled) {
+                model.addAttribute("alreadyTraveledMessage", "All passengers in this booking have traveled.");
+                model.addAttribute("loggedInUserName", principal.getName());
+                return "markTraveled";
+            } else {
+                booking.getPassengers().removeIf(Passenger::isTraveled);
+            }
+
         }
 
         model.addAttribute("booking", booking);
