@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.util.Map;
 import java.util.Optional;
 
@@ -67,7 +68,7 @@ public class PaymentController {
     }
 
     @GetMapping("/doPayment")
-    public String showPaymentPage(@RequestParam(value = "bookingId", required = false) Integer bookingId, Model model) {
+    public String showPaymentPage(@RequestParam(value = "bookingId", required = false) Integer bookingId, Model model, Principal principal) {
 
         if(bookingId != null) {
             Optional<Booking> booking = bookingService.findByBookingId(bookingId);
@@ -79,6 +80,8 @@ public class PaymentController {
                 return "doPayment";  // or redirect to an error page
             }
         }
+
+        model.addAttribute("loggedInUserName", principal.getName());
 
         model.addAttribute("isBookingIdPresent", bookingId != null);
         return "doPayment";

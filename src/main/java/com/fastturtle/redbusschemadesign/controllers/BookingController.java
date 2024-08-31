@@ -42,14 +42,15 @@ public class BookingController {
     }
 
     @GetMapping("/averageCostOnDate")
-    public String showAverageCostForm() {
+    public String showAverageCostForm(Principal principal, Model model) {
+        model.addAttribute("loggedInUserName", principal.getName());
         return "averageCost";
     }
 
     @PostMapping("/averageCostOnDate")
     public String getAverageCostOfTicketsOnDate(@RequestParam String date, Model model) {
         ResponseEntity<?> response = bookingService.getAverageCostOfTicketsOnDate(
-                LocalDate.parse(DateUtils.convertDateFormat(date)));
+                LocalDate.parse(date));
 
         if (response.getStatusCode() == HttpStatus.OK) {
             Double averageCost = (Double) response.getBody();
@@ -63,7 +64,7 @@ public class BookingController {
     }
 
     @GetMapping("/fetchPassengersForBooking")
-    public String fetchAllPassengersForBooking(@RequestParam(value = "bookingId", required = false) Integer bookingId, Model model) {
+    public String fetchAllPassengersForBooking(@RequestParam(value = "bookingId", required = false) Integer bookingId, Model model, Principal principal) {
         if(bookingId != null) {
             ResponseEntity<?> response = bookingService.fetchAllPassengersForBooking(bookingId);
 
@@ -76,11 +77,13 @@ public class BookingController {
             }
         }
 
+        model.addAttribute("loggedInUserName", principal.getName());
+
         return "findPassengersForBooking";
     }
 
     @GetMapping("/create")
-    public String showPassengerForm(Model model) {
+    public String showPassengerForm(Model model, Principal principal) {
         List<Passenger> passengers = new ArrayList<>();
         passengers.add(new Passenger());
 
@@ -93,6 +96,7 @@ public class BookingController {
         model.addAttribute("seatPreferences", Arrays.asList("NO_PREFERENCE", SeatType.AISLE.name(), SeatType.WINDOW.name()));
         model.addAttribute("sources", routeService.findAllSources());
         model.addAttribute("destinations", routeService.findAllDestinations());
+        model.addAttribute("loggedInUserName", principal.getName());
 
         return "bookingForm";
     }
@@ -267,14 +271,15 @@ public class BookingController {
     }
 
     @GetMapping("/findPassengersTraveledOnDate")
-    public String showFindPassengersTravelledOnDatePage() {
+    public String showFindPassengersTravelledOnDatePage(Principal principal, Model model) {
+        model.addAttribute("loggedInUserName", principal.getName());
         return "findPassengersTraveledOnDate";
     }
 
     @PostMapping("/findPassengersTraveledOnDate")
     public String findNumberOfPassengersTravelledOnDate(@RequestParam("travelDate") String travelDate, Model model) {
         Optional<List<Passenger>> passengers = bookingService.findPassengersTraveledOnDate(LocalDate.parse(
-                new DateUtils().convertDateFormat(travelDate)));
+                travelDate));
 
         if(passengers.isPresent()) {
             int count = passengers.get().size();

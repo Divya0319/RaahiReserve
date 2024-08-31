@@ -11,14 +11,21 @@
             <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
                 <h2>Find Average Ticket Cost for a date</h2>
 
-                <!-- Logout Button -->
-                <h6><a th:href="@{/logout}" class="btn btn-primary text-white mt-2">Logout</a></h6>
+                <div class="d-flex align-items-center">
+
+                    <!-- Logged-in User Name -->
+                    <span class="mr-3">Logged in User: <strong><span class="mr-3" th:text="${loggedInUserName}"></span></strong></span>
+
+                    <!-- Logout Button -->
+                    <h6><a th:href="@{/logout}" class="btn btn-success text-white mt-2">Logout</a></h6>
+
+                </div>
 
             </div>
             <div class="card-body bg-light text-dark">
                 <form th:action="@{/bookings/averageCostOnDate}" method="post">
                     <div class="form-group">
-                        <label for="date" class="form-label">Enter Date (dd/MM/yyyy) </label>
+                        <label for="date" class="form-label">Enter Date:</label>
                         <input type="date" id="date" name="date" class="form-control"
                                th:max="${T(java.time.LocalDate).now()}" required/>
                     </div>
