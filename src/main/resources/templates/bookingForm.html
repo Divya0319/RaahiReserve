@@ -125,7 +125,14 @@
                             <div th:each="bus : ${entry.value}">
                                 <label>
                                     <input type="radio" name="busId" th:value="${bus.busId}" onclick="updateSelectedBusId(this)" />
-                                    <span th:text="${bus.companyName} + ', ' + ${bus.busNo} + ', ' + ${bus.formattedBusTiming} + ', Daily'"></span>
+                                    <span
+                                            th:text="${bus.companyName} + ', ' + ${bus.busNo} + ', ' + ${bus.formattedBusTiming} + ', Daily, Available Seats: ' + ${bus.availableSeats}"
+                                            th:classappend="|
+        ${bus.availableSeats} <= 5 ? 'red-text' :
+        (${bus.availableSeats / bus.totalSeats * 100} >= 40 and ${bus.availableSeats / bus.totalSeats * 100} <= 80) ? 'yellow-text' :
+        (${bus.availableSeats / bus.totalSeats * 100} < 40) ? 'green-text' : ''
+    |">
+</span>
                                 </label>
                             </div>
                         </div>

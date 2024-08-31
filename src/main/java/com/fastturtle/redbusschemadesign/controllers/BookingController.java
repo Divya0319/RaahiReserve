@@ -48,7 +48,7 @@ public class BookingController {
     }
 
     @PostMapping("/averageCostOnDate")
-    public String getAverageCostOfTicketsOnDate(@RequestParam String date, Model model) {
+    public String getAverageCostOfTicketsOnDate(@RequestParam String date, Model model, Principal principal) {
         ResponseEntity<?> response = bookingService.getAverageCostOfTicketsOnDate(
                 LocalDate.parse(date));
 
@@ -59,6 +59,8 @@ public class BookingController {
             String errorMessage = ((Map<String, String>)response.getBody()).get("error");
             model.addAttribute("errorMessage", errorMessage);
         }
+
+        model.addAttribute("loggedInUserName", principal.getName());
 
         return "averageCost";
     }
@@ -110,7 +112,7 @@ public class BookingController {
     public String checkAvailability(@RequestParam("source") String source,
                                     @RequestParam("destination") String destination,
                                     @RequestParam("travelDate") String travelDate,
-                                    Model model) {
+                                    Model model, Principal principal) {
 
         Map<BusType, List<Bus>> busesByType = busService.getAllBusesGroupedByTypeFilterBySourceAndDestination(source, destination);
 
@@ -141,6 +143,8 @@ public class BookingController {
 
         if (source.equals(destination)) {
             model.addAttribute("errorMessage", "Source and destination cannot be the same.");
+            model.addAttribute("loggedInUserName", principal.getName());
+            
             return "bookingForm"; // Return to the same form view with an error message
         } else {
 
@@ -149,6 +153,8 @@ public class BookingController {
 
             if (availableBuses.isEmpty()) {
                 model.addAttribute("errorMessage", "No available buses found for given source and destination.");
+                model.addAttribute("loggedInUserName", principal.getName());
+
                 return "bookingForm";
             } else {
                 Set<BusType> availableBusTypes = new HashSet<>();
@@ -162,6 +168,7 @@ public class BookingController {
 
         // Clear any existing error message
         model.addAttribute("errorMessage", null);
+        model.addAttribute("loggedInUserName", principal.getName());
 
         return "bookingForm"; // Return to the same form view
     }
@@ -207,6 +214,11 @@ public class BookingController {
             model.addAttribute("selectedDestination", destination);
             model.addAttribute("selectedTravelDate", travelDate);
 
+            if(principal != null) {
+                model.addAttribute("loggedInUserName", principal.getName());
+            }
+
+
             return "bookingForm";
         }
 
@@ -236,6 +248,10 @@ public class BookingController {
 
         } else if(response.getStatusCode() == HttpStatus.BAD_REQUEST) {
             String errorMessage = ((Map<String, String>) response.getBody()).get("error");
+
+            if(principal != null) {
+                model.addAttribute("loggedInUserName", principal.getName());
+            }
             model.addAttribute("errorMessage", errorMessage);
             return "bookingForm";
         }
@@ -277,7 +293,7 @@ public class BookingController {
     }
 
     @PostMapping("/findPassengersTraveledOnDate")
-    public String findNumberOfPassengersTravelledOnDate(@RequestParam("travelDate") String travelDate, Model model) {
+    public String findNumberOfPassengersTravelledOnDate(@RequestParam("travelDate") String travelDate, Model model, Principal principal) {
         Optional<List<Passenger>> passengers = bookingService.findPassengersTraveledOnDate(LocalDate.parse(
                 travelDate));
 
@@ -292,6 +308,9 @@ public class BookingController {
             model.addAttribute("errorMessage", "No Passengers found travelling on this date");
 
         }
+
+        model.addAttribute("loggedInUserName", principal.getName());
+
 
         return "findPassengersTraveledOnDate";
     }

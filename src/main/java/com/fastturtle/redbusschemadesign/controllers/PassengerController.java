@@ -35,7 +35,7 @@ public class PassengerController {
     }
 
     @PostMapping("/markTraveled")
-    public String loadPassengers(@RequestParam("bookingId") Integer bookingId, Model model) {
+    public String loadPassengers(@RequestParam("bookingId") Integer bookingId, Model model, Principal principal) {
         Booking booking = bookingService.findByBookingId(bookingId).orElse(null);
 
         if (booking == null) {
@@ -44,6 +44,7 @@ public class PassengerController {
         }
 
         model.addAttribute("booking", booking);
+        model.addAttribute("loggedInUserName", principal.getName());
         return "markTraveled";
     }
 
