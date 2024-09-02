@@ -60,6 +60,8 @@ public class PaymentController {
             model.addAttribute("isBookingIdPresent", false);
         } else if(response.getStatusCode() == HttpStatus.BAD_REQUEST) {
             model.addAttribute("successMessage", ((Map<String, String>)response.getBody()).get("warning"));
+            model.addAttribute("paidAmt", ((Map<String, Float>)response.getBody()).get("paidAmt"));
+            model.addAttribute("chosenPaymentMode", ((Map<String, PaymentMethods>)response.getBody()).get("chosenPaymentMode"));
             model.addAttribute("isBookingIdPresent", false);
         }
 
@@ -78,7 +80,7 @@ public class PaymentController {
                 model.addAttribute("paymentModes", PaymentMethods.values());
             } else {
                 model.addAttribute("error", "Invalid Booking ID");
-                return "doPayment";  // or redirect to an error page
+                return "doPayment";
             }
         }
 
@@ -96,10 +98,10 @@ public class PaymentController {
 
         paymentService.processPayment(bookingId, paymentMode, action);
 
-        // Add success message
+        // Adding success message
         redirectAttributes.addFlashAttribute("message", "Payment marked as " + action.toUpperCase() + " successfully.");
 
-        // Redirect to a confirmation page or back to the booking result
+        // Redirecting to a confirmation page or back to the booking result
         return "redirect:/bookings/bookingResult?bookingId=" + bookingId;
     }
 

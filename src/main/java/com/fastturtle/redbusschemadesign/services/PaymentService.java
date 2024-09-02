@@ -102,7 +102,13 @@ public class PaymentService {
             Payment payment = optionalPayment.get();
 
             if(payment.getPaymentStatus() == PaymentStatus.COMPLETED) {
-                response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("warning", "Payment is Already Completed for booking id " + bookingId));
+                Float paidAmt = payment.getAmount();
+                PaymentMethods chosenPaymentMode = payment.getPaymentMethod();
+                response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        Map.of(
+                                "warning", "Payment is Already Completed for booking id " + bookingId,
+                                "paidAmt", paidAmt,
+                                "chosenPaymentMode", chosenPaymentMode));
                 return response;
             }
 
