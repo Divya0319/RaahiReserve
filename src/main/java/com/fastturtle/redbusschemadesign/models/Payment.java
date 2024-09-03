@@ -33,16 +33,16 @@ public class Payment {
     @Column(name = "paymentStatus", nullable = false)
     private PaymentStatus paymentStatus;
 
-    @Column(name = "paymentReferenceId")
-    private Integer paymentReferenceId;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "paymentReferenceType")
-    private PaymentRefType paymentReferenceType;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+//    @Column(name = "paymentReferenceId")
+//    private Integer paymentReferenceId;    //  The ID of the related entity (CardDetails, BankDetails, etc.)
+//
+//    @Enumerated(EnumType.STRING)
+//    @Column(name = "paymentReferenceType")
+//    private PaymentRefType paymentReferenceType;    //  The type of the related entity  ('CARD', 'BANK', 'USER')
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id")
+//    private User user;
 
     public int getPaymentId() {
         return paymentId;
@@ -92,27 +92,27 @@ public class Payment {
         this.paymentStatus = paymentStatus;
     }
 
-    public Integer getPaymentReferenceId() {
-        return paymentReferenceId;
-    }
-
-    public void setPaymentReferenceId(Integer paymentReferenceId) {
-        this.paymentReferenceId = paymentReferenceId;
-    }
-
-    public PaymentRefType getPaymentReferenceType() {
-        return paymentReferenceType;
-    }
-
-    public void setPaymentReferenceType(PaymentRefType paymentReferenceType) {
-        this.paymentReferenceType = paymentReferenceType;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
+//    public Integer getPaymentReferenceId() {
+//        return paymentReferenceId;
+//    }
+//
+//    public void setPaymentReferenceId(Integer paymentReferenceId) {
+//        this.paymentReferenceId = paymentReferenceId;
+//    }
+//
+//    public PaymentRefType getPaymentReferenceType() {
+//        return paymentReferenceType;
+//    }
+//
+//    public void setPaymentReferenceType(PaymentRefType paymentReferenceType) {
+//        this.paymentReferenceType = paymentReferenceType;
+//    }
+//
+//    public User getUser() {
+//        return user;
+//    }
+//
+//    public void setUser(User user) {
+//        this.user = user;
+//    }
 }
