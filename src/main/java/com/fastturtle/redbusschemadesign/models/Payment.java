@@ -27,11 +27,22 @@ public class Payment {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "paymentMethod")
-    private PaymentMethods paymentMethod;
+    private PaymentMethod paymentMethod;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "paymentStatus", nullable = false)
     private PaymentStatus paymentStatus;
+
+    @Column(name = "paymentReferenceId")
+    private Integer paymentReferenceId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "paymentReferenceType")
+    private PaymentRefType paymentReferenceType;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public int getPaymentId() {
         return paymentId;
@@ -65,11 +76,11 @@ public class Payment {
         this.paymentDate = paymentDate;
     }
 
-    public PaymentMethods getPaymentMethod() {
+    public PaymentMethod getPaymentMethod() {
         return paymentMethod;
     }
 
-    public void setPaymentMethod(PaymentMethods paymentMethod) {
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
@@ -79,5 +90,29 @@ public class Payment {
 
     public void setPaymentStatus(PaymentStatus paymentStatus) {
         this.paymentStatus = paymentStatus;
+    }
+
+    public Integer getPaymentReferenceId() {
+        return paymentReferenceId;
+    }
+
+    public void setPaymentReferenceId(Integer paymentReferenceId) {
+        this.paymentReferenceId = paymentReferenceId;
+    }
+
+    public PaymentRefType getPaymentReferenceType() {
+        return paymentReferenceType;
+    }
+
+    public void setPaymentReferenceType(PaymentRefType paymentReferenceType) {
+        this.paymentReferenceType = paymentReferenceType;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

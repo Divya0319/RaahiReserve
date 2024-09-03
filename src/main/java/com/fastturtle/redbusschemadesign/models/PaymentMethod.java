@@ -1,9 +1,9 @@
 package com.fastturtle.redbusschemadesign.models;
 
-public enum PaymentMethods {
-    CASH,
+public enum PaymentMethod {
     DEBIT_CARD,
     CREDIT_CARD,
+    NETBANKING,
     WALLET;
 
 }

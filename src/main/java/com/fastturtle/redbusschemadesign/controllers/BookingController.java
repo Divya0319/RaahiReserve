@@ -2,6 +2,7 @@ package com.fastturtle.redbusschemadesign.controllers;
 
 import com.fastturtle.redbusschemadesign.dtos.BookingRequest;
 import com.fastturtle.redbusschemadesign.dtos.TravelRequest;
+import com.fastturtle.redbusschemadesign.helpers.BusDataUtils;
 import com.fastturtle.redbusschemadesign.helpers.DateUtils;
 import com.fastturtle.redbusschemadesign.helpers.SeatTypeEditor;
 import com.fastturtle.redbusschemadesign.models.*;
@@ -122,8 +123,8 @@ public class BookingController {
 
             for(Bus b : buses) {
                 double percentageAvailable = (double) (b.getAvailableSeats() * 100) / b.getTotalSeats();
-                String formattedBusNo = DateUtils.formatBusNumber(b.getBusNo());
-                String formattedBusTime = DateUtils.formatBusTiming(b.getBusTiming());
+                String formattedBusNo = BusDataUtils.formatBusNumber(b.getBusNo());
+                String formattedBusTime = BusDataUtils.formatBusTiming(b.getBusTiming());
 
                 b.setBusNo(formattedBusNo);
                 b.setFormattedBusTiming(formattedBusTime);
@@ -241,9 +242,9 @@ public class BookingController {
             if(booking != null) {
 
                 // Formatted bus no. and bus timing
-                String formattedBusNumber = DateUtils.formatBusNumber(booking.getBusRoute().getBus().getBusNo());
+                String formattedBusNumber = BusDataUtils.formatBusNumber(booking.getBusRoute().getBus().getBusNo());
                 booking.getBusRoute().getBus().setFormattedBusNumber(formattedBusNumber);
-                String formattedBusTiming = DateUtils.formatBusTiming(booking.getBusRoute().getBus().getBusTiming());
+                String formattedBusTiming = BusDataUtils.formatBusTiming(booking.getBusRoute().getBus().getBusTiming());
                 booking.getBusRoute().getBus().setFormattedBusTiming(formattedBusTiming);
 
                 model.addAttribute("booking", booking);

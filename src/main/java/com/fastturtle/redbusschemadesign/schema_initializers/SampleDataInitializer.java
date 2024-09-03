@@ -6,9 +6,7 @@ import com.fastturtle.redbusschemadesign.models.*;
 import com.fastturtle.redbusschemadesign.repositories.*;
 import jakarta.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -122,12 +120,12 @@ public class SampleDataInitializer {
                 LocalDate.parse(DateUtils.convertDateFormat("03/01/2024")),
                 LocalDate.parse(DateUtils.convertDateFormat("25/08/2024"))
         };
-        PaymentMethods[] paymentMethods = {
-                PaymentMethods.CASH,
-                PaymentMethods.CREDIT_CARD,
-                PaymentMethods.DEBIT_CARD,
-                PaymentMethods.WALLET,
-                PaymentMethods.DEBIT_CARD
+        PaymentMethod[] paymentMethods = {
+                PaymentMethod.NETBANKING,
+                PaymentMethod.CREDIT_CARD,
+                PaymentMethod.DEBIT_CARD,
+                PaymentMethod.WALLET,
+                PaymentMethod.DEBIT_CARD
         };
         PaymentStatus[] paymentStatuses = {
                 PaymentStatus.COMPLETED,

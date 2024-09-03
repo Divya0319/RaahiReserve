@@ -3,7 +3,7 @@ package com.fastturtle.redbusschemadesign.services;
 import com.fastturtle.redbusschemadesign.dtos.PaymentRequest;
 import com.fastturtle.redbusschemadesign.models.Booking;
 import com.fastturtle.redbusschemadesign.models.Payment;
-import com.fastturtle.redbusschemadesign.models.PaymentMethods;
+import com.fastturtle.redbusschemadesign.models.PaymentMethod;
 import com.fastturtle.redbusschemadesign.models.PaymentStatus;
 import com.fastturtle.redbusschemadesign.repositories.BookingRepository;
 import com.fastturtle.redbusschemadesign.repositories.PaymentRepository;
@@ -71,7 +71,7 @@ public class PaymentService {
 
     }
 
-    public void processPayment(int bookingId, PaymentMethods paymentMode, String action) {
+    public void processPayment(int bookingId, PaymentMethod paymentMode, String action) {
         Optional<Payment> optionalPayment = paymentRepository.findByBookingId(bookingId);
         Booking booking = bookingRepository.findByBookingId(bookingId).get();
 
@@ -103,7 +103,7 @@ public class PaymentService {
 
             if(payment.getPaymentStatus() == PaymentStatus.COMPLETED) {
                 Float paidAmt = payment.getAmount();
-                PaymentMethods chosenPaymentMode = payment.getPaymentMethod();
+                PaymentMethod chosenPaymentMode = payment.getPaymentMethod();
                 response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                         Map.of(
                                 "warning", "Payment is Already Completed for booking id " + bookingId,

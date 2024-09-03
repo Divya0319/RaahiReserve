@@ -1,12 +1,12 @@
 package com.fastturtle.redbusschemadesign.dtos;
 
-import com.fastturtle.redbusschemadesign.models.PaymentMethods;
+import com.fastturtle.redbusschemadesign.models.PaymentMethod;
 import com.fastturtle.redbusschemadesign.models.PaymentStatus;
 
 public class PaymentRequest {
     private int bookingId;
     private float amount;
-    private PaymentMethods paymentMethod;
+    private PaymentMethod paymentMethod;
     private PaymentStatus paymentStatus;
 
     public int getBookingId() {
@@ -25,11 +25,11 @@ public class PaymentRequest {
         this.amount = amount;
     }
 
-    public PaymentMethods getPaymentMethod() {
+    public PaymentMethod getPaymentMethod() {
         return paymentMethod;
     }
 
-    public void setPaymentMethod(PaymentMethods paymentMethod) {
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 

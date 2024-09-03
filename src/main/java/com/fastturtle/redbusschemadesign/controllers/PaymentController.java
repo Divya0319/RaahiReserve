@@ -2,8 +2,7 @@ package com.fastturtle.redbusschemadesign.controllers;
 
 import com.fastturtle.redbusschemadesign.dtos.PaymentRequest;
 import com.fastturtle.redbusschemadesign.models.Booking;
-import com.fastturtle.redbusschemadesign.models.Payment;
-import com.fastturtle.redbusschemadesign.models.PaymentMethods;
+import com.fastturtle.redbusschemadesign.models.PaymentMethod;
 import com.fastturtle.redbusschemadesign.services.BookingService;
 import com.fastturtle.redbusschemadesign.services.PaymentService;
 //import io.swagger.v3.oas.annotations.Hidden;
@@ -61,12 +60,12 @@ public class PaymentController {
         } else if(response.getStatusCode() == HttpStatus.BAD_REQUEST) {
             model.addAttribute("successMessage", ((Map<String, String>)response.getBody()).get("warning"));
             model.addAttribute("paidAmt", ((Map<String, Float>)response.getBody()).get("paidAmt"));
-            model.addAttribute("chosenPaymentMode", ((Map<String, PaymentMethods>)response.getBody()).get("chosenPaymentMode"));
+            model.addAttribute("chosenPaymentMode", ((Map<String, PaymentMethod>)response.getBody()).get("chosenPaymentMode"));
             model.addAttribute("isBookingIdPresent", false);
         }
 
         model.addAttribute("loggedInUserName", principal.getName());
-        model.addAttribute("paymentModes", PaymentMethods.values());
+        model.addAttribute("paymentModes", PaymentMethod.values());
         return "doPayment";
     }
 
@@ -77,7 +76,7 @@ public class PaymentController {
             Optional<Booking> booking = bookingService.findByBookingId(bookingId);
             if (booking.isPresent()) {
                 model.addAttribute("booking", booking.get());
-                model.addAttribute("paymentModes", PaymentMethods.values());
+                model.addAttribute("paymentModes", PaymentMethod.values());
             } else {
                 model.addAttribute("error", "Invalid Booking ID");
                 return "doPayment";
@@ -92,7 +91,7 @@ public class PaymentController {
 
     @PostMapping("/doPayment")
     public String processPayment(@RequestParam("bookingId") Integer bookingId,
-                                 @RequestParam("paymentMode") PaymentMethods paymentMode,
+                                 @RequestParam("paymentMode") PaymentMethod paymentMode,
                                  @RequestParam("action") String action,
                                  RedirectAttributes redirectAttributes) {
 
