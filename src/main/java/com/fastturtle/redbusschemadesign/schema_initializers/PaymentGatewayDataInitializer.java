@@ -1,27 +1,30 @@
 package com.fastturtle.redbusschemadesign.schema_initializers;
 
-import com.fastturtle.redbusschemadesign.models.BankDetails;
-import com.fastturtle.redbusschemadesign.models.CardDetails;
-import com.fastturtle.redbusschemadesign.models.CardType;
-import com.fastturtle.redbusschemadesign.repositories.BankDetailRepository;
-import com.fastturtle.redbusschemadesign.repositories.CardDetailRepository;
-import com.fastturtle.redbusschemadesign.repositories.PaymentRepository;
+import com.fastturtle.redbusschemadesign.models.*;
+import com.fastturtle.redbusschemadesign.repositories.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Component
 public class PaymentGatewayDataInitializer {
 
     private final CardDetailRepository cardDetailRepository;
     private final BankDetailRepository bankDetailRepository;
+    private final UserRepository userRepository;
+    private final UserWalletRepository userWalletRepository;
 
     @Autowired
-    public PaymentGatewayDataInitializer(CardDetailRepository cardDetailRepository, BankDetailRepository bankDetailRepository) {
+    public PaymentGatewayDataInitializer(CardDetailRepository cardDetailRepository, BankDetailRepository bankDetailRepository, UserRepository userRepository , UserWalletRepository userWalletRepository) {
 
         this.cardDetailRepository = cardDetailRepository;
         this.bankDetailRepository = bankDetailRepository;
+        this.userRepository = userRepository;
+        this.userWalletRepository = userWalletRepository;
     }
 
     @PostConstruct
@@ -76,6 +79,13 @@ public class PaymentGatewayDataInitializer {
             bankDetailRepository.save(bankDetails);
         }
 
+        List<User> users = userRepository.findAll();
+
+        for(User user : users) {
+            UserWallet uw = new UserWallet(BigDecimal.valueOf(2000));
+            uw.setUser(user);
+            userWalletRepository.save(uw);
+        }
 
     }
 }
