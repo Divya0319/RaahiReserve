@@ -22,6 +22,118 @@ import java.util.List;
 
 @Component
 public class SampleDataInitializer {
+
+    // Sample data for Bus
+    String[] busNos = {
+            "KA07HM7834",
+            "CG04LM7492",
+            "AP11HL2756",
+            "PJ02HK7295",
+            "MH04UK2743"
+    };
+    int[] totalSeats = {65, 70, 45, 50, 55};
+    int[] availableSeats = {63, 60, 30, 20, 40};
+
+    String[] busCompanyNames = {
+            "Maya Travels",
+            "Sunny Roadways",
+            "Harleen Tourism",
+            "Karan Travels",
+            "Guru Roadways"
+
+    };
+
+    BusType[] busType = { BusType.AC,
+            BusType.SLEEPER,
+            BusType.NON_AC,
+            BusType.NON_AC,
+            BusType.SLEEPER};
+
+    LocalTime[] busTiming = {
+            LocalTime.parse("07:00:00"),
+            LocalTime.parse("09:00:00"),
+            LocalTime.parse("12:00:00"),
+            LocalTime.parse("17:00:00"),
+            LocalTime.parse("21:00:00"),
+    };
+
+    // Sample data for route
+
+    String[] source = {"Chhattisgarh", "Mumbai", "Hyderabad", "Bangalore", "Goa"};
+    String[] destination = {"Mumbai", "Indore", "Chhattisgarh", "Punjab", "Mumbai"};
+    Direction[] directions = {Direction.UP, Direction.DOWN, Direction.UP, Direction.UP, Direction.DOWN};
+
+    String[] usernames = {"JohnDoe", "AliceSmith", "BobJohnson", "EmilyBrown", "MichaelDavis"};
+    String[] passwords = {"doe@123", "smith@234", "john@345", "brown@456", "davis@567"};
+    String[] emails = {"john.doe@gmail.com", "alice.smith@rediffmail.com", "bob.johnson@yahoo.in", "emily.brown@gmail.com",
+            "michael.davis@rediffmail.com"};
+    int[] userAges = {23, 46, 58, 33, 21};
+    Gender[] userGenders = {Gender.MALE, Gender.FEMALE, Gender.MALE, Gender.OTHER, Gender.MALE};
+    String[] phNos = {"9898976767", "7878765656", "8989877665", "9988656543", "8987967578"};
+
+    LocalDate[] bookingDates = {LocalDate.parse(DateUtils.convertDateFormat("02/09/2023")),
+            LocalDate.parse(DateUtils.convertDateFormat("03/09/2023")),
+            LocalDate.parse(DateUtils.convertDateFormat("10/09/2023")),
+            LocalDate.parse(DateUtils.convertDateFormat("12/12/2023")),
+            LocalDate.parse(DateUtils.convertDateFormat("08/08/2024"))
+    };
+
+    LocalDate[] paymentDates = {
+            LocalDate.parse(DateUtils.convertDateFormat("08/09/2023")),
+            LocalDate.parse(DateUtils.convertDateFormat("08/10/2023")),
+            LocalDate.parse(DateUtils.convertDateFormat("15/09/2023")),
+            LocalDate.parse(DateUtils.convertDateFormat("12/12/2023")),
+            LocalDate.parse(DateUtils.convertDateFormat("15/08/2024"))
+    };
+
+    LocalDate[] travelDates = {
+            LocalDate.parse(DateUtils.convertDateFormat("03/10/2023")),
+            LocalDate.parse(DateUtils.convertDateFormat("10/10/2023")),
+            LocalDate.parse(DateUtils.convertDateFormat("15/09/2023")),
+            LocalDate.parse(DateUtils.convertDateFormat("03/01/2024")),
+            LocalDate.parse(DateUtils.convertDateFormat("25/08/2024"))
+    };
+
+    // Sample data for Passenger
+    String[] passengerNames = {
+            "Alice Johnson",
+            "Bob Smith",
+            "Charlie Brown",
+            "David Wilson",
+            "Eva Davis",
+            "Frank Moore",
+            "Grace Taylor",
+            "Hannah Anderson",
+            "Isaac Thomas",
+            "Julia Martin"
+    };
+
+    int[] passengerAges = {
+            29,  // Alice Johnson
+            34,  // Bob Smith
+            28,  // Charlie Brown
+            45,  // David Wilson
+            31,  // Eva Davis
+            22,  // Frank Moore
+            39,  // Grace Taylor
+            27,  // Hannah Anderson
+            40,  // Isaac Thomas
+            33   // Julia Martin
+    };
+
+    Gender[] passengerGenders = {
+            Gender.FEMALE, // Alice Johnson
+            Gender.MALE,   // Bob Smith
+            Gender.OTHER,  // Charlie Brown
+            Gender.MALE,   // David Wilson
+            Gender.FEMALE, // Eva Davis
+            Gender.MALE,   // Frank Moore
+            Gender.OTHER,  // Grace Taylor
+            Gender.FEMALE, // Hannah Anderson
+            Gender.MALE,   // Isaac Thomas
+            Gender.OTHER   // Julia Martin
+    };
+
     private final BusRouteRepository busRouteRepository;
     private final BusRepository busRepository;
     private final RouteRepository routeRepository;
@@ -33,9 +145,10 @@ public class SampleDataInitializer {
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserWalletRepository userWalletRepository;
     private final BankDetailRepository bankDetailRepository;
+    private final CardDetailRepository cardDetailRepository;
 
     @Autowired
-    public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder, UserWalletRepository userWalletRepository, BankDetailRepository bankDetailRepository, BankDetailRepository bankDetailRepository1) {
+    public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder, UserWalletRepository userWalletRepository, BankDetailRepository bankDetailRepository, BankDetailRepository bankDetailRepository1, CardDetailRepository cardDetailRepository) {
         this.busRepository = busRepository;
         this.routeRepository = routeRepository;
         this.busRouteRepository = busRouteRepository;
@@ -47,6 +160,7 @@ public class SampleDataInitializer {
         this.passwordEncoder = passwordEncoder;
         this.userWalletRepository = userWalletRepository;
         this.bankDetailRepository = bankDetailRepository1;
+        this.cardDetailRepository = cardDetailRepository;
     }
 
     @PostConstruct
@@ -55,120 +169,7 @@ public class SampleDataInitializer {
         insertIntoEntitiesOneByOne();
     }
 
-
-
     private void insertIntoEntitiesOneByOne() {
-        // Sample data for Bus
-        String[] busNos = {
-                "KA07HM7834",
-                "CG04LM7492",
-                "AP11HL2756",
-                "PJ02HK7295",
-                "MH04UK2743"
-        };
-        int[] totalSeats = {65, 70, 45, 50, 55};
-        int[] availableSeats = {63, 60, 30, 20, 40};
-
-        String[] busCompanyNames = {
-                "Maya Travels",
-                "Sunny Roadways",
-                "Harleen Tourism",
-                "Karan Travels",
-                "Guru Roadways"
-
-        };
-
-        BusType[] busType = { BusType.AC,
-                           BusType.SLEEPER,
-                           BusType.NON_AC,
-                           BusType.NON_AC,
-                           BusType.SLEEPER};
-
-        LocalTime[] busTiming = {
-                LocalTime.parse("07:00:00"),
-                LocalTime.parse("09:00:00"),
-                LocalTime.parse("12:00:00"),
-                LocalTime.parse("17:00:00"),
-                LocalTime.parse("21:00:00"),
-        };
-
-        // Sample data for route
-
-        String[] source = {"Chhattisgarh", "Mumbai", "Hyderabad", "Bangalore", "Goa"};
-        String[] destination = {"Mumbai", "Indore", "Chhattisgarh", "Punjab", "Mumbai"};
-        Direction[] directions = {Direction.UP, Direction.DOWN, Direction.UP, Direction.UP, Direction.DOWN};
-
-        String[] usernames = {"JohnDoe", "AliceSmith", "BobJohnson", "EmilyBrown", "MichaelDavis"};
-        String[] passwords = {"doe@123", "smith@234", "john@345", "brown@456", "davis@567"};
-        String[] emails = {"john.doe@gmail.com", "alice.smith@rediffmail.com", "bob.johnson@yahoo.in", "emily.brown@gmail.com",
-                "michael.davis@rediffmail.com"};
-        int[] userAges = {23, 46, 58, 33, 21};
-        Gender[] userGenders = {Gender.MALE, Gender.FEMALE, Gender.MALE, Gender.OTHER, Gender.MALE};
-        String[] phNos = {"9898976767", "7878765656", "8989877665", "9988656543", "8987967578"};
-
-        LocalDate[] bookingDates = {LocalDate.parse(DateUtils.convertDateFormat("02/09/2023")),
-                LocalDate.parse(DateUtils.convertDateFormat("03/09/2023")),
-                LocalDate.parse(DateUtils.convertDateFormat("10/09/2023")),
-                LocalDate.parse(DateUtils.convertDateFormat("12/12/2023")),
-                LocalDate.parse(DateUtils.convertDateFormat("08/08/2024"))
-        };
-
-        LocalDate[] paymentDates = {
-                LocalDate.parse(DateUtils.convertDateFormat("08/09/2023")),
-                LocalDate.parse(DateUtils.convertDateFormat("08/10/2023")),
-                LocalDate.parse(DateUtils.convertDateFormat("15/09/2023")),
-                LocalDate.parse(DateUtils.convertDateFormat("12/12/2023")),
-                LocalDate.parse(DateUtils.convertDateFormat("15/08/2024"))
-        };
-
-        LocalDate[] travelDates = {
-                LocalDate.parse(DateUtils.convertDateFormat("03/10/2023")),
-                LocalDate.parse(DateUtils.convertDateFormat("10/10/2023")),
-                LocalDate.parse(DateUtils.convertDateFormat("15/09/2023")),
-                LocalDate.parse(DateUtils.convertDateFormat("03/01/2024")),
-                LocalDate.parse(DateUtils.convertDateFormat("25/08/2024"))
-        };
-
-        // Sample data for Passenger
-        String[] passengerNames = {
-                "Alice Johnson",
-                "Bob Smith",
-                "Charlie Brown",
-                "David Wilson",
-                "Eva Davis",
-                "Frank Moore",
-                "Grace Taylor",
-                "Hannah Anderson",
-                "Isaac Thomas",
-                "Julia Martin"
-        };
-
-        int[] passengerAges = {
-                29,  // Alice Johnson
-                34,  // Bob Smith
-                28,  // Charlie Brown
-                45,  // David Wilson
-                31,  // Eva Davis
-                22,  // Frank Moore
-                39,  // Grace Taylor
-                27,  // Hannah Anderson
-                40,  // Isaac Thomas
-                33   // Julia Martin
-        };
-
-        Gender[] passengerGenders = {
-                Gender.FEMALE, // Alice Johnson
-                Gender.MALE,   // Bob Smith
-                Gender.OTHER,  // Charlie Brown
-                Gender.MALE,   // David Wilson
-                Gender.FEMALE, // Eva Davis
-                Gender.MALE,   // Frank Moore
-                Gender.OTHER,  // Grace Taylor
-                Gender.FEMALE, // Hannah Anderson
-                Gender.MALE,   // Isaac Thomas
-                Gender.OTHER   // Julia Martin
-        };
-
 
         for (int i = 0; i < busNos.length; i++) {
             // Create and save Bus
@@ -433,28 +434,26 @@ public class SampleDataInitializer {
         Payment payment3 = new Payment();
         payment3.setPaymentMethod(PaymentMethod.DEBIT_CARD);
 
-        BankDetails bankDetails2 = bankDetailRepository.findByBankNameStartsWith("Axis").get(0);
+        CardDetails cardDetails = cardDetailRepository.findCardByEnding4DigitsAndType(1234, CardType.DEBIT).get(0);
 
-        if(payment5.getPaymentMethod() == PaymentMethod.NETBANKING) {
-            payment5.setPaymentReferenceId(bankDetails2.getBankId());
-            payment5.setPaymentReferenceType(PaymentRefType.BANK);
-            int receivedOtp = 343532;
+        if(payment3.getPaymentMethod() == PaymentMethod.DEBIT_CARD) {
+            payment3.setPaymentReferenceId(cardDetails.getCardId());
+            payment3.setPaymentReferenceType(PaymentRefType.CARD);
+            int receivedOtp = 840320;
             String otpString = String.valueOf(receivedOtp);
             if(otpString.length() == 6) {
                 System.out.println("OTP verified successfully");
-                payment5.setPaymentStatus(PaymentStatus.COMPLETED);
-                payment5.setBooking(booking5);
-                payment5.setAmount(booking5.getPrice());
-                payment5.setPaymentDate(paymentDates[4]);
-                booking5.setPayment(payment5);
+                payment3.setPaymentStatus(PaymentStatus.COMPLETED);
+                payment3.setBooking(booking3);
+                payment3.setAmount(booking3.getPrice());
+                payment3.setPaymentDate(paymentDates[4]);
+                booking3.setPayment(payment3);
 
-                // Saving booking1
+                busForBooking3.setAvailableSeats(busForBooking3.getAvailableSeats() -
+                        booking3.getPassengers().size());
+                busRepository.save(busForBooking3);
 
-                busForBooking4.setAvailableSeats(busForBooking4.getAvailableSeats() -
-                        booking4.getPassengers().size());
-                busRepository.save(busForBooking4);
-
-                bookingRepository.save(booking4);
+                bookingRepository.save(booking3);
 
             } else {
                 System.out.println("Invalid OTP");

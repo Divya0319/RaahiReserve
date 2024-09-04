@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface BankDetailRepository extends JpaRepository<BankDetails, Integer> {
 
-    @Query("SELECT bd FROM BankDetails bd WHERE bd.bankName LIKE :phrase%")
+    @Query("SELECT bd FROM BankDetails bd WHERE bd.bankName LIKE CONCAT(:phrase, '%')")
     List<BankDetails> findByBankNameStartsWith(@Param("phrase") String phrase);
 
 }
