@@ -2,6 +2,16 @@ package com.fastturtle.redbusschemadesign.repositories;
 
 import com.fastturtle.redbusschemadesign.models.UserWallet;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.math.BigInteger;
 
 public interface UserWalletRepository extends JpaRepository<UserWallet, Integer> {
+
+    @Query("SELECT uw FROM UserWallet uw WHERE uw.user.userId = :userId")
+    UserWallet findByUserId(@Param("userId") Integer userId);
+
+    @Query("SELECT uw.balance FROM UserWallet  uw WHERE uw.user.userName = :userName")
+    BigInteger fetchBalanceForUser(@Param("username") String username);
 }
