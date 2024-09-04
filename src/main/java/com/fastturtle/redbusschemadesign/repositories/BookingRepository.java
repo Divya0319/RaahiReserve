@@ -1,6 +1,7 @@
 package com.fastturtle.redbusschemadesign.repositories;
 
 import com.fastturtle.redbusschemadesign.models.Booking;
+import com.fastturtle.redbusschemadesign.models.Bus;
 import com.fastturtle.redbusschemadesign.models.Passenger;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,4 +23,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     @Query("SELECT COUNT(p) FROM Booking b JOIN b.passengers p WHERE b.travelDate = :date")
     long countByTraveledDate(@Param("date") LocalDate date);
+
+    @Query("SELECT bus FROM Booking b JOIN b.busRoute.bus bus WHERE b.bookingId = :bookingId")
+    Bus findBusForBooking(@Param("bookingId") int bookingId);
 }
