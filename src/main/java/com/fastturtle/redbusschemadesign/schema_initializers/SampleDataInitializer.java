@@ -323,7 +323,7 @@ public class SampleDataInitializer {
         int assignedSeatNo3 = rsnp.getRandomSeatNumberWithPreference(SeatType.AISLE, true);
 
         BusSeat busSeat3 = new BusSeat();
-        busSeat3.setBus(busRepository.findById(2).get());
+        busSeat3.setBus(busForBooking2);
         busSeat3.setSeatNumber(assignedSeatNo3);
         busSeat3.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatNo3));
         busSeat3.setOccupied(true);
@@ -591,7 +591,6 @@ public class SampleDataInitializer {
             }
 
         }
-
         return null;
     }
 
