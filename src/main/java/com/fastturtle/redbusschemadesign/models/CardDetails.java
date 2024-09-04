@@ -10,7 +10,7 @@ public class CardDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer cardId;
 
-    @Column(name = "cardNumber", unique = true, nullable = false)
+    @Column(name = "cardNumber", unique = true, nullable = false, length = 16)
     private String cardNumber;
 
     @Enumerated(EnumType.STRING)
