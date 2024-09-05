@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -235,52 +234,20 @@ public class SampleDataInitializer {
         Float booking1Cost = 0.0f;
 
         if(booking1.isUserPassenger()) {
-            int assignedSeatForUser = rsnp.getRandomSeatNumberWithPreference(SeatType.AISLE, true);
-            BusSeat busSeatForUser = new BusSeat();
-            busSeatForUser.setBus(busForBooking1);
-            busSeatForUser.setSeatNumber(assignedSeatForUser);
-            busSeatForUser.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatForUser));
-            busSeatForUser.setOccupied(true);
-            busSeatForUser.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")));
-            busSeatRepository.save(busSeatForUser);
+            BusSeat busSeatForUser = saveAssignedSeatToBusSeatEntityForBooking1(rsnp, busForBooking1, SeatType.AISLE);
 
             BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(busSeatForUser);
             Float seatCostForUser = seatCostRepository.findCostByBusType(busTypeForUser);
 
             booking1Cost += seatCostForUser;
 
-            Passenger userPassenger = new Passenger();
-            userPassenger.setName(booking1.getUser().getUserName());
-            userPassenger.setAge(booking1.getUser().getAge());
-            userPassenger.setGender(booking1.getUser().getGender());
-            userPassenger.setBusSeat(busSeatForUser);
-            booking1.addPassenger(userPassenger);
+            createAndSaveUserPassengerToBooking1(booking1, busSeatForUser);
 
         }
 
-        int assignedSeatNo1 = rsnp.getRandomSeatNumberWithPreference(SeatType.WINDOW, true);
+        BusSeat busSeat1 = saveAssignedSeatToBusSeatEntityForBooking1(rsnp, busForBooking1, SeatType.WINDOW);
 
-        BusSeat busSeat1 = new BusSeat();
-        busSeat1.setBus(busRepository.findById(1).get());
-        busSeat1.setSeatNumber(assignedSeatNo1);
-        busSeat1.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatNo1));
-        busSeat1.setOccupied(true);
-        busSeat1.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")));
-
-        busSeatRepository.save(busSeat1);
-
-
-
-        int assignedSeatNo2 = rsnp.getRandomSeatNumberWithPreference(SeatType.WINDOW, true);
-
-        BusSeat busSeat2 = new BusSeat();
-        busSeat2.setBus(busRepository.findById(1).get());
-        busSeat2.setSeatNumber(assignedSeatNo2);
-        busSeat2.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatNo2));
-        busSeat2.setOccupied(true);
-        busSeat2.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")));
-
-        busSeatRepository.save(busSeat2);
+        BusSeat busSeat2 = saveAssignedSeatToBusSeatEntityForBooking1(rsnp, busForBooking1, SeatType.WINDOW);
 
         BusType busTypeForSeat1 = busSeatRepository.findBusTypeFromBusSeat(busSeat1);
         Float seatCostForSeat1 = seatCostRepository.findCostByBusType(busTypeForSeat1);
@@ -295,21 +262,34 @@ public class SampleDataInitializer {
         booking1Cost = booking1Cost + seatCostForSeat1 + seatCostForSeat2;
         booking1.setPrice(booking1Cost);
 
-        Payment payment1 = new Payment();
-        payment1.setPaymentMethod(null);
-        payment1.setPaymentStatus(PaymentStatus.PENDING);
-        payment1.setBooking(booking1);
-        payment1.setAmount(0.00f);
-        payment1.setPaymentDate(null);
-        booking1.setPayment(payment1);
-
+        Booking bookingWithPaymentAdded = createAndSavePaymentForBooking(booking1, PaymentStatus.PENDING, null, null, null);
 
         busForBooking1.setAvailableSeats(busForBooking1.getAvailableSeats() -
-                booking1.getPassengers().size());
+                bookingWithPaymentAdded.getPassengers().size());
         busRepository.save(busForBooking1);
 
-        return bookingRepository.save(booking1);
+        return bookingRepository.save(bookingWithPaymentAdded);
 
+    }
+
+    private void createAndSaveUserPassengerToBooking1(Booking booking1, BusSeat busSeatForUser) {
+        Passenger userPassenger = new Passenger();
+        userPassenger.setName(booking1.getUser().getUserName());
+        userPassenger.setAge(booking1.getUser().getAge());
+        userPassenger.setGender(booking1.getUser().getGender());
+        userPassenger.setBusSeat(busSeatForUser);
+        booking1.addPassenger(userPassenger);
+    }
+
+    private BusSeat saveAssignedSeatToBusSeatEntityForBooking1(RandomSeatNumberProviderWithPreference rsnp, Bus busForBooking1, SeatType seatPref) {
+        int assignedSeat = rsnp.getRandomSeatNumberWithPreference(seatPref, true);
+        BusSeat busSeat = new BusSeat();
+        busSeat.setBus(busForBooking1);
+        busSeat.setSeatNumber(assignedSeat);
+        busSeat.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeat));
+        busSeat.setOccupied(true);
+        busSeat.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")));
+        return busSeatRepository.save(busSeat);
     }
 
     private Booking createAndSaveBooking2(RandomSeatNumberProviderWithPreference rsnp) {
@@ -592,6 +572,48 @@ public class SampleDataInitializer {
 
         }
         return null;
+    }
+
+    private Booking createAndSavePaymentForBooking(Booking booking, PaymentStatus paymentStatus, PaymentMethod paymentMethod,
+                                                   String bankNamePrefix, String cardSuffix) {
+        Payment payment = new Payment();
+        payment.setPaymentStatus(paymentStatus);
+
+        if(paymentStatus == PaymentStatus.PENDING) {
+            payment.setPaymentMethod(null);
+            payment.setAmount(0.00f);
+            payment.setPaymentDate(null);
+            payment.setBooking(booking);
+            booking.setPayment(payment);
+        } else if(paymentMethod == PaymentMethod.NETBANKING){
+            payment.setPaymentReferenceId(bankDetails.getBankId());
+            payment.setPaymentReferenceType(PaymentRefType.BANK);
+            int receivedOtp = 343532;
+            String otpString = String.valueOf(receivedOtp);
+            if(otpString.length() == 6) {
+                System.out.println("OTP verified successfully");
+                payment.setPaymentStatus(PaymentStatus.COMPLETED);
+                payment.setBooking(booking);
+                payment.setAmount(booking.getPrice());
+                payment.setPaymentDate(paymentDates[4]);
+                booking.setPayment(payment);
+
+//                // Saving booking1
+//
+//                busForBooking5.setAvailableSeats(busForBooking5.getAvailableSeats() -
+//                        booking5.getPassengers().size());
+//                busRepository.save(busForBooking5);
+//
+//                return bookingRepository.save(booking5);
+
+            } else {
+                System.out.println("Invalid OTP");
+            }
+        }
+
+
+
+        return booking;
     }
 
     private void markingTravelForBooking(Booking booking) {
