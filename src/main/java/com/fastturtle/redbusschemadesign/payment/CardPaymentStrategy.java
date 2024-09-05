@@ -32,7 +32,7 @@ public class CardPaymentStrategy implements PaymentStrategy {
 
         payment.setPaymentReferenceId(cardDetails.getCardId());
         payment.setPaymentReferenceType(PaymentRefType.CARD);
-        int receivedOtp = 840320;
+        int receivedOtp = cardParams.getReceivedOtp();
         String otpString = String.valueOf(receivedOtp);
         if(otpString.length() == 6) {
             System.out.println("OTP verified successfully");

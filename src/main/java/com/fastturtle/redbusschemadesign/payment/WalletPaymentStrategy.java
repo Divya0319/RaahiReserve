@@ -25,18 +25,23 @@ public class WalletPaymentStrategy implements PaymentStrategy {
         payment.setPaymentMethod(PaymentMethod.WALLET);
         payment.setPaymentStatus(paymentStatus);
 
+
         User user = walletParams.getUser();
         UserWallet userWallet = userWalletRepository.findByUserId(user.getUserId());
         double walletBalance1 = userWallet.getBalance().doubleValue();
+
+        payment.setPaymentReferenceId(userWallet.getWalletId());
+        payment.setUser(user);
+        payment.setPaymentReferenceType(PaymentRefType.USER);
 
         if(booking.getPrice() <= walletBalance1) {
             String enteredEmail = "alice.smith@rediffmail.com";
 
             if(enteredEmail.equals(user.getEmail())) {
-                int receivedOtp = 474649;
+                int receivedOtp = walletParams.getReceivedOtp();
                 String otpString = String.valueOf(receivedOtp);
                 if(otpString.length() == 6) {
-                    System.out.println("OTP verified successfully for booking 2");
+                    System.out.println("OTP verified successfully");
 
                     walletBalance1 -= booking.getPrice();
                     userWallet.setBalance(BigDecimal.valueOf(walletBalance1));

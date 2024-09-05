@@ -18,16 +18,16 @@ public class NetbankingPaymentStrategy implements PaymentStrategy {
     @Override
     public Booking processPayment(Booking booking, PaymentStatus paymentStatus, PaymentParams paymentParams) {
 
-        NetbankingPaymentParams walletParams = (NetbankingPaymentParams) paymentParams;
+        NetbankingPaymentParams netbankingPaymentParams = (NetbankingPaymentParams) paymentParams;
         Payment payment = new Payment();
         payment.setPaymentMethod(PaymentMethod.NETBANKING);
         payment.setPaymentStatus(paymentStatus);
 
-        BankDetails bankDetails = bankDetailRepository.findByBankNameStartsWith(((NetbankingPaymentParams) paymentParams).getBankNameSuffix()).get(0);
+        BankDetails bankDetails = bankDetailRepository.findByBankNameStartsWith(netbankingPaymentParams.getBankNamePrefix()).get(0);
 
         payment.setPaymentReferenceId(bankDetails.getBankId());
         payment.setPaymentReferenceType(PaymentRefType.BANK);
-        int receivedOtp = 343532;
+        int receivedOtp = netbankingPaymentParams.getReceivedOtp();
         String otpString = String.valueOf(receivedOtp);
         if(otpString.length() == 6) {
             System.out.println("OTP verified successfully");

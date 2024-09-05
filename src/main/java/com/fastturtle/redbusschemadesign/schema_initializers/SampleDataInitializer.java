@@ -3,9 +3,7 @@ package com.fastturtle.redbusschemadesign.schema_initializers;
 import com.fastturtle.redbusschemadesign.helpers.DateUtils;
 import com.fastturtle.redbusschemadesign.helpers.RandomSeatNumberProviderWithPreference;
 import com.fastturtle.redbusschemadesign.models.*;
-import com.fastturtle.redbusschemadesign.payment.PaymentParams;
-import com.fastturtle.redbusschemadesign.payment.WalletPaymentParams;
-import com.fastturtle.redbusschemadesign.payment.WalletPaymentStrategy;
+import com.fastturtle.redbusschemadesign.payment.*;
 import com.fastturtle.redbusschemadesign.repositories.*;
 import jakarta.annotation.PostConstruct;
 
@@ -22,7 +20,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+//@Component
 public class SampleDataInitializer {
 
     // Sample data for Bus
@@ -149,7 +147,7 @@ public class SampleDataInitializer {
     private final BankDetailRepository bankDetailRepository;
     private final CardDetailRepository cardDetailRepository;
 
-    @Autowired
+//    @Autowired
     public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder, UserWalletRepository userWalletRepository, BankDetailRepository bankDetailRepository, BankDetailRepository bankDetailRepository1, CardDetailRepository cardDetailRepository) {
         this.busRepository = busRepository;
         this.routeRepository = routeRepository;
@@ -242,7 +240,7 @@ public class SampleDataInitializer {
         Float booking1Cost = 0.0f;
 
         if(booking1.isUserPassenger()) {
-            BusSeat busSeatForUser = saveAssignedSeatToBusSeatEntityForBooking1(rsnp, busForBooking1, SeatType.AISLE);
+            BusSeat busSeatForUser = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking1, SeatType.AISLE);
 
             BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(busSeatForUser);
             Float seatCostForUser = seatCostRepository.findCostByBusType(busTypeForUser);
@@ -253,9 +251,9 @@ public class SampleDataInitializer {
 
         }
 
-        BusSeat busSeat1 = saveAssignedSeatToBusSeatEntityForBooking1(rsnp, busForBooking1, SeatType.WINDOW);
+        BusSeat busSeat1 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking1, SeatType.WINDOW);
 
-        BusSeat busSeat2 = saveAssignedSeatToBusSeatEntityForBooking1(rsnp, busForBooking1, SeatType.WINDOW);
+        BusSeat busSeat2 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking1, SeatType.WINDOW);
 
         BusType busTypeForSeat1 = busSeatRepository.findBusTypeFromBusSeat(busSeat1);
         Float seatCostForSeat1 = seatCostRepository.findCostByBusType(busTypeForSeat1);
@@ -289,10 +287,16 @@ public class SampleDataInitializer {
         booking1.addPassenger(userPassenger);
     }
 
-    private BusSeat saveAssignedSeatToBusSeatEntityForBooking1(RandomSeatNumberProviderWithPreference rsnp, Bus busForBooking1, SeatType seatPref) {
-        int assignedSeat = rsnp.getRandomSeatNumberWithPreference(seatPref, true);
+    private BusSeat saveAssignedSeatToBusSeatEntityForBooking(RandomSeatNumberProviderWithPreference rsnp, Bus busForBooking, SeatType seatPref) {
+        int assignedSeat;
+        if(seatPref == null) {
+            assignedSeat = rsnp.getRandomSeatNumber();
+        } else {
+            assignedSeat = rsnp.getRandomSeatNumberWithPreference(seatPref, true);
+        }
+
         BusSeat busSeat = new BusSeat();
-        busSeat.setBus(busForBooking1);
+        busSeat.setBus(busForBooking);
         busSeat.setSeatNumber(assignedSeat);
         busSeat.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeat));
         busSeat.setOccupied(true);
@@ -308,16 +312,7 @@ public class SampleDataInitializer {
         Bus busForBooking2 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking2).get(0);
         rsnp.setBusNo(busForBooking2.getBusNo());
 
-        int assignedSeatNo3 = rsnp.getRandomSeatNumberWithPreference(SeatType.AISLE, true);
-
-        BusSeat busSeat3 = new BusSeat();
-        busSeat3.setBus(busForBooking2);
-        busSeat3.setSeatNumber(assignedSeatNo3);
-        busSeat3.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatNo3));
-        busSeat3.setOccupied(true);
-        busSeat3.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")));
-
-        busSeatRepository.save(busSeat3);
+        BusSeat busSeat3 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking2, SeatType.AISLE);
 
         BusType busTypeForSeat3 = busSeatRepository.findBusTypeFromBusSeat(busSeat3);
         Float seatCostForSeat3 = seatCostRepository.findCostByBusType(busTypeForSeat3);
@@ -331,10 +326,20 @@ public class SampleDataInitializer {
         WalletPaymentStrategy wps = new WalletPaymentStrategy(userWalletRepository);
         WalletPaymentParams walletPaymentParams = new WalletPaymentParams();
         walletPaymentParams.setUser(user);
+        walletPaymentParams.setReceivedOtp(673412);
         walletPaymentParams.setPaymentDate(paymentDates[3]);
         booking2 = wps.processPayment(booking2, PaymentStatus.COMPLETED, walletPaymentParams);
 
-        return booking2;
+        if(booking2 != null) {
+            busForBooking2.setAvailableSeats(busForBooking2.getAvailableSeats() -
+                    booking2.getPassengers().size());
+            busRepository.save(busForBooking2);
+
+            return bookingRepository.save(booking2);
+        } else {
+            return null;
+        }
+
     }
 
     private Booking createAndSaveBooking3(RandomSeatNumberProviderWithPreference rsnp) {
@@ -348,39 +353,19 @@ public class SampleDataInitializer {
         Float booking3Cost = 0.0f;
 
         if(booking3.isUserPassenger()) {
-            int assignedSeatForUser = rsnp.getRandomSeatNumberWithPreference(SeatType.WINDOW, true);
-            BusSeat busSeatForUser = new BusSeat();
-            busSeatForUser.setBus(busForBooking3);
-            busSeatForUser.setSeatNumber(assignedSeatForUser);
-            busSeatForUser.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatForUser));
-            busSeatForUser.setOccupied(true);
-            busSeatForUser.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")));
-            busSeatRepository.save(busSeatForUser);
+
+            BusSeat busSeatForUser = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking3, SeatType.WINDOW);
 
             BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(busSeatForUser);
             Float seatCostForUser = seatCostRepository.findCostByBusType(busTypeForUser);
 
             booking3Cost += seatCostForUser;
 
-            Passenger userPassenger = new Passenger();
-            userPassenger.setName(booking3.getUser().getUserName());
-            userPassenger.setAge(booking3.getUser().getAge());
-            userPassenger.setGender(booking3.getUser().getGender());
-            userPassenger.setBusSeat(busSeatForUser);
-            booking3.addPassenger(userPassenger);
+            createAndSaveUserPassengerToBooking1(booking3, busSeatForUser);
 
         }
 
-        int assignedSeatNo4 = rsnp.getRandomSeatNumberWithPreference(SeatType.AISLE, true);
-
-        BusSeat busSeat4 = new BusSeat();
-        busSeat4.setBus(busForBooking3);
-        busSeat4.setSeatNumber(assignedSeatNo4);
-        busSeat4.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatNo4));
-        busSeat4.setOccupied(true);
-        busSeat4.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")));
-
-        busSeatRepository.save(busSeat4);
+        BusSeat busSeat4 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking3, SeatType.AISLE);
 
         BusType busTypeForSeat4 = busSeatRepository.findBusTypeFromBusSeat(busSeat4);
         Float seatCostForSeat4 = seatCostRepository.findCostByBusType(busTypeForSeat4);
@@ -391,38 +376,25 @@ public class SampleDataInitializer {
         booking3Cost = booking3Cost + seatCostForSeat4;
         booking3.setPrice(booking3Cost);
 
-        Payment payment3 = new Payment();
-        payment3.setPaymentMethod(PaymentMethod.DEBIT_CARD);
+        CardPaymentStrategy cps = new CardPaymentStrategy(cardDetailRepository);
+        CardPaymentParams cardPaymentParams = new CardPaymentParams();
+        cardPaymentParams.setLast4Digits(1234);
+        cardPaymentParams.setPaymentDate(paymentDates[4]);
+        cardPaymentParams.setReceivedOtp(840320);
+        cardPaymentParams.setCardType(CardType.DEBIT);
 
-        // Doing payment via Debit Card
-        CardDetails cardDetails = cardDetailRepository.findCardByEnding4DigitsAndType(1234, CardType.DEBIT).get(0);
+        booking3 = cps.processPayment(booking3, PaymentStatus.COMPLETED, cardPaymentParams);
 
-        if(payment3.getPaymentMethod() == PaymentMethod.DEBIT_CARD) {
-            payment3.setPaymentReferenceId(cardDetails.getCardId());
-            payment3.setPaymentReferenceType(PaymentRefType.CARD);
-            int receivedOtp = 840320;
-            String otpString = String.valueOf(receivedOtp);
-            if(otpString.length() == 6) {
-                System.out.println("OTP verified successfully");
-                payment3.setPaymentStatus(PaymentStatus.COMPLETED);
-                payment3.setBooking(booking3);
-                payment3.setAmount(booking3.getPrice());
-                payment3.setPaymentDate(paymentDates[4]);
-                booking3.setPayment(payment3);
+        if(booking3 != null) {
+            busForBooking3.setAvailableSeats(busForBooking3.getAvailableSeats() -
+                    booking3.getPassengers().size());
+            busRepository.save(busForBooking3);
 
-                busForBooking3.setAvailableSeats(busForBooking3.getAvailableSeats() -
-                        booking3.getPassengers().size());
-                busRepository.save(busForBooking3);
-
-                return bookingRepository.save(booking3);
-
-            } else {
-                System.out.println("Invalid OTP");
-            }
-
+            return bookingRepository.save(booking3);
+        } else {
+            return null;
         }
 
-        return null;
     }
 
     private Booking createAndSaveBooking4(RandomSeatNumberProviderWithPreference rsnp) {
@@ -433,16 +405,7 @@ public class SampleDataInitializer {
         Bus busForBooking4 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking4).get(0);
         rsnp.setBusNo(busForBooking4.getBusNo());
 
-        int assignedSeatNo5 = rsnp.getRandomSeatNumberWithPreference(SeatType.WINDOW, true);
-
-        BusSeat busSeat5 = new BusSeat();
-        busSeat5.setBus(busForBooking4);
-        busSeat5.setSeatNumber(assignedSeatNo5);
-        busSeat5.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatNo5));
-        busSeat5.setOccupied(true);
-        busSeat5.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")));
-
-        busSeatRepository.save(busSeat5);
+        BusSeat busSeat5 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking4, SeatType.WINDOW);
 
         BusType busTypeForSeat5 = busSeatRepository.findBusTypeFromBusSeat(busSeat5);
         Float seatCostForSeat5 = seatCostRepository.findCostByBusType(busTypeForSeat5);
@@ -452,37 +415,23 @@ public class SampleDataInitializer {
 
         booking4.setPrice(seatCostForSeat5);
 
-        Payment payment4 = new Payment();
-        payment4.setPaymentMethod(PaymentMethod.NETBANKING);
+        NetbankingPaymentStrategy nbps = new NetbankingPaymentStrategy(bankDetailRepository);
+        NetbankingPaymentParams netbankingPaymentParams = new NetbankingPaymentParams();
+        netbankingPaymentParams.setBankNamePrefix("HDFC");
+        netbankingPaymentParams.setReceivedOtp(343532);
+        netbankingPaymentParams.setPaymentDate(paymentDates[2]);
 
-        // Doing Payment via NetBanking
-        BankDetails bankDetails1 = bankDetailRepository.findByBankNameStartsWith("HDFC").get(0);
+        booking4 = nbps.processPayment(booking4, PaymentStatus.COMPLETED, netbankingPaymentParams);
 
-        if(payment4.getPaymentMethod() == PaymentMethod.NETBANKING) {
-            payment4.setPaymentReferenceId(bankDetails1.getBankId());
-            payment4.setPaymentReferenceType(PaymentRefType.BANK);
-            int receivedOtp = 343532;
-            String otpString = String.valueOf(receivedOtp);
-            if(otpString.length() == 6) {
-                System.out.println("OTP verified successfully");
-                payment4.setPaymentStatus(PaymentStatus.COMPLETED);
-                payment4.setBooking(booking4);
-                payment4.setAmount(booking4.getPrice());
-                payment4.setPaymentDate(paymentDates[2]);
-                booking4.setPayment(payment4);
+        if(booking4 != null) {
+            busForBooking4.setAvailableSeats(busForBooking4.getAvailableSeats() -
+                    booking4.getPassengers().size());
+            busRepository.save(busForBooking4);
 
-                busForBooking4.setAvailableSeats(busForBooking4.getAvailableSeats() -
-                        booking4.getPassengers().size());
-                busRepository.save(busForBooking4);
-
-                return bookingRepository.save(booking4);
-
-            } else {
-                System.out.println("Invalid OTP");
-            }
-
+            return bookingRepository.save(booking4);
+        } else {
+            return null;
         }
-        return null;
     }
 
     private Booking createAndSaveBooking5(RandomSeatNumberProviderWithPreference rsnp) {
@@ -493,17 +442,7 @@ public class SampleDataInitializer {
         Bus busForBooking5 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking5).get(0);
         rsnp.setBusNo(busForBooking5.getBusNo());
 
-        int assignedSeatNo6 = rsnp.getRandomSeatNumber();
-
-        BusSeat busSeat6 = new BusSeat();
-        busSeat6.setBus(busForBooking5);
-        busSeat6.setSeatNumber(assignedSeatNo6);
-        busSeat6.setSeatType(rsnp.getSeatTypeFromSeatNumber(assignedSeatNo6));
-        busSeat6.setOccupied(true);
-        busSeat6.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")));
-
-        busSeatRepository.save(busSeat6);
-
+        BusSeat busSeat6 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking5, null);
 
         BusType busTypeForSeat6 = busSeatRepository.findBusTypeFromBusSeat(busSeat6);
         Float seatCostForSeat6 = seatCostRepository.findCostByBusType(busTypeForSeat6);
@@ -512,39 +451,23 @@ public class SampleDataInitializer {
 
         booking5.setPrice(seatCostForSeat6);
 
-        Payment payment5 = new Payment();
-        payment5.setPaymentMethod(PaymentMethod.NETBANKING);
+        NetbankingPaymentStrategy nbps = new NetbankingPaymentStrategy((bankDetailRepository));
+        NetbankingPaymentParams netbankingPaymentParams = new NetbankingPaymentParams();
+        netbankingPaymentParams.setReceivedOtp(457433);
+        netbankingPaymentParams.setPaymentDate(paymentDates[4]);
+        netbankingPaymentParams.setBankNamePrefix("Axis");
 
-        // Doing Payment via Netbanking
-        BankDetails bankDetails2 = bankDetailRepository.findByBankNameStartsWith("Axis").get(0);
+        booking5 = nbps.processPayment(booking5, PaymentStatus.COMPLETED, netbankingPaymentParams);
 
-        if(payment5.getPaymentMethod() == PaymentMethod.NETBANKING) {
-            payment5.setPaymentReferenceId(bankDetails2.getBankId());
-            payment5.setPaymentReferenceType(PaymentRefType.BANK);
-            int receivedOtp = 343532;
-            String otpString = String.valueOf(receivedOtp);
-            if(otpString.length() == 6) {
-                System.out.println("OTP verified successfully");
-                payment5.setPaymentStatus(PaymentStatus.COMPLETED);
-                payment5.setBooking(booking5);
-                payment5.setAmount(booking5.getPrice());
-                payment5.setPaymentDate(paymentDates[4]);
-                booking5.setPayment(payment5);
+        if(booking5 != null) {
+            busForBooking5.setAvailableSeats(busForBooking5.getAvailableSeats() -
+                    booking5.getPassengers().size());
+            busRepository.save(busForBooking5);
 
-                // Saving booking1
-
-                busForBooking5.setAvailableSeats(busForBooking5.getAvailableSeats() -
-                        booking5.getPassengers().size());
-                busRepository.save(busForBooking5);
-
-                return bookingRepository.save(booking5);
-
-            } else {
-                System.out.println("Invalid OTP");
-            }
-
+            return bookingRepository.save(booking5);
+        } else {
+            return null;
         }
-        return null;
     }
 
     private Booking createAndSavePendingPaymentForBooking(Booking booking) {

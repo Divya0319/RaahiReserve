@@ -1,13 +1,13 @@
 package com.fastturtle.redbusschemadesign.payment;
 
 public class NetbankingPaymentParams extends PaymentParams {
-    private String bankNameSuffix;
+    private String bankNamePrefix;
 
-    public String getBankNameSuffix() {
-        return bankNameSuffix;
+    public String getBankNamePrefix() {
+        return bankNamePrefix;
     }
 
-    public void setBankNameSuffix(String bankNameSuffix) {
-        this.bankNameSuffix = bankNameSuffix;
+    public void setBankNamePrefix(String bankNamePrefix) {
+        this.bankNamePrefix = bankNamePrefix;
     }
 }
