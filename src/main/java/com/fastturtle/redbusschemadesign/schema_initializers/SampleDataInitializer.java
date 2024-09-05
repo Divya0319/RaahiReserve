@@ -3,6 +3,9 @@ package com.fastturtle.redbusschemadesign.schema_initializers;
 import com.fastturtle.redbusschemadesign.helpers.DateUtils;
 import com.fastturtle.redbusschemadesign.helpers.RandomSeatNumberProviderWithPreference;
 import com.fastturtle.redbusschemadesign.models.*;
+import com.fastturtle.redbusschemadesign.payment.PaymentParams;
+import com.fastturtle.redbusschemadesign.payment.WalletPaymentParams;
+import com.fastturtle.redbusschemadesign.payment.WalletPaymentStrategy;
 import com.fastturtle.redbusschemadesign.repositories.*;
 import jakarta.annotation.PostConstruct;
 
@@ -168,6 +171,11 @@ public class SampleDataInitializer {
         createAndSaveBusesRoutesAndBusRoutes();
         createAndSaveUsers();
         creatingAndSavingSeatCosts();
+        createAndInsert10MoreBuses();
+
+        createAndSaveCardDetails();
+        createAndSaveBankDetails();
+        createAndSaveUserWallets();
 
         RandomSeatNumberProviderWithPreference rsnp = new RandomSeatNumberProviderWithPreference(busRepository, busSeatRepository);
         Booking booking1 = createAndSaveBooking1(rsnp);
@@ -262,7 +270,7 @@ public class SampleDataInitializer {
         booking1Cost = booking1Cost + seatCostForSeat1 + seatCostForSeat2;
         booking1.setPrice(booking1Cost);
 
-        Booking bookingWithPaymentAdded = createAndSavePaymentForBooking(booking1, PaymentStatus.PENDING, null, null, null);
+        Booking bookingWithPaymentAdded = createAndSavePendingPaymentForBooking(booking1);
 
         busForBooking1.setAvailableSeats(busForBooking1.getAvailableSeats() -
                 bookingWithPaymentAdded.getPassengers().size());
@@ -318,50 +326,15 @@ public class SampleDataInitializer {
         booking2.addPassenger(new Passenger(passengerNames[2], passengerAges[2], passengerGenders[2], busSeat3));
         booking2.setPrice(seatCostForSeat3);
 
-        Payment payment2 = new Payment();
-        payment2.setPaymentMethod(PaymentMethod.WALLET);
-
-
-        // Doing payment via User wallet
+        // Doing payment for Booking 2 via User wallet
         User user = userRepository.findByUserName("AliceSmith");
-        UserWallet userWallet1 = userWalletRepository.findByUserId(user.getUserId());
-        double walletBalance1 = userWallet1.getBalance().doubleValue();
+        WalletPaymentStrategy wps = new WalletPaymentStrategy(userWalletRepository);
+        WalletPaymentParams walletPaymentParams = new WalletPaymentParams();
+        walletPaymentParams.setUser(user);
+        walletPaymentParams.setPaymentDate(paymentDates[3]);
+        booking2 = wps.processPayment(booking2, PaymentStatus.COMPLETED, walletPaymentParams);
 
-        if(booking2.getPrice() <= walletBalance1) {
-            String enteredEmail = "alice.smith@rediffmail.com";
-
-            if(enteredEmail.equals(user.getEmail())) {
-                int receivedOtp = 474649;
-                String otpString = String.valueOf(receivedOtp);
-                if(otpString.length() == 6) {
-                    System.out.println("OTP verified successfully for booking 2");
-
-                    walletBalance1 -= booking2.getPrice();
-                    userWallet1.setBalance(BigDecimal.valueOf(walletBalance1));
-                    userWalletRepository.save(userWallet1);
-
-                    payment2.setPaymentStatus(PaymentStatus.COMPLETED);
-                    payment2.setBooking(booking2);
-                    payment2.setAmount(booking2.getPrice());
-                    payment2.setPaymentDate(paymentDates[3]);
-                    booking2.setPayment(payment2);
-
-                    busForBooking2.setAvailableSeats(busForBooking2.getAvailableSeats() -
-                            booking2.getPassengers().size());
-                    busRepository.save(busForBooking2);
-
-                    // Saving booking2
-                    return bookingRepository.save(booking2);
-
-                } else {
-                    System.out.println("Invalid OTP");
-                }
-            }
-
-        } else {
-            System.out.println("Insufficient balance for payment of booking 1");
-        }
-        return null;
+        return booking2;
     }
 
     private Booking createAndSaveBooking3(RandomSeatNumberProviderWithPreference rsnp) {
@@ -574,44 +547,15 @@ public class SampleDataInitializer {
         return null;
     }
 
-    private Booking createAndSavePaymentForBooking(Booking booking, PaymentStatus paymentStatus, PaymentMethod paymentMethod,
-                                                   String bankNamePrefix, String cardSuffix) {
+    private Booking createAndSavePendingPaymentForBooking(Booking booking) {
         Payment payment = new Payment();
-        payment.setPaymentStatus(paymentStatus);
+        payment.setPaymentStatus(PaymentStatus.PENDING);
 
-        if(paymentStatus == PaymentStatus.PENDING) {
-            payment.setPaymentMethod(null);
-            payment.setAmount(0.00f);
-            payment.setPaymentDate(null);
-            payment.setBooking(booking);
-            booking.setPayment(payment);
-        } else if(paymentMethod == PaymentMethod.NETBANKING){
-            payment.setPaymentReferenceId(bankDetails.getBankId());
-            payment.setPaymentReferenceType(PaymentRefType.BANK);
-            int receivedOtp = 343532;
-            String otpString = String.valueOf(receivedOtp);
-            if(otpString.length() == 6) {
-                System.out.println("OTP verified successfully");
-                payment.setPaymentStatus(PaymentStatus.COMPLETED);
-                payment.setBooking(booking);
-                payment.setAmount(booking.getPrice());
-                payment.setPaymentDate(paymentDates[4]);
-                booking.setPayment(payment);
-
-//                // Saving booking1
-//
-//                busForBooking5.setAvailableSeats(busForBooking5.getAvailableSeats() -
-//                        booking5.getPassengers().size());
-//                busRepository.save(busForBooking5);
-//
-//                return bookingRepository.save(booking5);
-
-            } else {
-                System.out.println("Invalid OTP");
-            }
-        }
-
-
+        payment.setPaymentMethod(null);
+        payment.setAmount(0.00f);
+        payment.setPaymentDate(null);
+        payment.setBooking(booking);
+        booking.setPayment(payment);
 
         return booking;
     }
@@ -640,6 +584,169 @@ public class SampleDataInitializer {
 
         busForBooking.setAvailableSeats(busForBooking.getAvailableSeats() + passengersInBooking.size());
         busRepository.save(busForBooking);
+    }
+
+    private void createAndInsert10MoreBuses() {
+
+        // Sample data for Bus
+        String[] busNos = {
+                "KA07WA7234",
+                "CG14LT7402",
+                "AP02LH2736",
+                "PJ16TH1295",
+                "MH04WM2756",
+                "MH07HM7813",
+                "CG04HJ7412",
+                "AP11WA2746",
+                "PJ02BL7215",
+                "MH04PW2747"
+        };
+        int[] totalSeats = {65, 70, 45, 50, 55, 45, 80, 45, 60, 75};
+        int[] availableSeats = {63, 60, 45, 48, 55, 45, 75, 30, 10, 40};
+
+        String[] busCompanyNames = {
+                "Murgan Travels",
+                "Soni Roadways",
+                "Sania Travels",
+                "Sukhi Tourism",
+                "Gurudev Roadways",
+                "Satnaam Travels",
+                "Karan Roadways",
+                "Sinha Tourism",
+                "Lucky Transports",
+                "Jolly Travels"
+
+        };
+
+        BusType[] busType = {
+                BusType.AC,
+                BusType.SLEEPER,
+                BusType.NON_AC,
+                BusType.NON_AC,
+                BusType.AC,
+                BusType.SLEEPER,
+                BusType.SLEEPER,
+                BusType.NON_AC,
+                BusType.NON_AC,
+                BusType.AC
+        };
+
+        LocalTime[] busTiming = {
+                LocalTime.parse("07:00:00"),
+                LocalTime.parse("09:00:00"),
+                LocalTime.parse("12:00:00"),
+                LocalTime.parse("17:00:00"),
+                LocalTime.parse("12:00:00"),
+                LocalTime.parse("07:00:00"),
+                LocalTime.parse("09:00:00"),
+                LocalTime.parse("17:00:00"),
+                LocalTime.parse("07:00:00"),
+                LocalTime.parse("12:00:00")
+        };
+
+        // Sample data for route
+        Direction[] directions = {
+                Direction.UP,
+                Direction.DOWN,
+                Direction.UP,
+                Direction.UP,
+                Direction.DOWN,
+                Direction.UP,
+                Direction.DOWN,
+                Direction.UP,
+                Direction.UP,
+                Direction.DOWN
+        };
+
+        for (int i = 0; i < busNos.length; i++) {
+            // Create and save Bus
+            Bus bus = new Bus(busNos[i], busCompanyNames[i], totalSeats[i], availableSeats[i],
+                    busType[i], busTiming[i]);
+            busRepository.save(bus);
+
+        }
+
+        List<Route> routes = routeRepository.findAll();
+        List<Bus> buses = busRepository.findAll();
+
+        BusRoute[] busRoutes = new BusRoute[10];
+
+        // Create and save BusRoute
+        busRoutes[0] = new BusRoute(buses.get(5), routes.get(3), directions[0]);
+        busRoutes[1] = new BusRoute(buses.get(6), routes.get(2), directions[1]);
+        busRoutes[2] = new BusRoute(buses.get(7), routes.get(4), directions[2]);
+        busRoutes[3] = new BusRoute(buses.get(8), routes.get(1), directions[3]);
+        busRoutes[4] = new BusRoute(buses.get(9), routes.get(0), directions[4]);
+        busRoutes[5] = new BusRoute(buses.get(10), routes.get(3), directions[5]);
+        busRoutes[6] = new BusRoute(buses.get(11), routes.get(2), directions[6]);
+        busRoutes[7] = new BusRoute(buses.get(12), routes.get(4), directions[7]);
+        busRoutes[8] = new BusRoute(buses.get(13), routes.get(3), directions[8]);
+        busRoutes[9] = new BusRoute(buses.get(14), routes.get(2), directions[9]);
+
+        for (int i = 0; i < 10; i++) {
+            busRouteRepository.save(busRoutes[i]);
+        }
+    }
+
+    private void createAndSaveCardDetails() {
+        String[] cardNumbers = {"432111111234", "111123455432", "543211111234", "678943211234"};
+        CardType[] cardTypes = {
+                CardType.DEBIT,
+                CardType.CREDIT,
+                CardType.DEBIT,
+                CardType.CREDIT
+        };
+        Byte[] expiryMonths = {11, 12, 8, 9};
+        Integer[] expiryYears = {2027, 2029, 2026, 2025};
+        String[] cVVs = {"123", "321", "456", "678"};
+
+        for(int i = 0; i < cardNumbers.length; i++) {
+            CardDetails cardDetails = new CardDetails(cardNumbers[i], cardTypes[i], expiryMonths[i], expiryYears[i], cVVs[i], true);
+            cardDetailRepository.save(cardDetails);
+
+        }
+    }
+
+    private void createAndSaveBankDetails() {
+        String[] bankNames = {
+                "HDFC Bank Ltd",
+                "Axis Bank",
+                "State Bank of India",
+                "ICICI Bank",
+                "Bank of Baroda",
+                "Canara Bank",
+                "Punjab National Bank",
+                "Yes Bank Ltd",
+                "Allahabad Bank",
+                "Gramin Bank"
+        };
+        String[] bankCodes = {
+                "HDFC1234567890123456",
+                "AXIS1234567890123456",
+                "SBI12345678901234567",
+                "ICICI123456789012345",
+                "BOB12345678901234567",
+                "CANARA12345678901234",
+                "PNB12345678901234567",
+                "YES12345678901234567",
+                "ALHBD123456789012345",
+                "GRMN1234567890123456"
+        };
+
+        for(int i = 0; i < bankNames.length; i++) {
+            BankDetails bankDetails = new BankDetails(bankNames[i], bankCodes[i]);
+            bankDetailRepository.save(bankDetails);
+        }
+    }
+
+    private void createAndSaveUserWallets() {
+        List<User> users = userRepository.findAll();
+
+        for(User user : users) {
+            UserWallet uw = new UserWallet(BigDecimal.valueOf(2000));
+            uw.setUser(user);
+            userWalletRepository.save(uw);
+        }
     }
 
 }

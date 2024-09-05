@@ -1,12 +1,48 @@
 package com.fastturtle.redbusschemadesign.payment;
 
-import com.fastturtle.redbusschemadesign.models.Booking;
-import com.fastturtle.redbusschemadesign.models.Payment;
-import com.fastturtle.redbusschemadesign.models.PaymentStatus;
+import com.fastturtle.redbusschemadesign.models.*;
+import com.fastturtle.redbusschemadesign.repositories.BankDetailRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class NetbankingPaymentStrategy implements PaymentStrategy {
+
+    private final BankDetailRepository bankDetailRepository;
+
+    @Autowired
+    public NetbankingPaymentStrategy(BankDetailRepository bankDetailRepository) {
+        this.bankDetailRepository = bankDetailRepository;
+    }
+
     @Override
-    public Payment processPayment(Booking booking, PaymentStatus paymentStatus) {
+    public Booking processPayment(Booking booking, PaymentStatus paymentStatus, PaymentParams paymentParams) {
+
+        NetbankingPaymentParams walletParams = (NetbankingPaymentParams) paymentParams;
+        Payment payment = new Payment();
+        payment.setPaymentMethod(PaymentMethod.NETBANKING);
+        payment.setPaymentStatus(paymentStatus);
+
+        BankDetails bankDetails = bankDetailRepository.findByBankNameStartsWith(((NetbankingPaymentParams) paymentParams).getBankNameSuffix()).get(0);
+
+        payment.setPaymentReferenceId(bankDetails.getBankId());
+        payment.setPaymentReferenceType(PaymentRefType.BANK);
+        int receivedOtp = 343532;
+        String otpString = String.valueOf(receivedOtp);
+        if(otpString.length() == 6) {
+            System.out.println("OTP verified successfully");
+            payment.setPaymentStatus(PaymentStatus.COMPLETED);
+            payment.setBooking(booking);
+            payment.setAmount(booking.getPrice());
+            payment.setPaymentDate(paymentParams.getPaymentDate());
+            booking.setPayment(payment);
+
+            return booking;
+
+        } else {
+            System.out.println("Invalid OTP");
+        }
+
         return null;
     }
 }
