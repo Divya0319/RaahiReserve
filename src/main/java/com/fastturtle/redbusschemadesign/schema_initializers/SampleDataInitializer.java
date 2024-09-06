@@ -613,6 +613,12 @@ public class SampleDataInitializer {
 
     private void createAndSaveCardDetails() {
         String[] cardNumbers = {"432111111234", "111123455432", "543211111234", "678943211234"};
+        String[] cardHolderNames = {
+                "Vikram Bhatt",
+                "Suraj Pancholi",
+                "Anurag Basu",
+                "Neeraj Pandey"
+        };
         CardType[] cardTypes = {
                 CardType.DEBIT,
                 CardType.CREDIT,
@@ -624,7 +630,7 @@ public class SampleDataInitializer {
         String[] cVVs = {"123", "321", "456", "678"};
 
         for(int i = 0; i < cardNumbers.length; i++) {
-            CardDetails cardDetails = new CardDetails(cardNumbers[i], cardTypes[i], expiryMonths[i], expiryYears[i], cVVs[i], true);
+            CardDetails cardDetails = new CardDetails(cardNumbers[i], cardHolderNames[i], cardTypes[i], expiryMonths[i], expiryYears[i], cVVs[i], true);
             cardDetailRepository.save(cardDetails);
 
         }

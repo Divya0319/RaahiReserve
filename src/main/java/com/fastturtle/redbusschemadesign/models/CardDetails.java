@@ -13,6 +13,9 @@ public class CardDetails {
     @Column(name = "cardNumber", unique = true, nullable = false, length = 16)
     private String cardNumber;
 
+    @Column(name = "cardHolderName", nullable = false)
+    private String cardHolderName;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "cardType", nullable = false)
     private CardType cardType;
@@ -29,8 +32,9 @@ public class CardDetails {
     @Column(name = "isActive")
     private Boolean isActive;
 
-    public CardDetails(String cardNumber, CardType cardType, Byte expiryMonth, Integer expiryYear, String cvv, Boolean isActive) {
+    public CardDetails(String cardNumber, String cardHolderName, CardType cardType, Byte expiryMonth, Integer expiryYear, String cvv, Boolean isActive) {
         this.cardNumber = cardNumber;
+        this.cardHolderName = cardHolderName;
         this.cardType = cardType;
         this.expiryMonth = expiryMonth;
         this.expiryYear = expiryYear;
@@ -56,6 +60,14 @@ public class CardDetails {
 
     public void setCardNumber(String cardNumber) {
         this.cardNumber = cardNumber;
+    }
+
+    public String getCardHolderName() {
+        return cardHolderName;
+    }
+
+    public void setCardHolderName(String cardHolderName) {
+        this.cardHolderName = cardHolderName;
     }
 
     public CardType getCardType() {
