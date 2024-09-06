@@ -20,6 +20,9 @@ public class CardDetails {
     @Column(name = "cardType", nullable = false)
     private CardType cardType;
 
+    @Column(name = "cardCompany")
+    private String cardCompany;
+
     @Column(name = "expiryMonth", nullable = false)
     private Byte expiryMonth;
 
@@ -32,10 +35,11 @@ public class CardDetails {
     @Column(name = "isActive")
     private Boolean isActive;
 
-    public CardDetails(String cardNumber, String cardHolderName, CardType cardType, Byte expiryMonth, Integer expiryYear, String cvv, Boolean isActive) {
+    public CardDetails(String cardNumber, String cardHolderName, CardType cardType, String cardCompany, Byte expiryMonth, Integer expiryYear, String cvv, Boolean isActive) {
         this.cardNumber = cardNumber;
         this.cardHolderName = cardHolderName;
         this.cardType = cardType;
+        this.cardCompany = cardCompany;
         this.expiryMonth = expiryMonth;
         this.expiryYear = expiryYear;
         this.cvv = cvv;
@@ -76,6 +80,14 @@ public class CardDetails {
 
     public void setCardType(CardType cardType) {
         this.cardType = cardType;
+    }
+
+    public String getCardCompany() {
+        return cardCompany;
+    }
+
+    public void setCardCompany(String cardCompany) {
+        this.cardCompany = cardCompany;
     }
 
     public Byte getExpiryMonth() {

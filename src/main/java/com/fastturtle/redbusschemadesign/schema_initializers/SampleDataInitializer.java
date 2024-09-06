@@ -625,12 +625,19 @@ public class SampleDataInitializer {
                 CardType.DEBIT,
                 CardType.CREDIT
         };
+
+        String[] cardCompanies = {
+            "Visa",
+            "MasterCard",
+            "EasyShop",
+            "Discover"
+        };
         Byte[] expiryMonths = {11, 12, 8, 9};
         Integer[] expiryYears = {2027, 2029, 2026, 2025};
         String[] cVVs = {"123", "321", "456", "678"};
 
         for(int i = 0; i < cardNumbers.length; i++) {
-            CardDetails cardDetails = new CardDetails(cardNumbers[i], cardHolderNames[i], cardTypes[i], expiryMonths[i], expiryYears[i], cVVs[i], true);
+            CardDetails cardDetails = new CardDetails(cardNumbers[i], cardHolderNames[i], cardTypes[i], cardCompanies[i], expiryMonths[i], expiryYears[i], cVVs[i], true);
             cardDetailRepository.save(cardDetails);
 
         }

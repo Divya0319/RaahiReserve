@@ -2,7 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Payment Gateway</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap JS Bundle (includes Popper) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
     <div class="container mt-5">
@@ -84,7 +88,28 @@
                                                placeholder="Enter CVV">
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center align-items-end">
-                                        <button type="button" class="btn btn-primary">Proceed</button>
+                                        <button type="button" class="btn btn-primary" onclick="openOtpDialog()">Proceed</button>
+                                    </div>
+                                </div>
+
+                                <!-- OTP Modal -->
+                                <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="otpModalLabel"></h5> <!-- Title will be set dynamically -->
+                                            </div>
+                                            <div class="modal-body">
+                                                <p id="otpMessage"></p> <!-- OTP message will be set dynamically -->
+                                                <div class="mb-3">
+                                                    <label for="otpInput" class="form-label">Enter OTP</label>
+                                                    <input type="text" id="otpInput" class="form-control" maxlength="6" pattern="\d{6}" placeholder="Enter OTP" required>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-primary" onclick="submitOtp()">Submit</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -132,6 +157,34 @@
             let value = input.value;
             if (value.length === 2 && !value.includes('/')) {
                 input.value = value + '/'; // Automatically add a slash after the month
+            }
+        }
+
+        function openOtpDialog() {
+            // Assume cardCompany and userMobileNumber are fetched from the backend
+            const cardCompany = "Mastercard"; // Placeholder, replace with actual value
+            const userMobileNumber = "9876543210"; // Placeholder, replace with actual value
+
+            // Setting the modal title and message
+            document.getElementById('otpModalLabel').textContent = `${cardCompany} ID Check`;
+            document.getElementById('otpMessage').textContent = `OTP has been sent to registered number ending with ${userMobileNumber.slice(-4)}.`;
+
+            // Show the OTP Modal
+            const otpModal = new bootstrap.Modal(document.getElementById('otpModal'), {
+                backdrop: 'static',
+                keyboard: false
+            });
+            otpModal.show();
+        }
+
+        function submitOtp() {
+            // Close the OTP modal
+            const otpInput = document.getElementById('otpInput').value;
+
+            if (otpInput.trim() !== "") {
+                const otpModal = bootstrap.Modal.getInstance(document.getElementById('otpModal'));
+                document.getElementById('otpInput').value = '';
+                otpModal.hide();
             }
         }
 
