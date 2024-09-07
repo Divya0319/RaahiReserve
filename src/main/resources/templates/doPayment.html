@@ -55,7 +55,7 @@
                                 <input class="form-check-input" type="radio"
                                        th:id="${paymentMode}" th:name="paymentMode"
                                        th:value="${paymentMode}" required
-                                       onclick="toggleCardDetails(this)">
+                                       onclick="togglePaymentDetails(this)">
                                 <label class="form-check-label" th:for="${paymentMode}" th:text="${paymentMode}"></label>
                             </div>
 
@@ -114,6 +114,24 @@
                                 </div>
 
                             </div>
+
+                            <div id="bankOptions" style="display: none;" class="mt-3">
+                                <label for="bankName" class="form-label">Select Bank</label>
+                                <select class="form-control" name="source" id="bankName">
+                                    <option
+                                            th:each="bankDetail : ${bankDetails}"
+                                            th:value="${bankDetail.bankName}"
+                                            th:text="${bankDetail.bankName}">
+
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div id="walletDetails" style="display: none;" class="mt-3">
+                                <p><strong>User Email: </strong> <span th:text="${walletDetails.user.email}"></span></p>
+                                <p><strong>Wallet Balance: </strong> <span th:text="${walletDetails.balance}"></span></p>
+
+                            </div>
                         </div>
                     </div>
 
@@ -141,15 +159,30 @@
     </div>
 
     <script>
-        function toggleCardDetails(selectedElement) {
+        function togglePaymentDetails(selectedElement) {
             // Get the card details section
             const cardDetailsSection = document.getElementById('cardDetails');
+            const bankOptionsSection = document.getElementById('bankOptions');
+            const walletDetailsSection = document.getElementById('walletDetails')
 
-            // Show or hide card details based on the selected payment mode
+            // Show or hide payment details based on the selected payment mode
             if (selectedElement.value === 'DEBIT_CARD' || selectedElement.value === 'CREDIT_CARD') {
-                cardDetailsSection.style.display = 'block';  // Show if card mode selected
-            } else {
-                cardDetailsSection.style.display = 'none';  // Hide for other modes
+                cardDetailsSection.style.display = 'block';
+                bankOptionsSection.style.display = 'none';
+                walletDetailsSection.style.display = 'none'
+            } else if (selectedElement.value === 'NETBANKING') {
+                bankOptionsSection.style.display = 'block';
+                cardDetailsSection.style.display = 'none';
+                walletDetailsSection.style.display = 'none'
+            } else if(selectedElement.value === 'WALLET'){
+                walletDetailsSection.style.display = 'block'
+                bankOptionsSection.style.display = 'none';
+                cardDetailsSection.style.display = 'none';
+            }
+              else {
+                cardDetailsSection.style.display = 'none';
+                bankOptionsSection.style.display = 'none';
+                walletDetailsSection.style.display = 'none'
             }
         }
 

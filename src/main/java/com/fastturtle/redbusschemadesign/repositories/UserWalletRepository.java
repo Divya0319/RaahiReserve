@@ -14,4 +14,7 @@ public interface UserWalletRepository extends JpaRepository<UserWallet, Integer>
 
     @Query("SELECT uw.balance FROM UserWallet  uw WHERE uw.user.userName = :userName")
     BigInteger fetchBalanceForUser(@Param("userName") String userName);
+
+    @Query("SELECT uw FROM UserWallet uw JOIN uw.user u WHERE u.email = :email")
+    UserWallet findWalletByEmail(String email);
 }

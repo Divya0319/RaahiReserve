@@ -3,9 +3,12 @@ package com.fastturtle.redbusschemadesign.controllers;
 import com.fastturtle.redbusschemadesign.dtos.PaymentRequest;
 import com.fastturtle.redbusschemadesign.models.Booking;
 import com.fastturtle.redbusschemadesign.models.PaymentMethod;
+import com.fastturtle.redbusschemadesign.models.User;
+import com.fastturtle.redbusschemadesign.services.BankDetailsService;
 import com.fastturtle.redbusschemadesign.services.BookingService;
 import com.fastturtle.redbusschemadesign.services.PaymentService;
 //import io.swagger.v3.oas.annotations.Hidden;
+import com.fastturtle.redbusschemadesign.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +27,15 @@ public class PaymentController {
 
     private final PaymentService paymentService;
     private final BookingService bookingService;
+    private final BankDetailsService bankDetailsService;
+    private final UserService userService;
 
     @Autowired
-    public PaymentController(PaymentService paymentService, BookingService bookingService) {
+    public PaymentController(PaymentService paymentService, BookingService bookingService, BankDetailsService bankDetailsService, UserService userService) {
         this.paymentService = paymentService;
         this.bookingService = bookingService;
+        this.bankDetailsService = bankDetailsService;
+        this.userService = userService;
     }
 
     @PostMapping("/pay")
@@ -52,6 +59,9 @@ public class PaymentController {
         ResponseEntity<?> response = paymentService.checkPaymentStatusAndReturnBookingForBookingId(bookingId);
         if (response.getStatusCode() == HttpStatus.OK) {
             model.addAttribute("booking", response.getBody());
+            model.addAttribute("bankDetails", bankDetailsService.getAllBankDetails());
+            User loggedInUser = userService.findByUsername(principal.getName());
+            model.addAttribute("walletDetails", userService.getUserWalletByEmail(loggedInUser.getEmail()));
             model.addAttribute("isBookingIdPresent", true);
         } else if(response.getStatusCode() == HttpStatus.NOT_FOUND) {
             String errorMessage = ((Map<String, String>)response.getBody()).get("error");

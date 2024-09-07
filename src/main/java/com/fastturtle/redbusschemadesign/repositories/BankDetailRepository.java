@@ -12,4 +12,7 @@ public interface BankDetailRepository extends JpaRepository<BankDetails, Integer
     @Query("SELECT bd FROM BankDetails bd WHERE bd.bankName LIKE CONCAT(:phrase, '%')")
     List<BankDetails> findByBankNameStartsWith(@Param("phrase") String phrase);
 
+    @Query("SELECT bd.bankName FROM BankDetails bd")
+    List<BankDetails> findAllBankNames();
+
 }
