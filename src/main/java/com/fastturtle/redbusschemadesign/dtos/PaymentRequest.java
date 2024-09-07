@@ -1,7 +1,7 @@
 package com.fastturtle.redbusschemadesign.dtos;
 
-import com.fastturtle.redbusschemadesign.models.PaymentMethod;
-import com.fastturtle.redbusschemadesign.models.PaymentStatus;
+import com.fastturtle.redbusschemadesign.enums.PaymentMethod;
+import com.fastturtle.redbusschemadesign.enums.PaymentStatus;
 
 public class PaymentRequest {
     private int bookingId;

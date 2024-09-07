@@ -1,5 +1,8 @@
 package com.fastturtle.redbusschemadesign.payment;
 
+import com.fastturtle.redbusschemadesign.enums.PaymentMethod;
+import com.fastturtle.redbusschemadesign.enums.PaymentRefType;
+import com.fastturtle.redbusschemadesign.enums.PaymentStatus;
 import com.fastturtle.redbusschemadesign.models.*;
 import com.fastturtle.redbusschemadesign.repositories.BankDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;

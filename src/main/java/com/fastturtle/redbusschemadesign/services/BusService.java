@@ -1,7 +1,7 @@
 package com.fastturtle.redbusschemadesign.services;
 
 import com.fastturtle.redbusschemadesign.models.Bus;
-import com.fastturtle.redbusschemadesign.models.BusType;
+import com.fastturtle.redbusschemadesign.enums.BusType;
 import com.fastturtle.redbusschemadesign.models.Route;
 import com.fastturtle.redbusschemadesign.repositories.BusRepository;
 import com.fastturtle.redbusschemadesign.repositories.RouteRepository;

@@ -1,4 +1,4 @@
-package com.fastturtle.redbusschemadesign.models;
+package com.fastturtle.redbusschemadesign.enums;
 
 public enum BusType {
     AC,

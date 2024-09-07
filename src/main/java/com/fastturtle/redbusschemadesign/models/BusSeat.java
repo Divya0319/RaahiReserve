@@ -1,5 +1,6 @@
 package com.fastturtle.redbusschemadesign.models;
 
+import com.fastturtle.redbusschemadesign.enums.SeatType;
 import jakarta.persistence.*;
 
 import java.time.ZonedDateTime;

@@ -1,6 +1,6 @@
 package com.fastturtle.redbusschemadesign.controllers;
 
-import com.fastturtle.redbusschemadesign.models.BusType;
+import com.fastturtle.redbusschemadesign.enums.BusType;
 import com.fastturtle.redbusschemadesign.services.BusService;
 import com.fastturtle.redbusschemadesign.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

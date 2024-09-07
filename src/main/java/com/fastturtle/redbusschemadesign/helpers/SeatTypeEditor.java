@@ -1,6 +1,6 @@
 package com.fastturtle.redbusschemadesign.helpers;
 
-import com.fastturtle.redbusschemadesign.models.SeatType;
+import com.fastturtle.redbusschemadesign.enums.SeatType;
 
 import java.beans.PropertyEditorSupport;
 

@@ -1,6 +1,7 @@
 package com.fastturtle.redbusschemadesign.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fastturtle.redbusschemadesign.enums.BusType;
 import jakarta.persistence.*;
 
 import java.time.LocalTime;

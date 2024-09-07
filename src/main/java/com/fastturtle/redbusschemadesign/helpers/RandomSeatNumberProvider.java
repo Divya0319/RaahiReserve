@@ -1,6 +1,6 @@
 package com.fastturtle.redbusschemadesign.helpers;
 
-import com.fastturtle.redbusschemadesign.models.SeatType;
+import com.fastturtle.redbusschemadesign.enums.SeatType;
 import com.fastturtle.redbusschemadesign.repositories.BusRepository;
 import com.fastturtle.redbusschemadesign.repositories.BusSeatRepository;
 import org.springframework.beans.factory.annotation.Autowired;

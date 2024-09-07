@@ -1,6 +1,6 @@
 package com.fastturtle.redbusschemadesign.payment;
 
-import com.fastturtle.redbusschemadesign.models.CardType;
+import com.fastturtle.redbusschemadesign.enums.CardType;
 
 public class CardPaymentParams extends PaymentParams {
 

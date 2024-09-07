@@ -1,6 +1,10 @@
 package com.fastturtle.redbusschemadesign.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fastturtle.redbusschemadesign.enums.PaymentMethod;
+import com.fastturtle.redbusschemadesign.enums.PaymentRefType;
+import com.fastturtle.redbusschemadesign.enums.PaymentStatus;
+import com.fastturtle.redbusschemadesign.helpers.PaymentMethodConverter;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -26,6 +30,7 @@ public class Payment {
     private LocalDate paymentDate;
 
     @Enumerated(EnumType.STRING)
+    @Convert(converter = PaymentMethodConverter.class)
     @Column(name = "paymentMethod")
     private PaymentMethod paymentMethod;
 

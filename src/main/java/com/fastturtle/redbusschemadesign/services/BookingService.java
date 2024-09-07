@@ -2,6 +2,9 @@ package com.fastturtle.redbusschemadesign.services;
 
 import com.fastturtle.redbusschemadesign.dtos.BookingRequest;
 import com.fastturtle.redbusschemadesign.dtos.TravelRequest;
+import com.fastturtle.redbusschemadesign.enums.BusType;
+import com.fastturtle.redbusschemadesign.enums.PaymentStatus;
+import com.fastturtle.redbusschemadesign.enums.SeatType;
 import com.fastturtle.redbusschemadesign.helpers.RandomSeatNumberProvider;
 import com.fastturtle.redbusschemadesign.helpers.RandomSeatNumberProviderWithPreference;
 import com.fastturtle.redbusschemadesign.models.*;
@@ -15,7 +18,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class BookingService {

@@ -1,7 +1,7 @@
 package com.fastturtle.redbusschemadesign.payment;
 
 import com.fastturtle.redbusschemadesign.models.Booking;
-import com.fastturtle.redbusschemadesign.models.PaymentStatus;
+import com.fastturtle.redbusschemadesign.enums.PaymentStatus;
 
 public interface PaymentStrategy {
 

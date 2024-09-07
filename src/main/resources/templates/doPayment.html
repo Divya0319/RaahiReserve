@@ -173,15 +173,15 @@
             const walletWarningText = document.getElementById('walletWarning');
 
             // Show or hide payment details based on the selected payment mode
-            if (selectedElement.value === 'DEBIT_CARD' || selectedElement.value === 'CREDIT_CARD') {
+            if (selectedElement.value === 'Debit Card' || selectedElement.value === 'Credit Card') {
                 cardDetailsSection.style.display = 'block';
                 bankOptionsSection.style.display = 'none';
                 walletDetailsSection.style.display = 'none'
-            } else if (selectedElement.value === 'NETBANKING') {
+            } else if (selectedElement.value === 'Net Banking') {
                 bankOptionsSection.style.display = 'block';
                 cardDetailsSection.style.display = 'none';
                 walletDetailsSection.style.display = 'none'
-            } else if(selectedElement.value === 'WALLET') {
+            } else if(selectedElement.value === 'Wallet') {
                 walletDetailsSection.style.display = 'block'
                 bankOptionsSection.style.display = 'none';
                 cardDetailsSection.style.display = 'none';

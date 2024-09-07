@@ -1,8 +1,8 @@
 package com.fastturtle.redbusschemadesign.repositories;
 
 import com.fastturtle.redbusschemadesign.models.BusSeat;
-import com.fastturtle.redbusschemadesign.models.BusType;
-import com.fastturtle.redbusschemadesign.models.SeatType;
+import com.fastturtle.redbusschemadesign.enums.BusType;
+import com.fastturtle.redbusschemadesign.enums.SeatType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

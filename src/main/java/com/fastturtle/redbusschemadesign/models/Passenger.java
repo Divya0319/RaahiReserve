@@ -1,6 +1,7 @@
 package com.fastturtle.redbusschemadesign.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fastturtle.redbusschemadesign.enums.Gender;
 import jakarta.persistence.*;
 
 import java.util.HashSet;

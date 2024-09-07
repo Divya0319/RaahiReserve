@@ -2,7 +2,7 @@ package com.fastturtle.redbusschemadesign.controllers;
 
 import com.fastturtle.redbusschemadesign.dtos.PaymentRequest;
 import com.fastturtle.redbusschemadesign.models.Booking;
-import com.fastturtle.redbusschemadesign.models.PaymentMethod;
+import com.fastturtle.redbusschemadesign.enums.PaymentMethod;
 import com.fastturtle.redbusschemadesign.models.User;
 import com.fastturtle.redbusschemadesign.services.BankDetailsService;
 import com.fastturtle.redbusschemadesign.services.BookingService;

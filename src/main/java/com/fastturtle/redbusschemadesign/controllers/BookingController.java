@@ -2,6 +2,9 @@ package com.fastturtle.redbusschemadesign.controllers;
 
 import com.fastturtle.redbusschemadesign.dtos.BookingRequest;
 import com.fastturtle.redbusschemadesign.dtos.TravelRequest;
+import com.fastturtle.redbusschemadesign.enums.BusType;
+import com.fastturtle.redbusschemadesign.enums.Gender;
+import com.fastturtle.redbusschemadesign.enums.SeatType;
 import com.fastturtle.redbusschemadesign.helpers.BusDataUtils;
 import com.fastturtle.redbusschemadesign.helpers.DateUtils;
 import com.fastturtle.redbusschemadesign.helpers.SeatTypeEditor;

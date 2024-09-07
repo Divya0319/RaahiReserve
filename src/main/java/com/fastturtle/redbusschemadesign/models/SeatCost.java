@@ -1,5 +1,6 @@
 package com.fastturtle.redbusschemadesign.models;
 
+import com.fastturtle.redbusschemadesign.enums.BusType;
 import jakarta.persistence.*;
 
 @Entity
