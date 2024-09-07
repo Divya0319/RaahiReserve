@@ -148,7 +148,7 @@ public class BookingService {
                 seatForUser.setOccupied(true);
                 seatForUser.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")));
             } else {
-                // Handle "NO_PREFERENCE" case, assign any available seat
+                // Handle "No Preference" case, assign any available seat
                 seatForUser = getBusSeatWithoutPreference(busForBooking);
             }
             busSeatRepository.save(seatForUser);
@@ -184,7 +184,7 @@ public class BookingService {
                 seatForPassenger.setOccupied(true);
                 seatForPassenger.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")));
             } else {
-                // Handle "NO_PREFERENCE" case, assign any available seat
+                // Handle "No Preference" case, assign any available seat
                 seatForPassenger = getBusSeatWithoutPreference(busForBooking);
             }
 

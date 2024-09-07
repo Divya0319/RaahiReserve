@@ -119,8 +119,8 @@
                             <select class="form-control" name="busType" id="busTypeDropdown">
                                 <option
                                         th:each="busType : ${busTypes}"
-                                        th:value="${busType}"
-                                        th:text="${busType}">
+                                        th:value="${busType.name}"
+                                        th:text="${busType.toString}">
                                 </option>
                             </select>
 
@@ -147,7 +147,7 @@
                 </form>
 
                 <!-- Passenger Forms -->
-                <form th:action="@{/bookings/create}" method="post">
+                <form id="passengersSaveForm" th:action="@{/bookings/create}" method="post">
                     <!-- Hidden Inputs -->
                     <input type="hidden" name="source" th:value="${selectedSource}" />
                     <input type="hidden" name="destination" th:value="${selectedDestination}" />
@@ -186,8 +186,10 @@
                     </div>
 
                     <button type="button" id="add-passenger" class="btn btn-primary mt-3">Add Another Passenger</button>
-                    <button type="submit" class="btn btn-success mt-3">Submit</button>
+                    <button type="submit" id="save-passengers" class="btn btn-success mt-3">Submit</button>
                     <a href="/redbus" class="btn btn-danger mt-3">Cancel</a>
+                    <span id="warningText" class="text-danger ml-3 mt-2" style="display: none;">Please select a travel date</span>
+
                 </form>
             </div>
         </div>
@@ -197,10 +199,22 @@
 
         let passengerIndex = 1;
 
+        // Function to handle age validation
+        function handleAgeValidation(inputElement) {
+            inputElement.addEventListener('input', function () {
+                const value = parseInt(inputElement.value, 10);
+                if (value < 1) {
+                    inputElement.value = 1;
+                } else if (value > 100) {
+                    inputElement.value = 100;
+                }
+            });
+        }
+
         // Pass Thymeleaf variables to JavaScript
 
         const genders = ['MALE', 'FEMALE', 'OTHER'];
-        const seatPreferences = ['NO_PREFERENCE', 'AISLE', 'WINDOW'];
+        const seatPreferences = ['No Preference', 'AISLE', 'WINDOW'];
 
         $('#add-passenger').click(function () {
             const newForm = `
@@ -225,8 +239,13 @@
             `;
 
             $('#passenger-forms').append(newForm);
+
+            handleAgeValidation(document.getElementById(`age-${passengerIndex}`));
+
             passengerIndex++;
         });
+
+        handleAgeValidation(document.getElementById('age-0'));
 
     </script>
 
@@ -235,6 +254,24 @@
         document.addEventListener("DOMContentLoaded", function() {
             document.getElementById("travelDatePicker").addEventListener("change", function () {
                 document.getElementById("hiddenTravelDate").value = this.value;
+            });
+
+            document.getElementById("save-passengers").addEventListener("click", function (event) {
+                // Check if the hidden field is empty
+                const hiddenTravelDate = document.getElementById("hiddenTravelDate").value;
+
+                if (!hiddenTravelDate) { // If the value is empty
+                    // Show warning text
+                    const warningText = document.getElementById("warningText");
+                    warningText.style.display = 'inline'; // Show warning text
+
+                    // Hide the warning text after 3 seconds
+                    setTimeout(function () {
+                        warningText.style.display = 'none';
+                    }, 3000);
+
+                    event.preventDefault(); // Prevent navigation if needed
+                }
             });
 
             document.getElementById("addUserAsPassengerCheckBox").addEventListener("change", function () {
@@ -282,6 +319,19 @@
             if (busTypeDropdown) {
                 busTypeDropdown.dispatchEvent(new Event("change")); // Trigger the change event
             }
+
+            const ageInput = document.getElementById('age');
+
+            ageInput.addEventListener('input', function () {
+                const value = parseInt(ageInput.value, 10);
+
+                // If value is less than min or greater than max, set it to min or max respectively
+                if (value < 1) {
+                    ageInput.value = 1;
+                } else if (value > 100) {
+                    ageInput.value = 100;
+                }
+            });
 
         });
 
