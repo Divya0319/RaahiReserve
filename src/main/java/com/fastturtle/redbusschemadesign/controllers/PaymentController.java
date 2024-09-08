@@ -122,4 +122,11 @@ public class PaymentController {
 
         return "resultForPaymentModeSelection";
     }
+
+    @PostMapping("/otpValidation")
+    public String showValidateOtpPage(@RequestParam("paymentModeChosen") String paymentMode, Model model) {
+        model.addAttribute("paymentModeChosen", paymentMode);
+        return "securePaymentGateway";
+    }
+
 }

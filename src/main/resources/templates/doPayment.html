@@ -42,16 +42,16 @@
                     </div>
                 </form>
 
-                <form th:if="${errorMessage == null && successMessage == null}" th:action="@{/payments/doPayment}" method="post">
+<!--                <form th:if="${errorMessage == null && successMessage == null}" th:action="@{/payments/doPayment}" method="post">-->
 
                     <input type="hidden" th:if="${isBookingIdPresent}" th:name="bookingId" th:value="${booking.bookingId}"/>
                     <div th:if="${isBookingIdPresent}" class="mb-3">
-                        <label for="paymentMode" class="form-label">Select Payment Mode</label>
-                        <div id="paymentMode">
+                        <label for="paymentModeDiv" class="form-label">Select Payment Mode</label>
+                        <div id="paymentModeDiv">
                             <div th:each="paymentMode : ${paymentModes}" class="form-check">
                                 <input class="form-check-input" type="radio"
                                        th:id="${paymentMode}" th:name="paymentMode"
-                                       th:value="${paymentMode}" required
+                                       th:value="${paymentMode.name}" required
                                        onclick="togglePaymentDetails(this)">
                                 <label class="form-check-label" th:for="${paymentMode}" th:text="${paymentMode}"></label>
                             </div>
@@ -85,7 +85,10 @@
                                                placeholder="Enter CVV">
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center align-items-end">
-                                        <button type="button" class="btn btn-primary">Proceed</button>
+                                        <form th:action="@{/payments/otpValidation}" method="post">
+                                            <input type="hidden" th:if="${isBookingIdPresent}" th:name="paymentModeChosen" th:value="'card'"/>
+                                            <button type="submit" class="btn btn-primary">Proceed</button>
+                                        </form>
                                     </div>
                                 </div>
 
@@ -102,7 +105,10 @@
 
                                         </option>
                                     </select>
-                                    <button id="bankProceedButton" type="button" class="btn btn-primary ms-2">Proceed</button>
+                                    <form th:action="@{/payments/otpValidation}" method="post">
+                                        <input type="hidden" th:if="${isBookingIdPresent}" th:name="paymentModeChosen" th:value="'netbanking'"/>
+                                        <button type="submit" class="btn btn-primary ms-2">Proceed</button>
+                                    </form>
                                 </div>
                             </div>
 
@@ -110,16 +116,19 @@
                                 <p><strong>User Email: </strong> <span th:text="${walletDetails.user.email}"></span></p>
                                 <p><strong>Wallet Balance: </strong> <span id="walletBalance" th:text="${walletDetails.balance}"></span></p>
 
-                                <button id="walletProceedButton" type="button" class="btn btn-primary">Proceed</button>
+                                <form th:action="@{/payments/otpValidation}" method="post">
+                                    <input type="hidden" th:if="${isBookingIdPresent}" th:name="paymentModeChosen" th:value="'wallet'"/>
+                                    <button id="walletProceedButton" type="submit" class="btn btn-primary">Proceed</button>
+                                </form>
                                 <span id="walletWarning" class="text-danger" style="display: none;">Insufficient balance</span>
                             </div>
                         </div>
                     </div>
 
-                    <button th:if="${isBookingIdPresent}" type="submit" class="btn btn-success" name="action" value="completed">Mark Payment Completed</button>
+<!--                    <button th:if="${isBookingIdPresent}" type="submit" class="btn btn-success" name="action" value="completed">Mark Payment Completed</button>-->
 
-                    <button th:if="${isBookingIdPresent}" type="submit" class="btn btn-danger" name="action" value="failed">Mark Payment Failed</button>
-                </form>
+<!--                    <button th:if="${isBookingIdPresent}" type="submit" class="btn btn-danger" name="action" value="failed">Mark Payment Failed</button>-->
+<!--                </form>-->
 
                 <div th:if="${errorMessage != null}" class="alert alert-danger d-inline-block ml-3 mt-3" style="width: auto" >
                     <p th:text="${errorMessage}"></p>
@@ -149,15 +158,15 @@
             const walletWarningText = document.getElementById('walletWarning');
 
             // Show or hide payment details based on the selected payment mode
-            if (selectedElement.value === 'Debit Card' || selectedElement.value === 'Credit Card') {
+            if (selectedElement.value === 'DEBIT_CARD' || selectedElement.value === 'CREDIT_CARD') {
                 cardDetailsSection.style.display = 'block';
                 bankOptionsSection.style.display = 'none';
                 walletDetailsSection.style.display = 'none'
-            } else if (selectedElement.value === 'Net Banking') {
+            } else if (selectedElement.value === 'NETBANKING') {
                 bankOptionsSection.style.display = 'block';
                 cardDetailsSection.style.display = 'none';
                 walletDetailsSection.style.display = 'none'
-            } else if(selectedElement.value === 'Wallet') {
+            } else if(selectedElement.value === 'WALLET') {
                 walletDetailsSection.style.display = 'block'
                 bankOptionsSection.style.display = 'none';
                 cardDetailsSection.style.display = 'none';
