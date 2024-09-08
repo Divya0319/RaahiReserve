@@ -2,6 +2,7 @@ package com.fastturtle.redbusschemadesign.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fastturtle.redbusschemadesign.enums.BusType;
+import com.fastturtle.redbusschemadesign.helpers.BusTypeConverter;
 import jakarta.persistence.*;
 
 import java.time.LocalTime;
@@ -28,6 +29,7 @@ public class Bus {
     private int availableSeats;
 
     @Enumerated(EnumType.STRING)
+    @Convert(converter = BusTypeConverter.class)
     @Column(name = "busType", nullable = false)
     private BusType busType;
 

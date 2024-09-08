@@ -133,7 +133,7 @@
                             th:value="${selectedTravelDate}"/>
                         </div>
 
-                        <div class="bus-container ml-3 mt-2" th:each="entry : ${busesByType}" th:data-type="${entry.key}">
+                        <div class="bus-container ml-3 mt-2" th:each="entry : ${busesByType}" th:data-type="${entry.key.name}">
                             <div th:each="bus : ${entry.value}">
                                 <label>
                                     <input type="radio" name="busId" th:value="${bus.busId}" onclick="updateSelectedBusId(this)" />
@@ -188,7 +188,8 @@
                     <button type="button" id="add-passenger" class="btn btn-primary mt-3">Add Another Passenger</button>
                     <button type="submit" id="save-passengers" class="btn btn-success mt-3">Submit</button>
                     <a href="/redbus" class="btn btn-danger mt-3">Cancel</a>
-                    <span id="warningText" class="text-danger ml-3 mt-2" style="display: none;">Please select a travel date</span>
+                    <span id="warningTextForTravelDate" class="text-danger ml-3 mt-2" style="display: none;">Please select a travel date</span>
+                    <span id="warningTextForBus" class="text-danger ml-3 mt-2" style="display: none;">Please select a Bus</span>
 
                 </form>
             </div>
@@ -257,17 +258,30 @@
             });
 
             document.getElementById("save-passengers").addEventListener("click", function (event) {
-                // Check if the hidden field is empty
+                // Checking if the hidden field or selectedBusId field is empty
                 const hiddenTravelDate = document.getElementById("hiddenTravelDate").value;
+                const selectedBusIdInput = document.getElementById("selectedBusId");
 
-                if (!hiddenTravelDate) { // If the value is empty
-                    // Show warning text
-                    const warningText = document.getElementById("warningText");
-                    warningText.style.display = 'inline'; // Show warning text
+                if (selectedBusIdInput.value === "") {
+                    const warningTextForBus = document.getElementById("warningTextForBus");
+                    warningTextForBus.style.display = 'inline'; // Show warning text
 
                     // Hide the warning text after 3 seconds
                     setTimeout(function () {
-                        warningText.style.display = 'none';
+                        warningTextForBus.style.display = 'none';
+                    }, 3000);
+
+                    event.preventDefault(); // Prevent navigation if needed
+                }
+
+                if (!hiddenTravelDate) { // If the value is empty
+                    // Show warning text
+                    const warningTextForTravelDate = document.getElementById("warningTextForTravelDate");
+                    warningTextForTravelDate.style.display = 'inline'; // Show warning text
+
+                    // Hide the warning text after 3 seconds
+                    setTimeout(function () {
+                        warningTextForTravelDate.style.display = 'none';
                     }, 3000);
 
                     event.preventDefault(); // Prevent navigation if needed

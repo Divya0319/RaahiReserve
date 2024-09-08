@@ -4,9 +4,6 @@
     <title>Payment Gateway</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Bootstrap JS Bundle (includes Popper) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
     <div class="container mt-5">
@@ -88,28 +85,7 @@
                                                placeholder="Enter CVV">
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center align-items-end">
-                                        <button type="button" class="btn btn-primary" onclick="openOtpDialog('card', )">Proceed</button>
-                                    </div>
-                                </div>
-
-                                <!-- OTP Modal -->
-                                <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="otpModalLabel"></h5> <!-- Title will be set dynamically -->
-                                            </div>
-                                            <div class="modal-body">
-                                                <p id="otpMessage"></p> <!-- OTP message will be set dynamically -->
-                                                <div class="mb-3">
-                                                    <label for="otpInput" class="form-label">Enter OTP</label>
-                                                    <input type="text" id="otpInput" class="form-control" maxlength="6" pattern="\d{6}" placeholder="Enter OTP" required>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-primary" onclick="submitOtp()">Submit</button>
-                                            </div>
-                                        </div>
+                                        <button type="button" class="btn btn-primary">Proceed</button>
                                     </div>
                                 </div>
 
@@ -126,7 +102,7 @@
 
                                         </option>
                                     </select>
-                                    <button id="bankProceedButton" type="button" class="btn btn-primary ms-2" onclick="handleBankProceed()">Proceed</button>
+                                    <button id="bankProceedButton" type="button" class="btn btn-primary ms-2">Proceed</button>
                                 </div>
                             </div>
 
@@ -134,7 +110,7 @@
                                 <p><strong>User Email: </strong> <span th:text="${walletDetails.user.email}"></span></p>
                                 <p><strong>Wallet Balance: </strong> <span id="walletBalance" th:text="${walletDetails.balance}"></span></p>
 
-                                <button id="walletProceedButton" type="button" class="btn btn-primary" onclick="openOtpDialog('wallet', ${walletDetails})">Proceed</button>
+                                <button id="walletProceedButton" type="button" class="btn btn-primary">Proceed</button>
                                 <span id="walletWarning" class="text-danger" style="display: none;">Insufficient balance</span>
                             </div>
                         </div>
@@ -211,54 +187,6 @@
             }
         }
 
-        function handleBankProceed() {
-            // Get the selected bank name from the dropdown
-            const bankName = document.getElementById('bankName').value;
-            const payableAmount = parseFloat(document.getElementById('payableAmount').textContent);
-
-            // Call openOtpDialog with the bank name
-            openOtpDialog('netbanking',
-                bankName,
-                payableAmount
-            );
-        }
-
-        function openOtpDialog(paymentType, paymentModeDetails, payableAmount) {
-            let title, message;
-
-            switch (paymentType) {
-                case 'card':
-                    const cardNumber = paymentModeDetails.cardNumber; // e.g., "4123456789012345"
-                    const cardCompany = getCardCompany(cardNumber);
-                    title = `${cardCompany} ID Check`;
-                    message = `You are paying ${payableAmount} to Red Bus Booking\n\nOTP has been sent to registered number ending with ${paymentDetails.userMobileNumber.slice(-4)}.`;
-                    break;
-                case 'netbanking':
-                    title = `Electronic Payment Facility - ${paymentModeDetails.bankName}`;
-                    message = `You are paying ${payableAmount} to Red Bus Booking. Please enter the OTP received on registered mobile number ending with ${paymentDetails.userMobileNumber.slice(-4)}.`;
-                    break;
-                case 'wallet':
-                    title = `Wallet Balance: ${paymentModeDetails.balance}`;
-                    message = `Username: ${paymentModeDetails.user.userName}\n\nYou are paying ${payableAmount} to Red Bus Booking\n\nOTP has been sent to registered number ending with ${paymentDetails.user.phoneNumber.slice(-4)}.`;
-                    break;
-                default:
-                    title = 'Payment Verification';
-                    message = 'Please complete the payment verification process.';
-                    break;
-            }
-
-            // Set the modal title and message
-            document.getElementById('otpModalLabel').textContent = title;
-            document.getElementById('otpMessage').textContent = message;
-
-            // Show the OTP Modal
-            const otpModal = new bootstrap.Modal(document.getElementById('otpModal'), {
-                backdrop: 'static',
-                keyboard: false
-            });
-            otpModal.show();
-        }
-
         function getCardCompany(cardNumber) {
             if (cardNumber.startsWith('4')) return 'Visa';
             if (cardNumber.startsWith('1')) return 'Mastercard';
@@ -268,13 +196,10 @@
         }
 
         function submitOtp() {
-            // Close the OTP modal
             const otpInput = document.getElementById('otpInput').value;
 
             if (otpInput.trim() !== "") {
-                const otpModal = bootstrap.Modal.getInstance(document.getElementById('otpModal'));
                 document.getElementById('otpInput').value = '';
-                otpModal.hide();
             }
         }
 
