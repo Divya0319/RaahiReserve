@@ -88,7 +88,7 @@
                                                placeholder="Enter CVV">
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center align-items-end">
-                                        <button type="button" class="btn btn-primary" onclick="openOtpDialog()">Proceed</button>
+                                        <button type="button" class="btn btn-primary" onclick="openOtpDialog('card', )">Proceed</button>
                                     </div>
                                 </div>
 
@@ -126,7 +126,7 @@
 
                                         </option>
                                     </select>
-                                    <button id="bankProceedButton" type="button" class="btn btn-primary ms-2">Proceed</button>
+                                    <button id="bankProceedButton" type="button" class="btn btn-primary ms-2" onclick="handleBankProceed()">Proceed</button>
                                 </div>
                             </div>
 
@@ -134,7 +134,7 @@
                                 <p><strong>User Email: </strong> <span th:text="${walletDetails.user.email}"></span></p>
                                 <p><strong>Wallet Balance: </strong> <span id="walletBalance" th:text="${walletDetails.balance}"></span></p>
 
-                                <button id="walletProceedButton" type="button" class="btn btn-primary">Proceed</button>
+                                <button id="walletProceedButton" type="button" class="btn btn-primary" onclick="openOtpDialog('wallet', ${walletDetails})">Proceed</button>
                                 <span id="walletWarning" class="text-danger" style="display: none;">Insufficient balance</span>
                             </div>
                         </div>
@@ -211,14 +211,45 @@
             }
         }
 
-        function openOtpDialog() {
-            // Assume cardCompany and userMobileNumber are fetched from the backend
-            const cardCompany = "Mastercard"; // Placeholder, replace with actual value
-            const userMobileNumber = "9876543210"; // Placeholder, replace with actual value
+        function handleBankProceed() {
+            // Get the selected bank name from the dropdown
+            const bankName = document.getElementById('bankName').value;
+            const payableAmount = parseFloat(document.getElementById('payableAmount').textContent);
 
-            // Setting the modal title and message
-            document.getElementById('otpModalLabel').textContent = `${cardCompany} ID Check`;
-            document.getElementById('otpMessage').textContent = `OTP has been sent to registered number ending with ${userMobileNumber.slice(-4)}.`;
+            // Call openOtpDialog with the bank name
+            openOtpDialog('netbanking',
+                bankName,
+                payableAmount
+            );
+        }
+
+        function openOtpDialog(paymentType, paymentModeDetails, payableAmount) {
+            let title, message;
+
+            switch (paymentType) {
+                case 'card':
+                    const cardNumber = paymentModeDetails.cardNumber; // e.g., "4123456789012345"
+                    const cardCompany = getCardCompany(cardNumber);
+                    title = `${cardCompany} ID Check`;
+                    message = `You are paying ${payableAmount} to Red Bus Booking\n\nOTP has been sent to registered number ending with ${paymentDetails.userMobileNumber.slice(-4)}.`;
+                    break;
+                case 'netbanking':
+                    title = `Electronic Payment Facility - ${paymentModeDetails.bankName}`;
+                    message = `You are paying ${payableAmount} to Red Bus Booking. Please enter the OTP received on registered mobile number ending with ${paymentDetails.userMobileNumber.slice(-4)}.`;
+                    break;
+                case 'wallet':
+                    title = `Wallet Balance: ${paymentModeDetails.balance}`;
+                    message = `Username: ${paymentModeDetails.user.userName}\n\nYou are paying ${payableAmount} to Red Bus Booking\n\nOTP has been sent to registered number ending with ${paymentDetails.user.phoneNumber.slice(-4)}.`;
+                    break;
+                default:
+                    title = 'Payment Verification';
+                    message = 'Please complete the payment verification process.';
+                    break;
+            }
+
+            // Set the modal title and message
+            document.getElementById('otpModalLabel').textContent = title;
+            document.getElementById('otpMessage').textContent = message;
 
             // Show the OTP Modal
             const otpModal = new bootstrap.Modal(document.getElementById('otpModal'), {
@@ -226,6 +257,14 @@
                 keyboard: false
             });
             otpModal.show();
+        }
+
+        function getCardCompany(cardNumber) {
+            if (cardNumber.startsWith('4')) return 'Visa';
+            if (cardNumber.startsWith('1')) return 'Mastercard';
+            if (cardNumber.startsWith('5')) return 'EasyShop';
+            if (cardNumber.startsWith('6')) return 'Discover';
+            return 'Invalid Card';
         }
 
         function submitOtp() {
