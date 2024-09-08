@@ -86,7 +86,7 @@
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center align-items-end">
                                         <form th:action="@{/payments/otpValidation}" method="post">
-                                            <input type="hidden" th:if="${isBookingIdPresent}" th:name="paymentModeChosen" th:value="'card'"/>
+                                            <input type="hidden" id="paymentModeCard" th:if="${isBookingIdPresent}" th:name="paymentModeChosen"/>
                                             <button type="submit" class="btn btn-primary">Proceed</button>
                                         </form>
                                     </div>
@@ -106,7 +106,7 @@
                                         </option>
                                     </select>
                                     <form th:action="@{/payments/otpValidation}" method="post">
-                                        <input type="hidden" th:if="${isBookingIdPresent}" th:name="paymentModeChosen" th:value="'netbanking'"/>
+                                        <input type="hidden" id="paymentModeBank" th:if="${isBookingIdPresent}" th:name="paymentModeChosen"/>
                                         <button type="submit" class="btn btn-primary ms-2">Proceed</button>
                                     </form>
                                 </div>
@@ -117,7 +117,7 @@
                                 <p><strong>Wallet Balance: </strong> <span id="walletBalance" th:text="${walletDetails.balance}"></span></p>
 
                                 <form th:action="@{/payments/otpValidation}" method="post">
-                                    <input type="hidden" th:if="${isBookingIdPresent}" th:name="paymentModeChosen" th:value="'wallet'"/>
+                                    <input type="hidden" id="paymentModeWallet" th:if="${isBookingIdPresent}" th:name="paymentModeChosen"/>
                                     <button id="walletProceedButton" type="submit" class="btn btn-primary">Proceed</button>
                                 </form>
                                 <span id="walletWarning" class="text-danger" style="display: none;">Insufficient balance</span>
@@ -150,7 +150,14 @@
 
     <script>
         function togglePaymentDetails(selectedElement) {
-            // Get the card details section
+            // Getting the card details section
+            let selectedMode = selectedElement.nextElementSibling.textContent.trim();
+
+            // Updating the hidden input fields in each form with the selected payment mode
+            document.getElementById('paymentModeCard').value = selectedMode;
+            document.getElementById('paymentModeBank').value = selectedMode;
+            document.getElementById('paymentModeWallet').value = selectedMode;
+
             const cardDetailsSection = document.getElementById('cardDetails');
             const bankOptionsSection = document.getElementById('bankOptions');
             const walletDetailsSection = document.getElementById('walletDetails')

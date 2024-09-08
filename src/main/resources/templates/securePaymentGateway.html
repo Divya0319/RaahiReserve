@@ -9,14 +9,22 @@
     <div class="container mt-5">
         <div class="card">
             <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-                <h2>Select Payment Mode</h2>
-
+                <h2><span th:text="${paymentModeChosen}"></span> ID check</h2>
             </div>
+
             <div class="card-body bg-light text-dark">
-                <p class="text-body">Selected Payment Mode: <span th:text="${paymentModeChosen}"></span></p>
+                <p id="otpMessage"></p> <!-- OTP message will be set dynamically -->
+                <form th:action="@{/payments/doPayment}" method="post">
+                    <div class="d-flex flex-column align-items-center mb-3">
+                        <div class="w-50">
+                            <label for="otpInput" class="form-label d-block">Enter OTP</label>
+                            <input type="text" id="otpInput" class="form-control" maxlength="6" pattern="\d{6}" placeholder="Enter OTP" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3">Submit</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-
 </body>
 </html>
