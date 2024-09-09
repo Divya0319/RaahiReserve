@@ -63,7 +63,7 @@
                                     <div class="col-md-6">
                                         <label for="cardNumber" class="form-label">Card Number</label>
                                         <input type="text" id="cardNumber" name="cardNumber" class="form-control" maxlength="16"
-                                               pattern="\d{16}" placeholder="Enter 16-digit card number" oninput="validateCardDetails()">
+                                               pattern="\d{16}" placeholder="Enter 16-digit card number">
                                     </div>
                                     <div class="col-md-6">
                                         <label for="cardHolderName" class="form-label">Card Holder Name</label>
@@ -90,8 +90,8 @@
                                             <input type="hidden" id="hiddenCardNumber" th:if="${isBookingIdPresent}" th:name="cardNo">
                                             <input type="hidden" id="hiddenExpiryMonth" th:if="${isBookingIdPresent}" th:name="expiryMonth">
                                             <input type="hidden" id="hiddenExpiryYear" th:if="${isBookingIdPresent}" th:name="expiryYear">
-                                            <input type="hidden" id="hiddenCVV" th:if="${isBookingIdPresent}" th:name="cvv">
-                                            <button id="proceedWithCardPayment" type="submit" class="btn btn-primary">Proceed</button>
+                                            <input type="hidden" id="hiddenCVV" th:if="${isBookingIdPresent}" th:name="enteredCvv">
+                                            <button id="proceedWithCardPayment" type="submit" class="btn btn-primary" onclick="updateCardModel()">Proceed</button>
                                         </form>
                                     </div>
                                 </div>
@@ -232,12 +232,26 @@
             document.getElementById('selectedBankForPayment').value = selectedBank;
         }
 
+        function updateCardModel() {
+
+            const cardNumberInput = document.getElementById('cardNumber');
+            const expiryDateInput = document.getElementById('expiryDate');
+            const cardNumber = cardNumberInput.value;
+            const expiryDate = expiryDateInput.value;
+
+            document.getElementById('hiddenCardNumber').value = cardNumber;
+            const [expiryMonth, expiryYear] = expiryDate.split('/');
+            document.getElementById('hiddenExpiryMonth').value = expiryMonth;
+            document.getElementById('hiddenExpiryYear').value = expiryYear;
+            document.getElementById('hiddenCVV').value = document.getElementById('cvv').value;
+        }
+
         function validateCardDetails() {
             const cardNumberInput = document.getElementById('cardNumber');
             const expiryDateInput = document.getElementById('expiryDate');
             const cardNumber = cardNumberInput.value;
             const expiryDate = expiryDateInput.value;
-            const proceedButton = document.getElementById('proceedButton');
+            const proceedButton = document.getElementById('proceedWithCardPayment');
             const cardCompany = getCardCompany(cardNumber);
 
             // Validate card number and expiry date format
@@ -275,6 +289,8 @@
                 return false;
             }
 
+            validateCardDetails();
+
             return true;
         }
 
@@ -282,6 +298,10 @@
         document.addEventListener('DOMContentLoaded', () => {
             updateBankSelection(); // Call function to initialize hidden input
         });
+
+        // Attach optimized event listeners
+        // document.getElementById('cardNumber').addEventListener('input', validateCardDetails);
+        // document.getElementById('expiryDate').addEventListener('input', isValidExpiryDate);
 
     </script>
 </body>

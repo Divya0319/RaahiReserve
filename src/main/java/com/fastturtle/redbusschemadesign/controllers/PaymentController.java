@@ -125,6 +125,10 @@ public class PaymentController {
     @PostMapping("/otpValidation")
     public String showValidateOtpPage(@RequestParam("paymentModeChosen") String paymentMode,
                                       @RequestParam(value = "selectedBankForPayment", required = false) String selectedBankForPayment,
+                                      @RequestParam(value = "cardNo", required = false) String cardNo,
+                                      @RequestParam(value = "expiryMonth", required = false) String expiryMonth,
+                                      @RequestParam(value = "expiryYear", required = false) String expiryYear,
+                                      @RequestParam(value = "enteredCvv", required = false) String enteredCvv,
                                       Model model, Principal principal) {
         String loggedInUserName = principal.getName();
         User user = userService.findByUsername(loggedInUserName);
@@ -134,7 +138,28 @@ public class PaymentController {
         if(selectedBankForPayment != null) {
             model.addAttribute("selectedBankForPayment", selectedBankForPayment);
         }
+
+        if(cardNo != null) {
+            String cardCompany = getCardCompany(cardNo);
+
+            if(!cardCompany.equals("Invalid Card")) {
+                model.addAttribute("cardCompany", cardCompany);
+                model.addAttribute("cardNo", cardNo);
+                model.addAttribute("expiryMonth", expiryMonth);
+                model.addAttribute("expiryYear", expiryYear);
+                model.addAttribute("enteredCvv", enteredCvv);
+            }
+
+        }
         return "securePaymentGateway";
+    }
+
+    private String getCardCompany(String cardNumber) {
+        if (cardNumber.startsWith("4")) return "Visa";
+        if (cardNumber.startsWith("1")) return "Mastercard";
+        if (cardNumber.startsWith("5")) return "EasyShop";
+        if (cardNumber.startsWith("6")) return "Discover";
+        return "Invalid Card";
     }
 
 }
