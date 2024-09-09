@@ -97,7 +97,7 @@
                             <div id="bankOptions" style="display: none;" class="mt-3">
                                 <div class="d-flex align-items-center">
                                     <label for="bankName" class="form-label me-2">Select Bank</label>
-                                    <select class="form-control me-2" name="bankName" id="bankName">
+                                    <select class="form-control me-2" th:name="bankName" id="bankName" onchange="updateBankSelection()">
                                         <option
                                                 th:each="bankDetail : ${bankDetails}"
                                                 th:value="${bankDetail.bankName}"
@@ -107,6 +107,7 @@
                                     </select>
                                     <form th:action="@{/payments/otpValidation}" method="post">
                                         <input type="hidden" id="paymentModeBank" th:if="${isBookingIdPresent}" th:name="paymentModeChosen"/>
+                                        <input type="hidden" id="selectedBankForPayment" th:if="${isBookingIdPresent}" th:name="selectedBankForPayment">
                                         <button type="submit" class="btn btn-primary ms-2">Proceed</button>
                                     </form>
                                 </div>
@@ -218,6 +219,19 @@
                 document.getElementById('otpInput').value = '';
             }
         }
+
+        function updateBankSelection() {
+            // Get the selected bank value from the dropdown
+            const selectedBank = document.getElementById('bankName').value;
+
+            // Set the value to the hidden input field in the form
+            document.getElementById('selectedBankForPayment').value = selectedBank;
+        }
+
+        // Initialize hidden input on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateBankSelection(); // Call function to initialize hidden input
+        });
 
     </script>
 </body>

@@ -4,10 +4,10 @@ import com.fastturtle.redbusschemadesign.dtos.PaymentRequest;
 import com.fastturtle.redbusschemadesign.models.Booking;
 import com.fastturtle.redbusschemadesign.enums.PaymentMethod;
 import com.fastturtle.redbusschemadesign.models.User;
+import com.fastturtle.redbusschemadesign.models.UserWallet;
 import com.fastturtle.redbusschemadesign.services.BankDetailsService;
 import com.fastturtle.redbusschemadesign.services.BookingService;
 import com.fastturtle.redbusschemadesign.services.PaymentService;
-//import io.swagger.v3.oas.annotations.Hidden;
 import com.fastturtle.redbusschemadesign.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,7 +39,6 @@ public class PaymentController {
     }
 
     @PostMapping("/pay")
-//    @Hidden
     public ResponseEntity<?> makePayment(@RequestBody PaymentRequest paymentRequest) {
         return paymentService.makePayment(paymentRequest);
     }
@@ -124,8 +123,17 @@ public class PaymentController {
     }
 
     @PostMapping("/otpValidation")
-    public String showValidateOtpPage(@RequestParam("paymentModeChosen") String paymentMode, Model model) {
+    public String showValidateOtpPage(@RequestParam("paymentModeChosen") String paymentMode,
+                                      @RequestParam(value = "selectedBankForPayment", required = false) String selectedBankForPayment,
+                                      Model model, Principal principal) {
+        String loggedInUserName = principal.getName();
+        User user = userService.findByUsername(loggedInUserName);
+        String last4DigitsOfNo = user.getPhoneNumber().substring(user.getPhoneNumber().length() - 4);
+        model.addAttribute("last4DigitsOfMobNo", last4DigitsOfNo);
         model.addAttribute("paymentModeChosen", paymentMode);
+        if(selectedBankForPayment != null) {
+            model.addAttribute("selectedBankForPayment", selectedBankForPayment);
+        }
         return "securePaymentGateway";
     }
 
