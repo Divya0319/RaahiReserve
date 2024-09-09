@@ -63,7 +63,7 @@
                                     <div class="col-md-6">
                                         <label for="cardNumber" class="form-label">Card Number</label>
                                         <input type="text" id="cardNumber" name="cardNumber" class="form-control" maxlength="16"
-                                               pattern="\d{16}" placeholder="Enter 16-digit card number">
+                                               pattern="\d{16}" placeholder="Enter 16-digit card number" oninput="validateCardDetails()">
                                     </div>
                                     <div class="col-md-6">
                                         <label for="cardHolderName" class="form-label">Card Holder Name</label>
@@ -87,7 +87,11 @@
                                     <div class="col-md-4 d-flex justify-content-center align-items-end">
                                         <form th:action="@{/payments/otpValidation}" method="post">
                                             <input type="hidden" id="paymentModeCard" th:if="${isBookingIdPresent}" th:name="paymentModeChosen"/>
-                                            <button type="submit" class="btn btn-primary">Proceed</button>
+                                            <input type="hidden" id="hiddenCardNumber" th:if="${isBookingIdPresent}" th:name="cardNo">
+                                            <input type="hidden" id="hiddenExpiryMonth" th:if="${isBookingIdPresent}" th:name="expiryMonth">
+                                            <input type="hidden" id="hiddenExpiryYear" th:if="${isBookingIdPresent}" th:name="expiryYear">
+                                            <input type="hidden" id="hiddenCVV" th:if="${isBookingIdPresent}" th:name="cvv">
+                                            <button id="proceedWithCardPayment" type="submit" class="btn btn-primary">Proceed</button>
                                         </form>
                                     </div>
                                 </div>
@@ -226,6 +230,52 @@
 
             // Set the value to the hidden input field in the form
             document.getElementById('selectedBankForPayment').value = selectedBank;
+        }
+
+        function validateCardDetails() {
+            const cardNumberInput = document.getElementById('cardNumber');
+            const expiryDateInput = document.getElementById('expiryDate');
+            const cardNumber = cardNumberInput.value;
+            const expiryDate = expiryDateInput.value;
+            const proceedButton = document.getElementById('proceedButton');
+            const cardCompany = getCardCompany(cardNumber);
+
+            // Validate card number and expiry date format
+            if (cardCompany !== 'Invalid Card' && isValidExpiryDate(expiryDate)) {
+                proceedButton.style.display = 'block'; // Show the button if both are valid
+
+                // Update hidden input fields with card details
+                document.getElementById('hiddenCardNumber').value = cardNumber;
+                const [expiryMonth, expiryYear] = expiryDate.split('/');
+                document.getElementById('hiddenExpiryMonth').value = expiryMonth;
+                document.getElementById('hiddenExpiryYear').value = expiryYear;
+                document.getElementById('hiddenCVV').value = document.getElementById('cvv').value;
+            } else {
+                proceedButton.style.display = 'none'; // Hide the button if any are invalid
+            }
+        }
+
+        function isValidExpiryDate(expiryDate) {
+            // Check format MM/YY
+            const regex = /^\d{2}\/\d{2}$/;
+            if (!regex.test(expiryDate)) {
+                return false;
+            }
+
+            const [month, year] = expiryDate.split('/');
+
+            // Check valid month (01-12)
+            if (parseInt(month) < 1 || parseInt(month) > 12) {
+                return false;
+            }
+
+            // Check if year is in the future
+            const currentYear = new Date().getFullYear() % 100; // Get last two digits of the current year
+            if (parseInt(year) < currentYear) {
+                return false;
+            }
+
+            return true;
         }
 
         // Initialize hidden input on page load
