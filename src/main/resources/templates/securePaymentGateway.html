@@ -19,7 +19,7 @@
                 <p th:if="${selectedBankForPayment != null}" class="mt-2">Electronic Payment Facility</p>
 
                 <h2 th:if="${cardNo != null}">
-                    <span th:text="${cardCompany}"></span> ID check
+                    <span th:text="${cardCompany} + ' ' + ${paymentModeChosen}"></span> ID check
                 </h2>
 
             </div>
