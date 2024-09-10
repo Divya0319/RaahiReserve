@@ -60,17 +60,17 @@
                             <div id="cardDetails" style="display: none;" class="mt-3">
                                 <!-- Row 1: Card Number and Card Holder Name -->
                                 <form id="cardDetailsForm" th:action="@{/payments/otpValidation}" method="post">
-                                    <div class="col-md-4 d-flex justify-content-center align-items-end">
+                                    <div class="container">
                                         <div class="row mb-2">
                                             <div class="col-md-6">
                                                 <label for="cardNumber" class="form-label">Card Number</label>
                                                 <input type="text" id="cardNumber" name="cardNumber" class="form-control" maxlength="16"
-                                                       pattern="\d{16}" placeholder="Enter 16-digit card number" oninput="validateCardDetails()">
+                                                       pattern="\d{16}" placeholder="Enter 16-digit card number" oninput="validateCardDetails()" required>
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="cardHolderName" class="form-label">Card Holder Name</label>
                                                 <input type="text" id="cardHolderName" name="cardHolderName" class="form-control"
-                                                       placeholder="Enter card holder name">
+                                                       placeholder="Enter card holder name" required>
                                             </div>
                                         </div>
 
@@ -78,19 +78,25 @@
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <label for="expiryDate" class="form-label">Expiry Date (MM/YY)</label>
-                                                <input type="text" id="expiryDate" name="expiryDate" class="form-control" placeholder="MM/YY"
-                                                       pattern="\d{2}/\d{2}" maxlength="5" oninput="formatExpiryDate(this); validateExpiryDate();">
+                                                <input type="text" id="expiryDate" class="form-control" placeholder="MM/YY"
+                                                       pattern="\d{2}/\d{2}" maxlength="5" oninput="formatExpiryDate(this); validateExpiryDate();" required>
                                             </div>
                                             <div class="col-md-4">
                                                 <label for="cvv" class="form-label">CVV</label>
                                                 <input type="password" id="cvv" name="cvv" class="form-control" maxlength="3" pattern="\d{3}"
-                                                       placeholder="Enter CVV">
+                                                       placeholder="Enter CVV" required>
                                             </div>
 
-                                            <input type="hidden" id="paymentModeCard" th:if="${isBookingIdPresent}" th:name="paymentModeChosen"/>
-                                            <button id="proceedWithCardPayment" type="submit" class="btn btn-primary">Proceed</button>
-
+                                            <div class="col-md-4 d-flex align-items-end">
+                                                <button id="proceedWithCardPayment" type="submit" class="btn btn-primary" onclick="updateCardDetails()">Proceed</button>
+                                            </div>
                                         </div>
+
+                                            <input type="hidden" id="paymentModeCard" th:if="${isBookingIdPresent}" th:name="paymentModeChosen"/>
+                                            <input type="hidden" id="hiddenExpiryMonth" name="expiryMonth" />
+                                            <input type="hidden" id="hiddenExpiryYear" name="expiryYear" />
+
+
                                     </div>
                                 </form>
 
@@ -222,78 +228,16 @@
             document.getElementById('selectedBankForPayment').value = selectedBank;
         }
 
-        document.getElementById('proceedWithCardPayment').addEventListener('click', function(event) {
-            event.preventDefault();  // Prevent default form submission
-
+        function updateCardDetails() {
             // Get the input elements
-            const cardNumberInput = document.getElementById('cardNumber');
-            const cardHolderNameInput = document.getElementById('cardHolderName');
             const expiryDateInput = document.getElementById('expiryDate');
-            const cvvInput = document.getElementById('cvv');
-
-            // Clear custom validity when the user starts typing
-            const clearCustomValidity = (field) => {
-                field.setCustomValidity('');
-            };
-
-            // Add oninput event listeners to clear validity
-            cardNumberInput.oninput = () => clearCustomValidity(cardNumberInput);
-            expiryDateInput.oninput = () => clearCustomValidity(expiryDateInput);
-            cvvInput.oninput = () => clearCustomValidity(cvvInput);
-            cardHolderNameInput.oninput = () => clearCustomValidity(cardHolderNameInput);
-
-            // Check if any field is empty
-            const isEmpty = (field) => !field.value.trim();
-
-            // Validate each field manually
-            if (isEmpty(cardNumberInput)) {
-                cardNumberInput.setCustomValidity('Please fill out this field.'); // Set custom message
-                cardNumberInput.reportValidity();
-                return;
-            } else {
-                cardNumberInput.setCustomValidity(''); // Clear the custom message
-            }
-
-            if (isEmpty(expiryDateInput)) {
-                expiryDateInput.setCustomValidity('Please fill out this field.');
-                expiryDateInput.reportValidity();
-                return;
-            } else {
-                expiryDateInput.setCustomValidity('');
-            }
-
-            if (isEmpty(cvvInput)) {
-                cvvInput.setCustomValidity('Please fill out this field.');
-                cvvInput.reportValidity();
-                return;
-            } else {
-                cvvInput.setCustomValidity('');
-            }
-
-            if (isEmpty(cardHolderNameInput)) {
-                cardHolderNameInput.setCustomValidity('Please fill out this field.');
-                cardHolderNameInput.reportValidity();
-                return;
-            } else {
-                cardHolderNameInput.setCustomValidity('');
-            }
-
-
-            const cardNumber = cardNumberInput.value;
-            const cardHolder = cardHolderNameInput.value;
             const expiryDate = expiryDateInput.value;
 
-
-            document.getElementById('hiddenCardNumber').value = cardNumber;
-            document.getElementById('hiddenCardHolderName').value = cardHolder;
             const [expiryMonth, expiryYear] = expiryDate.split('/');
             document.getElementById('hiddenExpiryMonth').value = expiryMonth;
             document.getElementById('hiddenExpiryYear').value = expiryYear;
-            document.getElementById('hiddenCVV').value = document.getElementById('cvv').value;
 
-            document.getElementById('cardDetailsForm').submit();
-
-        });
+        }
 
         function validateCardDetails() {
             const cardNumber = document.getElementById('cardNumber').value;
