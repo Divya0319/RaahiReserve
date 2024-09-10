@@ -126,6 +126,7 @@ public class PaymentController {
     public String showValidateOtpPage(@RequestParam("paymentModeChosen") String paymentMode,
                                       @RequestParam(value = "selectedBankForPayment", required = false) String selectedBankForPayment,
                                       @RequestParam(value = "cardNo", required = false) String cardNo,
+                                      @RequestParam(value = "cardholderName", required = false) String cardHolderName,
                                       @RequestParam(value = "expiryMonth", required = false) String expiryMonth,
                                       @RequestParam(value = "expiryYear", required = false) String expiryYear,
                                       @RequestParam(value = "enteredCvv", required = false) String enteredCvv,
@@ -145,6 +146,7 @@ public class PaymentController {
             if(!cardCompany.equals("Invalid Card")) {
                 model.addAttribute("cardCompany", cardCompany);
                 model.addAttribute("cardNo", cardNo);
+                model.addAttribute("cardHolderName", cardHolderName);
                 model.addAttribute("expiryMonth", expiryMonth);
                 model.addAttribute("expiryYear", expiryYear);
                 model.addAttribute("enteredCvv", enteredCvv);
@@ -161,5 +163,14 @@ public class PaymentController {
         if (cardNumber.startsWith("6")) return "Discover";
         return "Invalid Card";
     }
+
+    //  TODO
+    //  Implement that required functionality for outside the form input fields as you searched in chatgpt.
+    //  Finish all the empty validation checks for card details fields on proceed click Finish with final payment processing in secure payment gateway template
+    //  Attach each payment mode details to specific payment made for the booking i.e. attach card to payment, netbanking bank to payment, wallet id to payment(or user whichever is in current schema).
+    //  On successful payment, redirect back to payment page with success of failure message.
+    //  If possible, also show a 4 minute(make it 2 minute during testing) timer in payment page, and after it expires, come back to payment page with failure message.
+    //  Change project home page title from welcome to booking system, to welcome to bus booking system. And instead of showing options in a top to down list, show it in a 2 or 3 column way.
+    //  Put the project update as a LinkedIn post tomorrow evening.
 
 }

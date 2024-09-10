@@ -85,13 +85,14 @@
                                                placeholder="Enter CVV">
                                     </div>
                                     <div class="col-md-4 d-flex justify-content-center align-items-end">
-                                        <form th:action="@{/payments/otpValidation}" method="post">
+                                        <form id="cardDetailsForm" th:action="@{/payments/otpValidation}" method="post">
                                             <input type="hidden" id="paymentModeCard" th:if="${isBookingIdPresent}" th:name="paymentModeChosen"/>
                                             <input type="hidden" id="hiddenCardNumber" th:if="${isBookingIdPresent}" th:name="cardNo">
+                                            <input type="hidden" id="hiddenCardHolderName" th:if="${isBookingIdPresent}" th:name="cardholderName">
                                             <input type="hidden" id="hiddenExpiryMonth" th:if="${isBookingIdPresent}" th:name="expiryMonth">
                                             <input type="hidden" id="hiddenExpiryYear" th:if="${isBookingIdPresent}" th:name="expiryYear">
                                             <input type="hidden" id="hiddenCVV" th:if="${isBookingIdPresent}" th:name="enteredCvv">
-                                            <button id="proceedWithCardPayment" type="submit" class="btn btn-primary" onclick="updateCardModel()">Proceed</button>
+                                            <button id="proceedWithCardPayment" type="submit" class="btn btn-primary">Proceed</button>
                                         </form>
                                     </div>
                                 </div>
@@ -224,19 +225,78 @@
             document.getElementById('selectedBankForPayment').value = selectedBank;
         }
 
-        function updateCardModel() {
+        document.getElementById('proceedWithCardPayment').addEventListener('click', function(event) {
+            event.preventDefault();  // Prevent default form submission
 
+            // Get the input elements
             const cardNumberInput = document.getElementById('cardNumber');
+            const cardHolderNameInput = document.getElementById('cardHolderName');
             const expiryDateInput = document.getElementById('expiryDate');
+            const cvvInput = document.getElementById('cvv');
+
+            // Clear custom validity when the user starts typing
+            const clearCustomValidity = (field) => {
+                field.setCustomValidity('');
+            };
+
+            // Add oninput event listeners to clear validity
+            cardNumberInput.oninput = () => clearCustomValidity(cardNumberInput);
+            expiryDateInput.oninput = () => clearCustomValidity(expiryDateInput);
+            cvvInput.oninput = () => clearCustomValidity(cvvInput);
+            cardHolderNameInput.oninput = () => clearCustomValidity(cardHolderNameInput);
+
+            // Check if any field is empty
+            const isEmpty = (field) => !field.value.trim();
+
+            // Validate each field manually
+            if (isEmpty(cardNumberInput)) {
+                cardNumberInput.setCustomValidity('Please fill out this field.'); // Set custom message
+                cardNumberInput.reportValidity();
+                return;
+            } else {
+                cardNumberInput.setCustomValidity(''); // Clear the custom message
+            }
+
+            if (isEmpty(expiryDateInput)) {
+                expiryDateInput.setCustomValidity('Please fill out this field.');
+                expiryDateInput.reportValidity();
+                return;
+            } else {
+                expiryDateInput.setCustomValidity('');
+            }
+
+            if (isEmpty(cvvInput)) {
+                cvvInput.setCustomValidity('Please fill out this field.');
+                cvvInput.reportValidity();
+                return;
+            } else {
+                cvvInput.setCustomValidity('');
+            }
+
+            if (isEmpty(cardHolderNameInput)) {
+                cardHolderNameInput.setCustomValidity('Please fill out this field.');
+                cardHolderNameInput.reportValidity();
+                return;
+            } else {
+                cardHolderNameInput.setCustomValidity('');
+            }
+
+
             const cardNumber = cardNumberInput.value;
+            const cardHolder = cardHolderNameInput.value;
             const expiryDate = expiryDateInput.value;
 
+
             document.getElementById('hiddenCardNumber').value = cardNumber;
+            document.getElementById('hiddenCardHolderName').value = cardHolder;
             const [expiryMonth, expiryYear] = expiryDate.split('/');
             document.getElementById('hiddenExpiryMonth').value = expiryMonth;
             document.getElementById('hiddenExpiryYear').value = expiryYear;
             document.getElementById('hiddenCVV').value = document.getElementById('cvv').value;
-        }
+
+            document.getElementById('cardDetailsForm').submit();
+
+        });
 
         function validateCardDetails() {
             const cardNumber = document.getElementById('cardNumber').value;
