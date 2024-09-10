@@ -9,7 +9,7 @@
 <div class="container mt-5">
     <div class="card w-50 mx-auto">
             <div class="card-header bg-success text-white d-flex flex-column align-items-center">
-                <h2 th:if="${selectedBankForPayment == null && cardNo == null}">
+                <h2 th:if="${selectedBankForPayment == null && cardNumber == null}">
                     <span th:text="${paymentModeChosen}"></span> ID check
                 </h2>
 
@@ -18,7 +18,7 @@
                 </h2>
                 <p th:if="${selectedBankForPayment != null}" class="mt-2">Electronic Payment Facility</p>
 
-                <h2 th:if="${cardNo != null}">
+                <h2 th:if="${cardNumber != null}">
                     <span th:text="${cardCompany} + ' ' + ${paymentModeChosen}"></span> ID check
                 </h2>
 

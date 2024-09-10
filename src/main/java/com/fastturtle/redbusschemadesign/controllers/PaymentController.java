@@ -130,12 +130,14 @@ public class PaymentController {
                                       @RequestParam(value = "expiryMonth", required = false) String expiryMonth,
                                       @RequestParam(value = "expiryYear", required = false) String expiryYear,
                                       @RequestParam(value = "cvv", required = false) String cvv,
+                                      @RequestParam("bookingIdForPayment") Integer bookingId,
                                       Model model, Principal principal) {
         String loggedInUserName = principal.getName();
         User user = userService.findByUsername(loggedInUserName);
         String last4DigitsOfNo = user.getPhoneNumber().substring(user.getPhoneNumber().length() - 4);
         model.addAttribute("last4DigitsOfMobNo", last4DigitsOfNo);
         model.addAttribute("paymentModeChosen", paymentMode);
+        model.addAttribute("bookingIdForPayment", bookingId);
         if(selectedBankForPayment != null) {
             model.addAttribute("selectedBankForPayment", selectedBankForPayment);
         }
@@ -165,8 +167,6 @@ public class PaymentController {
     }
 
     //  TODO
-    //  Implement that required functionality for outside the form input fields as you searched in chatgpt.
-    //  Finish all the empty validation checks for card details fields on proceed click
     //  Finish with final payment processing in secure payment gateway template
     //  Attach each payment mode details to specific payment made for the booking i.e. attach card to payment, netbanking bank to payment, wallet id to payment(or user whichever is in current schema).
     //  On successful payment, redirect back to payment page with success of failure message.

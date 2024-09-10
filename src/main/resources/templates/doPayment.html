@@ -95,7 +95,7 @@
                                             <input type="hidden" id="paymentModeCard" th:if="${isBookingIdPresent}" th:name="paymentModeChosen"/>
                                             <input type="hidden" id="hiddenExpiryMonth" name="expiryMonth" />
                                             <input type="hidden" id="hiddenExpiryYear" name="expiryYear" />
-
+                                            <input type="hidden" th:name="bookingIdForPayment" th:value="${booking.bookingId}" >
 
                                     </div>
                                 </form>
@@ -116,6 +116,7 @@
                                     <form th:action="@{/payments/otpValidation}" method="post">
                                         <input type="hidden" id="paymentModeBank" th:if="${isBookingIdPresent}" th:name="paymentModeChosen"/>
                                         <input type="hidden" id="selectedBankForPayment" th:if="${isBookingIdPresent}" th:name="selectedBankForPayment">
+                                        <input type="hidden" th:name="bookingIdForPayment" th:value="${booking.bookingId}" >
                                         <button type="submit" class="btn btn-primary ms-2">Proceed</button>
                                     </form>
                                 </div>
@@ -127,6 +128,7 @@
 
                                 <form th:action="@{/payments/otpValidation}" method="post">
                                     <input type="hidden" id="paymentModeWallet" th:if="${isBookingIdPresent}" th:name="paymentModeChosen"/>
+                                    <input type="hidden" th:name="bookingIdForPayment" th:value="${booking.bookingId}" >
                                     <button id="walletProceedButton" type="submit" class="btn btn-primary">Proceed</button>
                                 </form>
                                 <span id="walletWarning" class="text-danger" style="display: none;">Insufficient balance</span>
