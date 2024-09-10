@@ -26,11 +26,11 @@
 
             <div class="card-body bg-light text-dark">
                 <p>A 6 digit OTP has been sent to your registered mobile number ending with <span th:text="${last4DigitsOfMobNo}"></span></p>
-                <form th:action="@{/payments/doPayment}" method="post">
+                <form id="otpForm" th:action="@{/payments/doPayment}" method="post">
                     <div class="d-flex flex-column align-items-center mb-3">
                         <div class="w-100">
                             <label for="otpInput" class="form-label d-block">Enter OTP</label>
-                            <input type="number" id="otpInput" class="form-control" maxlength="6" pattern="\d{6}" required oninput="if (this.value.length > 6) this.value = this.value.slice(0, 6);">
+                            <input type="text" id="otpInput" class="form-control" pattern="\d{6}" title="OTP must be exactly 6 digits" required oninput="if (this.value.length > 6) this.value = this.value.slice(0, 6);">
                         </div>
                         <button type="submit" class="btn btn-primary mt-3">Submit</button>
                     </div>
@@ -38,5 +38,21 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.getElementById('otpForm').addEventListener('submit', function (event) {
+            const otpInput = document.getElementById('otpInput');
+            const otpValue = otpInput.value;
+
+            // Validate OTP length
+            if (otpValue.length !== 6) {
+                event.preventDefault(); // Prevent form submission
+                otpInput.setCustomValidity('OTP must be exactly 6 digits.'); // Set custom validity message
+                otpInput.reportValidity(); // Show the custom tooltip
+            } else {
+                otpInput.setCustomValidity(''); // Clear custom validity if input is correct
+            }
+        });
+    </script>
 </body>
 </html>
