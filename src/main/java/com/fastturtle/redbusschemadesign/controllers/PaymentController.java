@@ -166,7 +166,8 @@ public class PaymentController {
 
     //  TODO
     //  Implement that required functionality for outside the form input fields as you searched in chatgpt.
-    //  Finish all the empty validation checks for card details fields on proceed click Finish with final payment processing in secure payment gateway template
+    //  Finish all the empty validation checks for card details fields on proceed click
+    //  Finish with final payment processing in secure payment gateway template
     //  Attach each payment mode details to specific payment made for the booking i.e. attach card to payment, netbanking bank to payment, wallet id to payment(or user whichever is in current schema).
     //  On successful payment, redirect back to payment page with success of failure message.
     //  If possible, also show a 4 minute(make it 2 minute during testing) timer in payment page, and after it expires, come back to payment page with failure message.
