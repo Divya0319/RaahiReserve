@@ -33,6 +33,10 @@
                             <input type="text" id="otpInput" class="form-control" pattern="\d{6}" title="OTP must be exactly 6 digits" required oninput="if (this.value.length > 6) this.value = this.value.slice(0, 6);">
                         </div>
                         <button type="submit" class="btn btn-primary mt-3">Submit</button>
+
+                        <p>This page will automatically reload in <span id="countdownTimer" style="color: red; font-size: 20px; font-weight: bold;"></span></p>
+
+
                     </div>
                 </form>
             </div>
@@ -53,6 +57,34 @@
                 otpInput.setCustomValidity(''); // Clear custom validity if input is correct
             }
         });
+
+        let timerDuration = 120;
+
+        function startCountdown() {
+            const countdownElement = document.getElementById('countdownTimer');
+
+            const interval = setInterval(() => {
+                // Calculate the minutes and seconds
+                const minutes = Math.floor(timerDuration / 60);
+                const seconds = timerDuration % 60;
+
+                // Format the display (e.g., "02:00")
+                countdownElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                // Decrease the timer
+                timerDuration--;
+
+                // Check if the timer has reached zero
+                if (timerDuration < 0) {
+                    clearInterval(interval);
+                    countdownElement.textContent = "00:00"; // Display 00:00 when timer ends
+                    // Add functionality here for when the timer expires
+                    countdownElement.style.display = 'none'
+                }
+            }, 1000);
+        }
+
+        window.onload = startCountdown;
     </script>
 </body>
 </html>
