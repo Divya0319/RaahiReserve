@@ -32,9 +32,10 @@
                             <label for="otpInput" class="form-label d-block">Enter OTP</label>
                             <input type="text" id="otpInput" class="form-control" pattern="\d{6}" title="OTP must be exactly 6 digits" required oninput="if (this.value.length > 6) this.value = this.value.slice(0, 6);">
                         </div>
+                        <input type="hidden" name="bookingId" th:value="${bookingIdForPayment}"/>
                         <button type="submit" class="btn btn-primary mt-3">Submit</button>
 
-                        <p>This page will automatically reload in <span id="countdownTimer" style="color: red; font-size: 20px; font-weight: bold; vertical-align: baseline;"></span></p>
+                        <p>This page will automatically reload in <span id="countdownTimer" style="color: red; font-size: 20px; font-weight: bold;"></span></p>
 
 
                     </div>
@@ -79,7 +80,7 @@
                     clearInterval(interval);
                     countdownElement.textContent = "00:00"; // Display 00:00 when timer ends
                     // Add functionality here for when the timer expires
-                    countdownElement.style.display = 'none'
+                    //TODO:  send action param as failed, which server can capture and do relevant operations
                 }
             }, 1000);
         }

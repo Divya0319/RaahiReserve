@@ -1,6 +1,7 @@
 package com.fastturtle.redbusschemadesign.services;
 
 import com.fastturtle.redbusschemadesign.dtos.PaymentRequest;
+import com.fastturtle.redbusschemadesign.enums.PaymentRefType;
 import com.fastturtle.redbusschemadesign.models.Booking;
 import com.fastturtle.redbusschemadesign.models.Payment;
 import com.fastturtle.redbusschemadesign.enums.PaymentMethod;
@@ -71,21 +72,21 @@ public class PaymentService {
 
     }
 
-    public void processPayment(int bookingId, PaymentMethod paymentMode, String action) {
-        Optional<Payment> optionalPayment = paymentRepository.findByBookingId(bookingId);
-        Booking booking = bookingRepository.findByBookingId(bookingId).get();
-
-        Payment payment = optionalPayment.get();
-        payment.setPaymentMethod(paymentMode);
-        payment.setAmount(booking.getPrice());
-        payment.setPaymentDate(LocalDate.now());
-
-        if("completed".equals(action)) {
-            payment.setPaymentStatus(PaymentStatus.COMPLETED);
-        } else if("failed".equals(action)) {
-            payment.setPaymentStatus(PaymentStatus.FAILED);
-        }
-        paymentRepository.save(payment);
+    public void processPayment(int bookingId, PaymentRefType paymentRefType, String action) {
+//        Optional<Payment> optionalPayment = paymentRepository.findByBookingId(bookingId);
+//        Booking booking = bookingRepository.findByBookingId(bookingId).get();
+//
+//        Payment payment = optionalPayment.get();
+//        payment.setPaymentMethod(paymentMode);
+//        payment.setAmount(booking.getPrice());
+//        payment.setPaymentDate(LocalDate.now());
+//
+//        if("completed".equals(action)) {
+//            payment.setPaymentStatus(PaymentStatus.COMPLETED);
+//        } else if("failed".equals(action)) {
+//            payment.setPaymentStatus(PaymentStatus.FAILED);
+//        }
+//        paymentRepository.save(payment);
 
     }
 

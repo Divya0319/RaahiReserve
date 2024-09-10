@@ -1,6 +1,7 @@
 package com.fastturtle.redbusschemadesign.controllers;
 
 import com.fastturtle.redbusschemadesign.dtos.PaymentRequest;
+import com.fastturtle.redbusschemadesign.enums.PaymentRefType;
 import com.fastturtle.redbusschemadesign.models.Booking;
 import com.fastturtle.redbusschemadesign.enums.PaymentMethod;
 import com.fastturtle.redbusschemadesign.models.User;
@@ -100,11 +101,11 @@ public class PaymentController {
 
     @PostMapping("/doPayment")
     public String processPayment(@RequestParam("bookingId") Integer bookingId,
-                                 @RequestParam("paymentMode") PaymentMethod paymentMode,
+                                 @RequestParam("paymentRefType") PaymentRefType paymentRefType,
                                  @RequestParam("action") String action,
                                  RedirectAttributes redirectAttributes) {
 
-        paymentService.processPayment(bookingId, paymentMode, action);
+        paymentService.processPayment(bookingId, paymentRefType, action);
 
         // Adding success message
         redirectAttributes.addFlashAttribute("message", "Payment marked as " + action.toUpperCase() + " successfully.");
