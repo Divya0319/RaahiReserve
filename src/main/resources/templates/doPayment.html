@@ -162,7 +162,7 @@
     <script>
         function togglePaymentDetails(selectedElement) {
             // Getting the card details section
-            let selectedMode = selectedElement.nextElementSibling.textContent.trim();
+            let selectedMode = selectedElement.value;
 
             // Updating the hidden input fields in each form with the selected payment mode
             document.getElementById('paymentModeCard').value = selectedMode;

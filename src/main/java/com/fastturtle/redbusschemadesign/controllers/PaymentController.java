@@ -3,10 +3,12 @@ package com.fastturtle.redbusschemadesign.controllers;
 import com.fastturtle.redbusschemadesign.dtos.PaymentRequest;
 import com.fastturtle.redbusschemadesign.dtos.PaymentRequestDTO;
 import com.fastturtle.redbusschemadesign.enums.PaymentRefType;
+import com.fastturtle.redbusschemadesign.helpers.CardUtils;
 import com.fastturtle.redbusschemadesign.models.Booking;
 import com.fastturtle.redbusschemadesign.enums.PaymentMethod;
 import com.fastturtle.redbusschemadesign.models.User;
 import com.fastturtle.redbusschemadesign.models.UserWallet;
+import com.fastturtle.redbusschemadesign.repositories.BankDetailRepository;
 import com.fastturtle.redbusschemadesign.services.BankDetailsService;
 import com.fastturtle.redbusschemadesign.services.BookingService;
 import com.fastturtle.redbusschemadesign.services.PaymentService;
@@ -107,10 +109,10 @@ public class PaymentController {
         paymentService.processPayment(paymentRequestDTO);
 
         // Adding success message
-        redirectAttributes.addFlashAttribute("message", "Payment marked as " + action.toUpperCase() + " successfully.");
+        redirectAttributes.addFlashAttribute("message", "Payment marked as " + paymentRequestDTO.getAction().toUpperCase() + " successfully.");
 
         // Redirecting to a confirmation page or back to the booking result
-        return "redirect:/bookings/bookingResult?bookingId=" + bookingId;
+        return "redirect:/bookings/bookingResult?bookingId=" + paymentRequestDTO.getBookingId();
     }
 
     @PostMapping("/saveSelectedPaymentMode")
@@ -123,7 +125,7 @@ public class PaymentController {
     }
 
     @PostMapping("/otpValidation")
-    public String showValidateOtpPage(@RequestParam("paymentModeChosen") String paymentMode,
+    public String showValidateOtpPage(@RequestParam("paymentModeChosen") PaymentMethod paymentMode,
                                       @RequestParam(value = "selectedBankForPayment", required = false) String selectedBankForPayment,
                                       @RequestParam(value = "cardNumber", required = false) String cardNumber,
                                       @RequestParam(value = "cardHolderName", required = false) String cardHolderName,
@@ -136,34 +138,39 @@ public class PaymentController {
         User user = userService.findByUsername(loggedInUserName);
         String last4DigitsOfNo = user.getPhoneNumber().substring(user.getPhoneNumber().length() - 4);
         model.addAttribute("last4DigitsOfMobNo", last4DigitsOfNo);
-        model.addAttribute("paymentModeChosen", paymentMode);
-        model.addAttribute("bookingIdForPayment", bookingId);
+
+        PaymentRequestDTO paymentRequestDTO = new PaymentRequestDTO();
+        paymentRequestDTO.setBookingId(bookingId);
+        paymentRequestDTO.setPaymentMode(paymentMode);
+
         if(selectedBankForPayment != null) {
             model.addAttribute("selectedBankForPayment", selectedBankForPayment);
+            paymentRequestDTO.setPaymentRefType(PaymentRefType.BANK);
+            int bankID = bankDetailsService.finBankIDByBankName(selectedBankForPayment);
+            paymentRequestDTO.setBankID(bankID);
         }
 
         if(cardNumber != null) {
-            String cardCompany = getCardCompany(cardNumber);
+            String cardCompany = CardUtils.getCardCompany(cardNumber);
 
             if(!cardCompany.equals("Invalid Card")) {
-                model.addAttribute("cardCompany", cardCompany);
-                model.addAttribute("cardNumber", cardNumber);
-                model.addAttribute("cardHolderName", cardHolderName);
-                model.addAttribute("expiryMonth", expiryMonth);
-                model.addAttribute("expiryYear", expiryYear);
-                model.addAttribute("cvv", cvv);
+                paymentRequestDTO.setPaymentRefType(PaymentRefType.CARD);
+                paymentRequestDTO.setCardNo(cardNumber);
+                paymentRequestDTO.setCardCompany(CardUtils.getCardCompany(cardNumber));
+                paymentRequestDTO.setCardHolderName(cardHolderName);
+                paymentRequestDTO.setExpiryMonth(Byte.valueOf(expiryMonth));
+                paymentRequestDTO.setExpiryYear(Integer.valueOf(expiryYear));
+                paymentRequestDTO.setCvv(cvv);
             }
-
+        } else if(paymentMode == PaymentMethod.WALLET) {
+            paymentRequestDTO.setPaymentRefType(PaymentRefType.USER);
+            paymentRequestDTO.setUserID(user.getUserId());
         }
-        return "securePaymentGateway";
-    }
 
-    private String getCardCompany(String cardNumber) {
-        if (cardNumber.startsWith("4")) return "Visa";
-        if (cardNumber.startsWith("1")) return "Mastercard";
-        if (cardNumber.startsWith("5")) return "EasyShop";
-        if (cardNumber.startsWith("6")) return "Discover";
-        return "Invalid Card";
+        paymentRequestDTO.setPaymentMode(paymentMode);
+        paymentRequestDTO.setAction("completed");
+        model.addAttribute("paymentRequestDTO", paymentRequestDTO);
+        return "securePaymentGateway";
     }
 
     //  TODO

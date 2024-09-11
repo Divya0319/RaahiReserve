@@ -15,4 +15,7 @@ public interface BankDetailRepository extends JpaRepository<BankDetails, Integer
     @Query("SELECT bd.bankName FROM BankDetails bd")
     List<BankDetails> findAllBankNames();
 
+    @Query("SELECT b.bankId FROM BankDetails b WHERE b.bankName = :bankName")
+    int findBankIDByBankName(@Param("bankName") String bankName);
+
 }

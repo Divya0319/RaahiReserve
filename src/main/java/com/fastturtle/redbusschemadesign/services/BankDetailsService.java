@@ -22,4 +22,8 @@ public class BankDetailsService {
     public List<BankDetails> getAllBankNames() {
         return bankDetailRepository.findAllBankNames();
     }
+
+    public int finBankIDByBankName(String bankName) {
+        return bankDetailRepository.findBankIDByBankName(bankName);
+    }
 }

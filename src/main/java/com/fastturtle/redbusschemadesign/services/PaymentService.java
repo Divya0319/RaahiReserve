@@ -1,12 +1,16 @@
 package com.fastturtle.redbusschemadesign.services;
 
 import com.fastturtle.redbusschemadesign.dtos.PaymentRequest;
+import com.fastturtle.redbusschemadesign.dtos.PaymentRequestDTO;
+import com.fastturtle.redbusschemadesign.enums.CardType;
 import com.fastturtle.redbusschemadesign.enums.PaymentRefType;
 import com.fastturtle.redbusschemadesign.models.Booking;
+import com.fastturtle.redbusschemadesign.models.CardDetails;
 import com.fastturtle.redbusschemadesign.models.Payment;
 import com.fastturtle.redbusschemadesign.enums.PaymentMethod;
 import com.fastturtle.redbusschemadesign.enums.PaymentStatus;
 import com.fastturtle.redbusschemadesign.repositories.BookingRepository;
+import com.fastturtle.redbusschemadesign.repositories.CardDetailRepository;
 import com.fastturtle.redbusschemadesign.repositories.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,11 +27,13 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
 
     private final BookingRepository bookingRepository;
+    private final CardDetailRepository cardDetailRepository;
 
     @Autowired
-    public PaymentService(PaymentRepository paymentRepository, BookingRepository bookingRepository) {
+    public PaymentService(PaymentRepository paymentRepository, BookingRepository bookingRepository, CardDetailRepository cardDetailRepository) {
         this.paymentRepository = paymentRepository;
         this.bookingRepository = bookingRepository;
+        this.cardDetailRepository = cardDetailRepository;
     }
 
     public ResponseEntity<?> makePayment(PaymentRequest paymentRequest) {
@@ -72,22 +78,102 @@ public class PaymentService {
 
     }
 
-    public void processPayment(int bookingId, PaymentRefType paymentRefType, String action) {
-//        Optional<Payment> optionalPayment = paymentRepository.findByBookingId(bookingId);
-//        Booking booking = bookingRepository.findByBookingId(bookingId).get();
-//
-//        Payment payment = optionalPayment.get();
-//        payment.setPaymentMethod(paymentMode);
-//        payment.setAmount(booking.getPrice());
-//        payment.setPaymentDate(LocalDate.now());
-//
-//        if("completed".equals(action)) {
-//            payment.setPaymentStatus(PaymentStatus.COMPLETED);
-//        } else if("failed".equals(action)) {
-//            payment.setPaymentStatus(PaymentStatus.FAILED);
-//        }
-//        paymentRepository.save(payment);
+    public void processPayment(PaymentRequestDTO paymentRequestDTO) {
 
+        // Determine the payment type
+        switch (paymentRequestDTO.getPaymentRefType()) {
+            case CARD:
+                // Process card payment
+                processCardPayment(paymentRequestDTO);
+                break;
+            case BANK:
+                // Process net banking payment
+                processBankPayment(paymentRequestDTO);
+                break;
+            case USER:
+                // Process wallet payment
+                processWalletPayment(paymentRequestDTO);
+                break;
+        }
+
+    }
+
+    private void processCardPayment(PaymentRequestDTO dto) {
+        Booking booking = bookingRepository.findByBookingId(dto.getBookingId()).orElse(null);
+        Payment payment = booking.getPayment();
+        if(dto.getPaymentMode() == PaymentMethod.DEBIT_CARD) {
+            payment.setPaymentMethod(PaymentMethod.DEBIT_CARD);
+        } else {
+            payment.setPaymentMethod(PaymentMethod.CREDIT_CARD);
+        }
+
+        if(dto.getAction().equals("complete")) {
+            payment.setPaymentStatus(PaymentStatus.COMPLETED);
+        } else {
+            payment.setPaymentStatus(PaymentStatus.FAILED);
+        }
+
+        String last4DigitsOfCard = dto.getCardNo().substring(12);
+        CardType cardType = dto.getPaymentMode() == PaymentMethod.DEBIT_CARD ? CardType.DEBIT : CardType.CREDIT;
+
+        CardDetails cardDetails = cardDetailRepository.findCardByEnding4DigitsAndType(Integer.parseInt(last4DigitsOfCard), cardType).get(0);
+        if(cardDetails == null) {
+            cardDetails = new CardDetails();
+            cardDetails.setCardType(cardType);
+            cardDetails.setCardNumber(dto.getCardNo());
+            cardDetails.setCardCompany(dto.getCardCompany());
+            cardDetails.setCardHolderName(dto.getCardHolderName());
+            cardDetails.setCvv(dto.getCvv());
+            cardDetails.setExpiryMonth(dto.getExpiryMonth());
+            cardDetails.setExpiryYear(dto.getExpiryYear());
+            cardDetailRepository.save(cardDetails);
+            payment.setPaymentReferenceId(cardDetails.getCardId());
+        } else {
+            payment.setPaymentReferenceId(cardDetails.getCardId());
+        }
+        payment.setPaymentReferenceType(PaymentRefType.CARD);
+        payment.setAmount(booking.getPrice());
+        payment.setPaymentDate(LocalDate.now());
+
+        paymentRepository.save(payment);
+
+    }
+
+    private void processBankPayment(PaymentRequestDTO dto) {
+        Booking booking = bookingRepository.findByBookingId(dto.getBookingId()).orElse(null);
+        Payment payment = booking.getPayment();
+        payment.setPaymentMethod(PaymentMethod.NETBANKING);
+
+        if(dto.getAction().equals("complete")) {
+            payment.setPaymentStatus(PaymentStatus.COMPLETED);
+        } else {
+            payment.setPaymentStatus(PaymentStatus.FAILED);
+        }
+
+        payment.setPaymentReferenceId(dto.getBankID());
+        payment.setPaymentReferenceType(PaymentRefType.BANK);
+        payment.setAmount(booking.getPrice());
+        payment.setPaymentDate(LocalDate.now());
+
+        paymentRepository.save(payment);
+
+    }
+
+    private void processWalletPayment(PaymentRequestDTO dto) {
+        Booking booking = bookingRepository.findByBookingId(dto.getBookingId()).orElse(null);
+        Payment payment = booking.getPayment();
+        payment.setPaymentMethod(PaymentMethod.WALLET);
+        if(dto.getAction().equals("complete")) {
+            payment.setPaymentStatus(PaymentStatus.COMPLETED);
+        } else {
+            payment.setPaymentStatus(PaymentStatus.FAILED);
+        }
+        payment.setPaymentReferenceId(dto.getUserID());
+        payment.setPaymentReferenceType(PaymentRefType.USER);
+        payment.setAmount(booking.getPrice());
+        payment.setPaymentDate(LocalDate.now());
+
+        paymentRepository.save(payment);
     }
 
     public ResponseEntity<?> checkPaymentStatusAndReturnBookingForBookingId(int bookingId) {

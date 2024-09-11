@@ -18,21 +18,34 @@
                 </h2>
                 <p th:if="${selectedBankForPayment != null}" class="mt-2">Electronic Payment Facility</p>
 
-                <h2 th:if="${cardNumber != null}">
-                    <span th:text="${cardCompany} + ' ' + ${paymentModeChosen}"></span> ID check
+                <h2 th:if="${paymentRequestDTO.cardNo != null}">
+                    <span th:text="${paymentRequestDTO.cardCompany} + ' ' + ${paymentRequestDTO.paymentMode}"></span> ID check
                 </h2>
 
             </div>
 
             <div class="card-body bg-light text-dark">
                 <p>A 6 digit OTP has been sent to your registered mobile number ending with <span th:text="${last4DigitsOfMobNo}"></span></p>
-                <form id="otpForm" th:action="@{/payments/doPayment}" method="post">
+                <form id="otpForm" th:action="@{/payments/doPayment}" method="post" th:object="${paymentRequestDTO}">
                     <div class="d-flex flex-column align-items-center mb-3">
                         <div class="w-100">
                             <label for="otpInput" class="form-label d-block">Enter OTP</label>
                             <input type="text" id="otpInput" class="form-control" pattern="\d{6}" title="OTP must be exactly 6 digits" required oninput="if (this.value.length > 6) this.value = this.value.slice(0, 6);">
                         </div>
-                        <input type="hidden" name="bookingId" th:value="${bookingIdForPayment}"/>
+
+                        <input type="hidden" th:field="*{bookingId}" />
+                        <input type="hidden" th:field="*{paymentRefType}" />
+                        <input type="hidden" th:field="*{action}">
+                        <input type="hidden" th:field="*{paymentMode}">
+                        <input type="hidden" th:field="*{cardNo}">
+                        <input type="hidden" th:field="*{cardHolderName}">
+                        <input type="hidden" th:field="*{cardCompany}">
+                        <input type="hidden" th:field="*{expiryMonth}">
+                        <input type="hidden" th:field="*{expiryYear}">
+                        <input type="hidden" th:field="*{cvv}">
+                        <input type="hidden" th:field="*{bankID}">
+                        <input type="hidden" th:field="*{userID}">
+
                         <button type="submit" class="btn btn-primary mt-3">Submit</button>
 
                         <p>This page will automatically reload in <span id="countdownTimer" style="color: red; font-size: 20px; font-weight: bold;"></span></p>

@@ -34,7 +34,7 @@ public class CardDetails {
     private String cvv;
 
     @Column(name = "isActive")
-    private Boolean isActive;
+    private Boolean isActive = true;
 
     public CardDetails(String cardNumber, String cardHolderName, CardType cardType, String cardCompany, Byte expiryMonth, Integer expiryYear, String cvv, Boolean isActive) {
         this.cardNumber = cardNumber;

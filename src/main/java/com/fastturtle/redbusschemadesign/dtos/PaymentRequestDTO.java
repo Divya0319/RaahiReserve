@@ -11,6 +11,7 @@ public class PaymentRequestDTO {
 
     // Card details
     private String cardNo;
+    private String cardCompany;
     private Byte expiryMonth;
     private Integer expiryYear;
     private String cardHolderName;
@@ -60,6 +61,14 @@ public class PaymentRequestDTO {
 
     public void setCardNo(String cardNo) {
         this.cardNo = cardNo;
+    }
+
+    public String getCardCompany() {
+        return cardCompany;
+    }
+
+    public void setCardCompany(String cardCompany) {
+        this.cardCompany = cardCompany;
     }
 
     public Byte getExpiryMonth() {
