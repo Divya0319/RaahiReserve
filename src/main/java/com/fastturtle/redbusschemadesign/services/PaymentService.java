@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -107,7 +108,7 @@ public class PaymentService {
             payment.setPaymentMethod(PaymentMethod.CREDIT_CARD);
         }
 
-        if(dto.getAction().equals("complete")) {
+        if(dto.getAction().equals("completed")) {
             payment.setPaymentStatus(PaymentStatus.COMPLETED);
         } else {
             payment.setPaymentStatus(PaymentStatus.FAILED);
@@ -116,8 +117,10 @@ public class PaymentService {
         String last4DigitsOfCard = dto.getCardNo().substring(12);
         CardType cardType = dto.getPaymentMode() == PaymentMethod.DEBIT_CARD ? CardType.DEBIT : CardType.CREDIT;
 
-        CardDetails cardDetails = cardDetailRepository.findCardByEnding4DigitsAndType(Integer.parseInt(last4DigitsOfCard), cardType).get(0);
-        if(cardDetails == null) {
+
+        List<CardDetails> cards = cardDetailRepository.findCardByEnding4DigitsAndType(Integer.parseInt(last4DigitsOfCard), cardType);
+        CardDetails cardDetails;
+        if(cards.isEmpty()) {
             cardDetails = new CardDetails();
             cardDetails.setCardType(cardType);
             cardDetails.setCardNumber(dto.getCardNo());
@@ -129,6 +132,7 @@ public class PaymentService {
             cardDetailRepository.save(cardDetails);
             payment.setPaymentReferenceId(cardDetails.getCardId());
         } else {
+            cardDetails = cards.get(0);
             payment.setPaymentReferenceId(cardDetails.getCardId());
         }
         payment.setPaymentReferenceType(PaymentRefType.CARD);
@@ -144,7 +148,7 @@ public class PaymentService {
         Payment payment = booking.getPayment();
         payment.setPaymentMethod(PaymentMethod.NETBANKING);
 
-        if(dto.getAction().equals("complete")) {
+        if(dto.getAction().equals("completed")) {
             payment.setPaymentStatus(PaymentStatus.COMPLETED);
         } else {
             payment.setPaymentStatus(PaymentStatus.FAILED);
@@ -163,7 +167,7 @@ public class PaymentService {
         Booking booking = bookingRepository.findByBookingId(dto.getBookingId()).orElse(null);
         Payment payment = booking.getPayment();
         payment.setPaymentMethod(PaymentMethod.WALLET);
-        if(dto.getAction().equals("complete")) {
+        if(dto.getAction().equals("completed")) {
             payment.setPaymentStatus(PaymentStatus.COMPLETED);
         } else {
             payment.setPaymentStatus(PaymentStatus.FAILED);

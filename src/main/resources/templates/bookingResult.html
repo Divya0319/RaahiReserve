@@ -61,7 +61,7 @@
                 </tbody>
             </table>
 
-            <div th:if="${message == null}">
+            <div th:if="${successMessage == null}">
             <div class="container">
                 <div class="d-flex justify-content-start">
 
@@ -78,14 +78,18 @@
 
             </div>
 
-            <div th:if="${message != null}" class="alert alert-success mt-3" role="alert">
-                <span th:text="${message}"></span>
+            <div th:if="${successMessage != null}" class="alert alert-success mt-3" role="alert">
+                <span th:text="${successMessage}"></span>
             </div>
 
-            <div th:if="${message != null}">
+            <div th:if="${failureMessage != null}" class="alert alert-danger mt-3" role="alert">
+                <span th:text="${failureMessage}"></span>
+            </div>
+
+            <div th:if="${successMessage != null || failureMessage != null}">
                 <a href="/redbus/bookings/create" class="btn btn-primary mt-3">Create Another Booking</a>
             </div>
-            <div th:if="${message != null}">
+            <div th:if="${successMessage != null || failureMessage != null}">
                 <a href="/redbus" class="btn btn-secondary mt-3">Back to Home</a>
             </div>
 

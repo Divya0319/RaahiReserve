@@ -9,8 +9,8 @@
 <div class="container mt-5">
     <div class="card w-50 mx-auto">
             <div class="card-header bg-success text-white d-flex flex-column align-items-center">
-                <h2 th:if="${selectedBankForPayment == null && cardNumber == null}">
-                    <span th:text="${paymentModeChosen}"></span> ID check
+                <h2 th:if="${selectedBankForPayment == null && paymentRequestDTO.cardNo == null}">
+                    <span th:text="${paymentRequestDTO.paymentMode}"></span> ID check
                 </h2>
 
                 <h2 th:if="${selectedBankForPayment != null}">
@@ -48,11 +48,28 @@
 
                         <button type="submit" class="btn btn-primary mt-3">Submit</button>
 
-                        <p>This page will automatically reload in <span id="countdownTimer" style="color: red; font-size: 20px; font-weight: bold;"></span></p>
-
+                        <p>Please enter the OTP within the next <span id="countdownTimer" style="color: red; font-size: 20px; font-weight: bold;"></span> to complete your payment. <br>If the OTP is not submitted before the timer expires, the payment will be automatically canceled.</p>
 
                     </div>
                 </form>
+
+                <!-- Hidden form to be submitted on timer expiry -->
+                <form th:action="@{/payments/doPayment}" method="post" id="paymentFailedForm" th:object="${paymentRequestDTO}">
+                    <input type="hidden" name="action" value="failed" />
+                    <input type="hidden" th:field="*{bookingId}" />
+                    <input type="hidden" th:field="*{paymentRefType}" />
+                    <input type="hidden" th:field="*{paymentMode}">
+                    <input type="hidden" th:field="*{cardNo}">
+                    <input type="hidden" th:field="*{cardHolderName}">
+                    <input type="hidden" th:field="*{cardCompany}">
+                    <input type="hidden" th:field="*{expiryMonth}">
+                    <input type="hidden" th:field="*{expiryYear}">
+                    <input type="hidden" th:field="*{cvv}">
+                    <input type="hidden" th:field="*{bankID}">
+                    <input type="hidden" th:field="*{userID}">
+
+                </form>
+
             </div>
         </div>
     </div>
@@ -93,7 +110,8 @@
                     clearInterval(interval);
                     countdownElement.textContent = "00:00"; // Display 00:00 when timer ends
                     // Add functionality here for when the timer expires
-                    //TODO:  send action param as failed, which server can capture and do relevant operations
+
+                    document.getElementById('paymentFailedForm').submit();
                 }
             }, 1000);
         }

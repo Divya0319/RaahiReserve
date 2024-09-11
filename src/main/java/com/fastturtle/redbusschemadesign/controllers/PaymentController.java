@@ -109,7 +109,12 @@ public class PaymentController {
         paymentService.processPayment(paymentRequestDTO);
 
         // Adding success message
-        redirectAttributes.addFlashAttribute("message", "Payment marked as " + paymentRequestDTO.getAction().toUpperCase() + " successfully.");
+        if(paymentRequestDTO.getAction().equals("completed")) {
+            redirectAttributes.addFlashAttribute("successMessage", "Payment successful.");
+        } else {
+            redirectAttributes.addFlashAttribute("failureMessage", "Payment failed, please try the payment again after sometime");
+
+        }
 
         // Redirecting to a confirmation page or back to the booking result
         return "redirect:/bookings/bookingResult?bookingId=" + paymentRequestDTO.getBookingId();
@@ -167,7 +172,6 @@ public class PaymentController {
             paymentRequestDTO.setUserID(user.getUserId());
         }
 
-        paymentRequestDTO.setPaymentMode(paymentMode);
         paymentRequestDTO.setAction("completed");
         model.addAttribute("paymentRequestDTO", paymentRequestDTO);
         return "securePaymentGateway";
