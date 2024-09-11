@@ -177,12 +177,9 @@ public class PaymentController {
         return "securePaymentGateway";
     }
 
-    //  TODO
-    //  Finish with final payment processing in secure payment gateway template
-    //  Attach each payment mode details to specific payment made for the booking i.e. attach card to payment, netbanking bank to payment, wallet id to payment(or user whichever is in current schema).
-    //  On successful payment, redirect back to payment page with success of failure message.
-    //  If possible, also show a 4 minute(make it 2 minute during testing) timer in payment page, and after it expires, come back to payment page with failure message.
-    //  Change project home page title from welcome to booking system, to welcome to bus booking system. And instead of showing options in a top to down list, show it in a 2 or 3 column way.
-    //  Put the project update as a LinkedIn post tomorrow evening.
+    //TODO
+    //1. Integrate new payment gateway with Pay Now feature, now that pay later is done
+    //2. After payment is completed or failed now, bus number, and bus timing is not showing, or showing null in bookingResult page, rectify it
+    //3. Change timer from 2 minute to 4 minute from now.
 
 }
