@@ -89,6 +89,10 @@ public class PaymentController {
             Optional<Booking> booking = bookingService.findByBookingId(bookingId);
             if (booking.isPresent()) {
                 model.addAttribute("booking", booking.get());
+                model.addAttribute("bankDetails", bankDetailsService.getAllBankDetails());
+                User loggedInUser = userService.findByUsername(principal.getName());
+                model.addAttribute("walletDetails", userService.getUserWalletByEmail(loggedInUser.getEmail()));
+                model.addAttribute("isBookingIdPresent", true);
                 model.addAttribute("paymentModes", PaymentMethod.values());
             } else {
                 model.addAttribute("error", "Invalid Booking ID");
@@ -97,7 +101,6 @@ public class PaymentController {
         }
 
         model.addAttribute("loggedInUserName", principal.getName());
-
         model.addAttribute("isBookingIdPresent", bookingId != null);
         return "doPayment";
     }
