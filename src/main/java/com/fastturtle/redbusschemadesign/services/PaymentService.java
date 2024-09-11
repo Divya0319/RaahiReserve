@@ -9,14 +9,17 @@ import com.fastturtle.redbusschemadesign.models.CardDetails;
 import com.fastturtle.redbusschemadesign.models.Payment;
 import com.fastturtle.redbusschemadesign.enums.PaymentMethod;
 import com.fastturtle.redbusschemadesign.enums.PaymentStatus;
+import com.fastturtle.redbusschemadesign.models.UserWallet;
 import com.fastturtle.redbusschemadesign.repositories.BookingRepository;
 import com.fastturtle.redbusschemadesign.repositories.CardDetailRepository;
 import com.fastturtle.redbusschemadesign.repositories.PaymentRepository;
+import com.fastturtle.redbusschemadesign.repositories.UserWalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -29,12 +32,14 @@ public class PaymentService {
 
     private final BookingRepository bookingRepository;
     private final CardDetailRepository cardDetailRepository;
+    private final UserWalletRepository userWalletRepository;
 
     @Autowired
-    public PaymentService(PaymentRepository paymentRepository, BookingRepository bookingRepository, CardDetailRepository cardDetailRepository) {
+    public PaymentService(PaymentRepository paymentRepository, BookingRepository bookingRepository, CardDetailRepository cardDetailRepository, UserWalletRepository userWalletRepository) {
         this.paymentRepository = paymentRepository;
         this.bookingRepository = bookingRepository;
         this.cardDetailRepository = cardDetailRepository;
+        this.userWalletRepository = userWalletRepository;
     }
 
     public ResponseEntity<?> makePayment(PaymentRequest paymentRequest) {
@@ -169,6 +174,11 @@ public class PaymentService {
         payment.setPaymentMethod(PaymentMethod.WALLET);
         if(dto.getAction().equals("completed")) {
             payment.setPaymentStatus(PaymentStatus.COMPLETED);
+
+            UserWallet userWallet = userWalletRepository.findByUserId(dto.getUserID());
+            userWallet.setBalance(userWallet.getBalance().subtract(BigDecimal.valueOf(booking.getPrice())));
+            userWalletRepository.save(userWallet);
+
         } else {
             payment.setPaymentStatus(PaymentStatus.FAILED);
         }
