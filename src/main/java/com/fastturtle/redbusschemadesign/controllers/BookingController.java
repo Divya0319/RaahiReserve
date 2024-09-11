@@ -277,11 +277,22 @@ public class BookingController {
 
     @GetMapping("/bookingResult")
     public String showBookingResult(@RequestParam("bookingId") int bookingId, Model model) {
-        // Fetch the booking from the database using the bookingId
         Booking booking = bookingService.findByBookingId(bookingId).get();
 
-        // Add the booking to the model
+        Bus b = booking.getBusRoute().getBus();
+        String formattedBusNo = BusDataUtils.formatBusNumber(b.getBusNo());
+        String formattedBusTime = BusDataUtils.formatBusTiming(b.getBusTiming());
+
+        b.setFormattedBusNumber(formattedBusNo);
+        b.setFormattedBusTiming(formattedBusTime);
+
         model.addAttribute("booking", booking);
+
+        String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.getBookingDate());
+        String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.getTravelDate());
+
+        model.addAttribute("formattedBookingDate", formattedBookingDate);
+        model.addAttribute("formattedTravelDate", formattedTravelDate);
 
         return "bookingResult";
     }
