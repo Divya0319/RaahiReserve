@@ -2,6 +2,7 @@ package com.fastturtle.redbusschemadesign.controllers;
 
 import com.fastturtle.redbusschemadesign.dtos.PaymentRequest;
 import com.fastturtle.redbusschemadesign.dtos.PaymentRequestDTO;
+import com.fastturtle.redbusschemadesign.enums.CardType;
 import com.fastturtle.redbusschemadesign.enums.PaymentRefType;
 import com.fastturtle.redbusschemadesign.helpers.BusDataUtils;
 import com.fastturtle.redbusschemadesign.helpers.CardUtils;
@@ -21,6 +22,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/payments")
@@ -65,6 +67,21 @@ public class PaymentController {
             User loggedInUser = userService.findByUsername(principal.getName());
             model.addAttribute("walletDetails", userService.getUserWalletByEmail(loggedInUser.getEmail()));
             model.addAttribute("isBookingIdPresent", true);
+
+            User user = userService.findByUsername(principal.getName());
+            List<CardDetails> savedCards = cardDetailsService.findCardsForUser(user.getUserId());
+            if(!savedCards.isEmpty()) {
+                Map<CardType, List<CardDetails>> groupedCards = savedCards.stream().collect(Collectors.groupingBy(CardDetails::getCardType));
+                if(groupedCards.containsKey(CardType.DEBIT)) {
+                    model.addAttribute("savedDebitCards", groupedCards.get(CardType.DEBIT));
+                }
+
+                if(groupedCards.containsKey(CardType.CREDIT)) {
+                    model.addAttribute("savedCreditCards", groupedCards.get(CardType.CREDIT));
+                }
+
+            }
+
         } else if(response.getStatusCode() == HttpStatus.NOT_FOUND) {
             String errorMessage = ((Map<String, String>)response.getBody()).get("error");
             model.addAttribute("errorMessage", errorMessage);
@@ -90,7 +107,15 @@ public class PaymentController {
                 User user = userService.findByUsername(principal.getName());
                 List<CardDetails> savedCards = cardDetailsService.findCardsForUser(user.getUserId());
                 if(!savedCards.isEmpty()) {
-                    model.addAttribute("savedCards", savedCards);
+                    Map<CardType, List<CardDetails>> groupedCards = savedCards.stream().collect(Collectors.groupingBy(CardDetails::getCardType));
+                    if(groupedCards.containsKey(CardType.DEBIT)) {
+                        model.addAttribute("savedDebitCards", groupedCards.get(CardType.DEBIT));
+                    }
+
+                    if(groupedCards.containsKey(CardType.CREDIT)) {
+                        model.addAttribute("savedCreditCards", groupedCards.get(CardType.CREDIT));
+                    }
+
                 }
                 model.addAttribute("booking", booking.get());
                 model.addAttribute("bankDetails", bankDetailsService.getAllBankDetails());

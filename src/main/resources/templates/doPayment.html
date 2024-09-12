@@ -54,17 +54,31 @@
                                        th:value="${paymentMode.name}" required
                                        onclick="togglePaymentDetails(this)">
                                 <label class="form-check-label" th:for="${paymentMode}" th:text="${paymentMode}"></label>
-                            </div>
 
+                                <!-- Show saved cards here -->
 
-                            <!-- Show saved cards here -->
+                                <div th:if="${paymentMode.name == 'DEBIT_CARD' && savedDebitCards != null && savedDebitCards.size() > 0}" th:style="'display:none;'" id="saved-debit-cards">
+                                    <span class="ms-3">Saved Cards</span>
+                                    <div th:each="savedDebitCard : ${savedDebitCards}" class="form-check ms-3">
+                                        <input class="form-check-input" type="radio"
+                                               th:id="${savedDebitCard.cardId}" th:name="savedDebitCard"
+                                               th:value="${savedDebitCard.cardId}">
+                                        <label class="form-check-label" th:for="${savedDebitCard.cardId}"
+                                               th:text="${savedDebitCard.cardType} + ' - ' + ${savedDebitCard.cardHolderName} + ' - **' + ${savedDebitCard.cardNumber.substring(savedDebitCard.cardNumber.length() - 4)}"></label>
+                                    </div>
+                                </div>
 
-                            <div th:each="savedCard : ${savedCards}" class="form-check ms-2">
-                                <input class="form-check-input" type="radio"
-                                       th:id="${savedCard.cardId}" th:name="savedCard"
-                                       th:value="${savedCard.cardId}">
-                                <label class="form-check-label" th:for="${savedCard.cardId}"
-                                       th:text="${savedCard.cardType} + ' - ' + ${savedCard.cardHolderName} + ' - **' + ${savedCard.cardNumber.substring(savedCard.cardNumber.length() - 4)}"></label>
+                                <div th:if="${paymentMode.name == 'CREDIT_CARD' && savedCreditCards != null && savedCreditCards.size() > 0}" th:style="'display:none;'" id="saved-credit-cards">
+                                    <span class="ms-3">Saved Cards</span>
+                                    <div th:each="savedCreditCard : ${savedCreditCards}" class="form-check ms-3">
+                                        <input class="form-check-input" type="radio"
+                                               th:id="${savedCreditCard.cardId}" th:name="savedCreditCard"
+                                               th:value="${savedCreditCard.cardId}">
+                                        <label class="form-check-label" th:for="${savedCreditCard.cardId}"
+                                               th:text="${savedCreditCard.cardType} + ' - ' + ${savedCreditCard.cardHolderName} + ' - **' + ${savedCreditCard.cardNumber.substring(savedCreditCard.cardNumber.length() - 4)}"></label>
+                                    </div>
+                                </div>
+
                             </div>
 
                             <!-- Card Details Section: Initially Hidden -->
@@ -181,6 +195,11 @@
             document.getElementById('paymentModeWallet').value = selectedMode;
 
             const cardDetailsSection = document.getElementById('cardDetails');
+            const savedDebitCardsSection = document.getElementById('saved-debit-cards');
+            const savedCreditCardsSection = document.getElementById('saved-credit-cards');
+            savedCreditCardsSection.style.display = 'none';
+            savedDebitCardsSection.style.display = 'none';
+
             const bankOptionsSection = document.getElementById('bankOptions');
             const walletDetailsSection = document.getElementById('walletDetails')
             const walletProceedButton = document.getElementById('walletProceedButton');
@@ -191,6 +210,11 @@
                 cardDetailsSection.style.display = 'block';
                 bankOptionsSection.style.display = 'none';
                 walletDetailsSection.style.display = 'none'
+                if(selectedElement.value === 'DEBIT_CARD') {
+                    savedDebitCardsSection.style.display = 'block';
+                } else {
+                    savedCreditCardsSection.style.display = 'block';
+                }
             } else if (selectedElement.value === 'NETBANKING') {
                 bankOptionsSection.style.display = 'block';
                 cardDetailsSection.style.display = 'none';
