@@ -5,16 +5,10 @@ import com.fastturtle.redbusschemadesign.dtos.PaymentRequestDTO;
 import com.fastturtle.redbusschemadesign.enums.PaymentRefType;
 import com.fastturtle.redbusschemadesign.helpers.BusDataUtils;
 import com.fastturtle.redbusschemadesign.helpers.CardUtils;
-import com.fastturtle.redbusschemadesign.models.Booking;
+import com.fastturtle.redbusschemadesign.models.*;
 import com.fastturtle.redbusschemadesign.enums.PaymentMethod;
-import com.fastturtle.redbusschemadesign.models.Bus;
-import com.fastturtle.redbusschemadesign.models.User;
-import com.fastturtle.redbusschemadesign.models.UserWallet;
 import com.fastturtle.redbusschemadesign.repositories.BankDetailRepository;
-import com.fastturtle.redbusschemadesign.services.BankDetailsService;
-import com.fastturtle.redbusschemadesign.services.BookingService;
-import com.fastturtle.redbusschemadesign.services.PaymentService;
-import com.fastturtle.redbusschemadesign.services.UserService;
+import com.fastturtle.redbusschemadesign.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -35,13 +30,15 @@ public class PaymentController {
     private final BookingService bookingService;
     private final BankDetailsService bankDetailsService;
     private final UserService userService;
+    private final CardDetailsService cardDetailsService;
 
     @Autowired
-    public PaymentController(PaymentService paymentService, BookingService bookingService, BankDetailsService bankDetailsService, UserService userService) {
+    public PaymentController(PaymentService paymentService, BookingService bookingService, BankDetailsService bankDetailsService, UserService userService, CardDetailsService cardDetailsService) {
         this.paymentService = paymentService;
         this.bookingService = bookingService;
         this.bankDetailsService = bankDetailsService;
         this.userService = userService;
+        this.cardDetailsService = cardDetailsService;
     }
 
     @PostMapping("/pay")
@@ -90,6 +87,11 @@ public class PaymentController {
         if(bookingId != null) {
             Optional<Booking> booking = bookingService.findByBookingId(bookingId);
             if (booking.isPresent()) {
+                User user = userService.findByUsername(principal.getName());
+                List<CardDetails> savedCards = cardDetailsService.findCardsForUser(user.getUserId());
+                if(!savedCards.isEmpty()) {
+                    model.addAttribute("savedCards", savedCards);
+                }
                 model.addAttribute("booking", booking.get());
                 model.addAttribute("bankDetails", bankDetailsService.getAllBankDetails());
                 User loggedInUser = userService.findByUsername(principal.getName());
