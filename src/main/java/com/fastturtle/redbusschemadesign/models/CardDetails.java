@@ -36,6 +36,10 @@ public class CardDetails {
     @Column(name = "isActive")
     private Boolean isActive = true;
 
+    @ManyToOne
+    @JoinColumn(name = "linked_user_id")
+    private User linkedUser;
+
     public CardDetails(String cardNumber, String cardHolderName, CardType cardType, String cardCompany, Byte expiryMonth, Integer expiryYear, String cvv, Boolean isActive) {
         this.cardNumber = cardNumber;
         this.cardHolderName = cardHolderName;
@@ -121,5 +125,13 @@ public class CardDetails {
 
     public void setActive(Boolean active) {
         isActive = active;
+    }
+
+    public User getLinkedUser() {
+        return linkedUser;
+    }
+
+    public void setLinkedUser(User linkedUser) {
+        this.linkedUser = linkedUser;
     }
 }

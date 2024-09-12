@@ -8,7 +8,9 @@ import com.fastturtle.redbusschemadesign.payment.*;
 import com.fastturtle.redbusschemadesign.repositories.*;
 import jakarta.annotation.PostConstruct;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -19,7 +21,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-//@Component
+@Component
 public class SampleDataInitializer {
 
     // Sample data for Bus
@@ -146,7 +148,7 @@ public class SampleDataInitializer {
     private final BankDetailRepository bankDetailRepository;
     private final CardDetailRepository cardDetailRepository;
 
-//    @Autowired
+    @Autowired
     public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder, UserWalletRepository userWalletRepository, BankDetailRepository bankDetailRepository, BankDetailRepository bankDetailRepository1, CardDetailRepository cardDetailRepository) {
         this.busRepository = busRepository;
         this.routeRepository = routeRepository;
@@ -632,11 +634,14 @@ public class SampleDataInitializer {
             "Discover"
         };
         Byte[] expiryMonths = {11, 12, 8, 9};
-        Integer[] expiryYears = {2027, 2029, 2026, 2025};
+        Integer[] expiryYears = {27, 29, 26, 25};
         String[] cVVs = {"123", "321", "456", "678"};
+
+        List<User> users = userRepository.findAll();
 
         for(int i = 0; i < cardNumbers.length; i++) {
             CardDetails cardDetails = new CardDetails(cardNumbers[i], cardHolderNames[i], cardTypes[i], cardCompanies[i], expiryMonths[i], expiryYears[i], cVVs[i], true);
+            cardDetails.setLinkedUser(users.get(i));
             cardDetailRepository.save(cardDetails);
 
         }
