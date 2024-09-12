@@ -171,6 +171,7 @@ public class PaymentController {
                 paymentRequestDTO.setExpiryMonth(Byte.valueOf(expiryMonth));
                 paymentRequestDTO.setExpiryYear(Integer.valueOf(expiryYear));
                 paymentRequestDTO.setCvv(cvv);
+                paymentRequestDTO.setUserID(user.getUserId());
             }
         } else if(paymentMode == PaymentMethod.WALLET) {
             paymentRequestDTO.setPaymentRefType(PaymentRefType.USER);

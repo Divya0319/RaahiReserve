@@ -4,16 +4,10 @@ import com.fastturtle.redbusschemadesign.dtos.PaymentRequest;
 import com.fastturtle.redbusschemadesign.dtos.PaymentRequestDTO;
 import com.fastturtle.redbusschemadesign.enums.CardType;
 import com.fastturtle.redbusschemadesign.enums.PaymentRefType;
-import com.fastturtle.redbusschemadesign.models.Booking;
-import com.fastturtle.redbusschemadesign.models.CardDetails;
-import com.fastturtle.redbusschemadesign.models.Payment;
+import com.fastturtle.redbusschemadesign.models.*;
 import com.fastturtle.redbusschemadesign.enums.PaymentMethod;
 import com.fastturtle.redbusschemadesign.enums.PaymentStatus;
-import com.fastturtle.redbusschemadesign.models.UserWallet;
-import com.fastturtle.redbusschemadesign.repositories.BookingRepository;
-import com.fastturtle.redbusschemadesign.repositories.CardDetailRepository;
-import com.fastturtle.redbusschemadesign.repositories.PaymentRepository;
-import com.fastturtle.redbusschemadesign.repositories.UserWalletRepository;
+import com.fastturtle.redbusschemadesign.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,13 +27,15 @@ public class PaymentService {
     private final BookingRepository bookingRepository;
     private final CardDetailRepository cardDetailRepository;
     private final UserWalletRepository userWalletRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public PaymentService(PaymentRepository paymentRepository, BookingRepository bookingRepository, CardDetailRepository cardDetailRepository, UserWalletRepository userWalletRepository) {
+    public PaymentService(PaymentRepository paymentRepository, BookingRepository bookingRepository, CardDetailRepository cardDetailRepository, UserWalletRepository userWalletRepository, UserRepository userRepository) {
         this.paymentRepository = paymentRepository;
         this.bookingRepository = bookingRepository;
         this.cardDetailRepository = cardDetailRepository;
         this.userWalletRepository = userWalletRepository;
+        this.userRepository = userRepository;
     }
 
     public ResponseEntity<?> makePayment(PaymentRequest paymentRequest) {
@@ -126,6 +122,7 @@ public class PaymentService {
         List<CardDetails> cards = cardDetailRepository.findCardByEnding4DigitsAndType(Integer.parseInt(last4DigitsOfCard), cardType);
         CardDetails cardDetails;
         if(cards.isEmpty()) {
+            User user = userRepository.findById(dto.getUserID()).get();
             cardDetails = new CardDetails();
             cardDetails.setCardType(cardType);
             cardDetails.setCardNumber(dto.getCardNo());
@@ -134,6 +131,7 @@ public class PaymentService {
             cardDetails.setCvv(dto.getCvv());
             cardDetails.setExpiryMonth(dto.getExpiryMonth());
             cardDetails.setExpiryYear(dto.getExpiryYear());
+            cardDetails.setLinkedUser(user);
             cardDetailRepository.save(cardDetails);
             payment.setPaymentReferenceId(cardDetails.getCardId());
         } else {

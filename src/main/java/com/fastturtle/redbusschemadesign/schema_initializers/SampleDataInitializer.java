@@ -21,7 +21,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+//@Component
 public class SampleDataInitializer {
 
     // Sample data for Bus
@@ -148,7 +148,7 @@ public class SampleDataInitializer {
     private final BankDetailRepository bankDetailRepository;
     private final CardDetailRepository cardDetailRepository;
 
-    @Autowired
+//    @Autowired
     public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder, UserWalletRepository userWalletRepository, BankDetailRepository bankDetailRepository, BankDetailRepository bankDetailRepository1, CardDetailRepository cardDetailRepository) {
         this.busRepository = busRepository;
         this.routeRepository = routeRepository;
@@ -379,7 +379,7 @@ public class SampleDataInitializer {
 
         CardPaymentStrategy cps = new CardPaymentStrategy(cardDetailRepository);
         CardPaymentParams cardPaymentParams = new CardPaymentParams();
-        cardPaymentParams.setLast4Digits(1234);
+        cardPaymentParams.setLast4Digits(6789);
         cardPaymentParams.setPaymentDate(paymentDates[4]);
         cardPaymentParams.setReceivedOtp(840320);
         cardPaymentParams.setCardType(CardType.DEBIT);
@@ -613,7 +613,7 @@ public class SampleDataInitializer {
     }
 
     private void createAndSaveCardDetails() {
-        String[] cardNumbers = {"432111111234", "111123455432", "543211111234", "678943211234"};
+        String[] cardNumbers = {"4321111112345678", "1111234554324567", "5432111112346789", "6789432112345678"};
         String[] cardHolderNames = {
                 "Vikram Bhatt",
                 "Suraj Pancholi",
