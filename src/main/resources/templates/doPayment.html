@@ -57,30 +57,50 @@
 
                                 <!-- Showing saved cards here -->
 
-                                <!-- Saved Debit crads -->
-                                <div th:if="${paymentMode.name == 'DEBIT_CARD' && savedDebitCards != null && savedDebitCards.size() > 0}" th:style="'display:none;'" id="saved-debit-cards">
-                                    <span class="text-primary ms-3">Saved Cards</span>
+                                <!-- Saved Debit Cards -->
+                                <div th:if="${paymentMode.name == 'DEBIT_CARD' && savedDebitCards != null && savedDebitCards.size() > 0}"
+                                     style="display: none" id="saved-debit-cards">
+                                    <span class="text-primary ms-3">Previously Used Cards</span>
                                     <div th:each="savedDebitCard : ${savedDebitCards}" class="form-check ms-3">
                                         <input class="form-check-input" type="radio"
                                                th:id="${savedDebitCard.cardId}" th:name="savedDebitCard"
                                                th:value="${savedDebitCard.cardId}"
-                                               onclick="selectSavedCard(this, 'DEBIT_CARD')">
+                                               onclick="selectSavedCard(this, 'Debit Card')">
                                         <label class="form-check-label" th:for="${savedDebitCard.cardId}"
                                                th:text="${savedDebitCard.cardType} + ' - ' + ${savedDebitCard.cardHolderName} + ' - **' + ${savedDebitCard.cardNumber.substring(savedDebitCard.cardNumber.length() - 4)}"></label>
                                     </div>
+
+                                    <!-- CVV Input Section (Initially Hidden) -->
+                                    <div id="cvvSectionDebit" class="ms-4 mt-2" style="display: none;">
+                                        <div class="d-flex align-items-center">
+                                            <input type="text" id="cvvInputDebit" class="form-control me-2" placeholder="Enter CVV" maxlength="3" style="width: 100px;">
+                                            <button type="button" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </div>
+
                                 </div>
 
-                                <!-- Saved Credit Crads -->
-                                <div th:if="${paymentMode.name == 'CREDIT_CARD' && savedCreditCards != null && savedCreditCards.size() > 0}" th:style="'display:none;'" id="saved-credit-cards">
-                                    <span class="text-primary ms-3">Saved Cards</span>
+                                <!-- Saved Credit Cards -->
+                                <div th:if="${paymentMode.name == 'CREDIT_CARD' && savedCreditCards != null && savedCreditCards.size() > 0}"
+                                     style="display: none" id="saved-credit-cards">
+                                    <span class="text-primary ms-3">Previously Used Cards</span>
                                     <div th:each="savedCreditCard : ${savedCreditCards}" class="form-check ms-3">
                                         <input class="form-check-input" type="radio"
                                                th:id="${savedCreditCard.cardId}" th:name="savedCreditCard"
                                                th:value="${savedCreditCard.cardId}"
-                                               onclick="selectSavedCard(this, 'CREDIT_CARD')">
+                                               onclick="selectSavedCard(this, 'Credit Card')">
                                         <label class="form-check-label" th:for="${savedCreditCard.cardId}"
                                                th:text="${savedCreditCard.cardType} + ' - ' + ${savedCreditCard.cardHolderName} + ' - **' + ${savedCreditCard.cardNumber.substring(savedCreditCard.cardNumber.length() - 4)}"></label>
                                     </div>
+
+                                    <!-- CVV Input Section (Initially Hidden) -->
+                                    <div id="cvvSectionCredit" class="ms-4 mt-2" style="display: none;">
+                                        <div class="d-flex align-items-center">
+                                            <input type="text" id="cvvInputCredit" class="form-control me-2" placeholder="Enter CVV" maxlength="3" style="width: 100px;">
+                                            <button type="button" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </div>
+
                                 </div>
 
                             </div>
@@ -88,13 +108,6 @@
                             <!-- Hidden field to store the chosen card ID -->
                             <input type="hidden" id="selectedCardId" name="selectedCardId">
 
-                            <!-- CVV Input and Submit Button Div -->
-                            <div id="cvvSection" style="display: none; margin-top: 10px;">
-                                <div class="d-flex align-items-center">
-                                    <input type="text" id="cvvInput" class="form-control me-2" placeholder="Enter CVV" maxlength="3" style="width: 100px;">
-                                    <button type="button" class="btn btn-primary">Submit</button>
-                                </div>
-                            </div>
 
                             <!-- Card Details Section: Initially Hidden -->
                             <div id="cardDetails" style="display: none;" class="mt-3">
@@ -212,10 +225,14 @@
             const cardDetailsSection = document.getElementById('cardDetails');
             const savedDebitCardsSection = document.getElementById('saved-debit-cards');
             const savedCreditCardsSection = document.getElementById('saved-credit-cards');
-            const cvvForSavedCardSection = document.getElementById('cvvSection');
+            const cvvSavedDebitCardSection = document.getElementById('cvvSectionDebit');
+            const cvvSavedCreditCardSection = document.getElementById('cvvSectionCredit');
             savedCreditCardsSection.style.display = 'none';
             savedDebitCardsSection.style.display = 'none';
-            cvvForSavedCardSection.style.display ='none';
+            cvvSavedDebitCardSection.style.display ='none';
+            cvvSavedCreditCardSection.style.display ='none';
+
+            document.getElementById('selectedCardId').value = "";
 
             const bankOptionsSection = document.getElementById('bankOptions');
             const walletDetailsSection = document.getElementById('walletDetails')
@@ -264,12 +281,20 @@
         function selectSavedCard(savedCardRadio, paymentMode) {
             // Deselect parent payment mode radio button
             document.getElementById(paymentMode).checked = false;
+            document.getElementById('cardDetails').style.display = 'none';
+            const cvvSectionDebit = document.getElementById('cvvSectionDebit');
+            const cvvSectionCredit = document.getElementById('cvvSectionCredit');
+            cvvSectionDebit.style.display = 'none';
+            cvvSectionCredit.style.display = 'none';
 
             // Set the hidden field with the selected saved card ID
             document.getElementById('selectedCardId').value = savedCardRadio.value;
 
-            // Show the CVV input and submit button
-            document.getElementById('cvvSection').style.display = 'block';
+            if (paymentMode === 'Debit Card') {
+                cvvSectionDebit.style.display = 'block';
+            } else if (paymentMode === 'Credit Card') {
+                cvvSectionCredit.style.display = 'block';
+            }
         }
 
         function uncheckSavedCard(savedCardName) {
