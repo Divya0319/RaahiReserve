@@ -72,6 +72,10 @@
                                 <!-- CVV Input Section (Initially Hidden) -->
                                 <div id="cvvSectionDebit" class="ms-4 mt-2" style="display: none;">
                                     <form th:action="@{/payments/otpValidation}">
+
+                                        <!-- Hidden field to store the chosen card ID -->
+                                        <input type="hidden" id="selectedDebitCardId" name="selectedDebitCardId">
+
                                         <div class="d-flex align-items-center">
                                             <input type="text" id="cvvInputDebit" class="form-control me-2" placeholder="Enter CVV" maxlength="3" style="width: 100px;" required>
                                             <button type="submit" class="btn btn-primary">Submit</button>
@@ -96,18 +100,21 @@
 
                                 <!-- CVV Input Section (Initially Hidden) -->
                                 <div id="cvvSectionCredit" class="ms-4 mt-2" style="display: none;">
-                                    <div class="d-flex align-items-center">
-                                        <input type="text" id="cvvInputCredit" class="form-control me-2" placeholder="Enter CVV" maxlength="3" style="width: 100px;">
-                                        <button type="button" class="btn btn-primary">Submit</button>
-                                    </div>
+                                    <form th:action="@{/payments/otpValidation}">
+
+                                        <!-- Hidden field to store the chosen card ID -->
+                                        <input type="hidden" id="selectedCreditCardId" name="selectedCreditCardId">
+
+                                        <div class="d-flex align-items-center">
+                                            <input type="text" id="cvvInputCredit" class="form-control me-2" placeholder="Enter CVV" maxlength="3" style="width: 100px;" required>
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </form>
                                 </div>
 
                             </div>
 
                         </div>
-
-                        <!-- Hidden field to store the chosen card ID -->
-                        <input type="hidden" id="selectedCardId" name="selectedCardId">
 
 
                         <!-- Card Details Section: Initially Hidden -->
@@ -235,7 +242,8 @@
                 cvvSavedDebitCardSection.style.display = 'none';
             }
 
-            document.getElementById('selectedCardId').value = "";
+            document.getElementById('selectedDebitCardId').value = "";
+            document.getElementById('selectedCreditCardId').value = "";
 
             const bankOptionsSection = document.getElementById('bankOptions');
             const walletDetailsSection = document.getElementById('walletDetails')
@@ -285,8 +293,13 @@
             // Deselect parent payment mode radio button
             document.getElementById(paymentMode).checked = false;
             document.getElementById('cardDetails').style.display = 'none';
+
             const cvvSectionDebit = document.getElementById('cvvSectionDebit');
             const cvvSectionCredit = document.getElementById('cvvSectionCredit');
+            const hiddenSelectedDebitCard = document.getElementById('selectedDebitCardId');
+            const hiddenSelectedCreditCard = document.getElementById('selectedCreditCardId');
+            hiddenSelectedDebitCard.value = "";
+            hiddenSelectedCreditCard.value = "";
 
             if(cvvSectionDebit) {
                 cvvSectionDebit.style.display = 'none';
@@ -297,7 +310,11 @@
             }
 
             // Set the hidden field with the selected saved card ID
-            document.getElementById('selectedCardId').value = savedCardRadio.value;
+            if(paymentMode === 'Debit Card')
+                hiddenSelectedDebitCard.value = savedCardRadio.value;
+
+            if(paymentMode === 'Credit Card')
+                hiddenSelectedCreditCard.value = savedCardRadio.value;
 
             if (paymentMode === 'Debit Card' && cvvSectionDebit) {
                 cvvSectionDebit.style.display = 'block';
@@ -329,10 +346,13 @@
 
         function updateBankSelection() {
             // Get the selected bank value from the dropdown
-            const selectedBank = document.getElementById('bankName').value;
+            const bankNameRadioButton = document.getElementById('bankName');
+            if(bankNameRadioButton) {
+                const selectedBank = bankNameRadioButton.value;
 
-            // Set the value to the hidden input field in the form
-            document.getElementById('selectedBankForPayment').value = selectedBank;
+                // Set the value to the hidden input field in the form
+                document.getElementById('selectedBankForPayment').value = selectedBank;
+            }
         }
 
         function updateCardDetails() {
