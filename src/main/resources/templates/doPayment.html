@@ -55,30 +55,45 @@
                                        onclick="togglePaymentDetails(this)">
                                 <label class="form-check-label" th:for="${paymentMode}" th:text="${paymentMode}"></label>
 
-                                <!-- Show saved cards here -->
+                                <!-- Showing saved cards here -->
 
+                                <!-- Saved Debit crads -->
                                 <div th:if="${paymentMode.name == 'DEBIT_CARD' && savedDebitCards != null && savedDebitCards.size() > 0}" th:style="'display:none;'" id="saved-debit-cards">
-                                    <span class="ms-3">Saved Cards</span>
+                                    <span class="text-primary ms-3">Saved Cards</span>
                                     <div th:each="savedDebitCard : ${savedDebitCards}" class="form-check ms-3">
                                         <input class="form-check-input" type="radio"
                                                th:id="${savedDebitCard.cardId}" th:name="savedDebitCard"
-                                               th:value="${savedDebitCard.cardId}">
+                                               th:value="${savedDebitCard.cardId}"
+                                               onclick="selectSavedCard(this, 'DEBIT_CARD')">
                                         <label class="form-check-label" th:for="${savedDebitCard.cardId}"
                                                th:text="${savedDebitCard.cardType} + ' - ' + ${savedDebitCard.cardHolderName} + ' - **' + ${savedDebitCard.cardNumber.substring(savedDebitCard.cardNumber.length() - 4)}"></label>
                                     </div>
                                 </div>
 
+                                <!-- Saved Credit Crads -->
                                 <div th:if="${paymentMode.name == 'CREDIT_CARD' && savedCreditCards != null && savedCreditCards.size() > 0}" th:style="'display:none;'" id="saved-credit-cards">
-                                    <span class="ms-3">Saved Cards</span>
+                                    <span class="text-primary ms-3">Saved Cards</span>
                                     <div th:each="savedCreditCard : ${savedCreditCards}" class="form-check ms-3">
                                         <input class="form-check-input" type="radio"
                                                th:id="${savedCreditCard.cardId}" th:name="savedCreditCard"
-                                               th:value="${savedCreditCard.cardId}">
+                                               th:value="${savedCreditCard.cardId}"
+                                               onclick="selectSavedCard(this, 'CREDIT_CARD')">
                                         <label class="form-check-label" th:for="${savedCreditCard.cardId}"
                                                th:text="${savedCreditCard.cardType} + ' - ' + ${savedCreditCard.cardHolderName} + ' - **' + ${savedCreditCard.cardNumber.substring(savedCreditCard.cardNumber.length() - 4)}"></label>
                                     </div>
                                 </div>
 
+                            </div>
+
+                            <!-- Hidden field to store the chosen card ID -->
+                            <input type="hidden" id="selectedCardId" name="selectedCardId">
+
+                            <!-- CVV Input and Submit Button Div -->
+                            <div id="cvvSection" style="display: none; margin-top: 10px;">
+                                <div class="d-flex align-items-center">
+                                    <input type="text" id="cvvInput" class="form-control me-2" placeholder="Enter CVV" maxlength="3" style="width: 100px;">
+                                    <button type="button" class="btn btn-primary">Submit</button>
+                                </div>
                             </div>
 
                             <!-- Card Details Section: Initially Hidden -->
@@ -197,8 +212,10 @@
             const cardDetailsSection = document.getElementById('cardDetails');
             const savedDebitCardsSection = document.getElementById('saved-debit-cards');
             const savedCreditCardsSection = document.getElementById('saved-credit-cards');
+            const cvvForSavedCardSection = document.getElementById('cvvSection');
             savedCreditCardsSection.style.display = 'none';
             savedDebitCardsSection.style.display = 'none';
+            cvvForSavedCardSection.style.display ='none';
 
             const bankOptionsSection = document.getElementById('bankOptions');
             const walletDetailsSection = document.getElementById('walletDetails')
@@ -212,8 +229,10 @@
                 walletDetailsSection.style.display = 'none'
                 if(selectedElement.value === 'DEBIT_CARD') {
                     savedDebitCardsSection.style.display = 'block';
+                    uncheckSavedCard('savedDebitCard');
                 } else {
                     savedCreditCardsSection.style.display = 'block';
+                    uncheckSavedCard('savedCreditCard');
                 }
             } else if (selectedElement.value === 'NETBANKING') {
                 bankOptionsSection.style.display = 'block';
@@ -240,6 +259,23 @@
                 bankOptionsSection.style.display = 'none';
                 walletDetailsSection.style.display = 'none'
             }
+        }
+
+        function selectSavedCard(savedCardRadio, paymentMode) {
+            // Deselect parent payment mode radio button
+            document.getElementById(paymentMode).checked = false;
+
+            // Set the hidden field with the selected saved card ID
+            document.getElementById('selectedCardId').value = savedCardRadio.value;
+
+            // Show the CVV input and submit button
+            document.getElementById('cvvSection').style.display = 'block';
+        }
+
+        function uncheckSavedCard(savedCardName) {
+            // Uncheck all saved card radio buttons
+            const savedCards = document.getElementsByName(savedCardName);
+            savedCards.forEach(card => card.checked = false);
         }
 
         function formatExpiryDate(input) {
