@@ -42,157 +42,154 @@
                     </div>
                 </form>
 
-<!--                <form th:if="${errorMessage == null && successMessage == null}" th:action="@{/payments/doPayment}" method="post">-->
+                <input type="hidden" th:if="${isBookingIdPresent}" th:name="bookingId" th:value="${booking.bookingId}"/>
 
-                    <input type="hidden" th:if="${isBookingIdPresent}" th:name="bookingId" th:value="${booking.bookingId}"/>
-                    <div th:if="${isBookingIdPresent}" class="mb-3">
-                        <label for="paymentModeDiv" class="form-label">Select Payment Mode</label>
-                        <div id="paymentModeDiv">
-                            <div th:each="paymentMode : ${paymentModes}" class="form-check">
-                                <input class="form-check-input" type="radio"
-                                       th:id="${paymentMode}" th:name="paymentMode"
-                                       th:value="${paymentMode.name}" required
-                                       onclick="togglePaymentDetails(this)">
-                                <label class="form-check-label" th:for="${paymentMode}" th:text="${paymentMode}"></label>
+                <div th:if="${isBookingIdPresent}" class="mb-3">
+                    <label for="paymentModeDiv" class="form-label">Select Payment Mode</label>
+                    <div id="paymentModeDiv">
+                        <div th:each="paymentMode : ${paymentModes}" class="form-check">
+                            <input class="form-check-input" type="radio"
+                                   th:id="${paymentMode}" th:name="paymentMode"
+                                   th:value="${paymentMode.name}" required
+                                   onclick="togglePaymentDetails(this)">
+                            <label class="form-check-label" th:for="${paymentMode}" th:text="${paymentMode}"></label>
 
-                                <!-- Showing saved cards here -->
+                            <!-- Showing saved cards here -->
 
-                                <!-- Saved Debit Cards -->
-                                <div th:if="${paymentMode.name == 'DEBIT_CARD' && savedDebitCards != null && savedDebitCards.size() > 0}"
-                                     style="display: none" id="saved-debit-cards">
-                                    <span class="text-primary ms-3">Previously Used Cards</span>
-                                    <div th:each="savedDebitCard : ${savedDebitCards}" class="form-check ms-3">
-                                        <input class="form-check-input" type="radio"
-                                               th:id="${savedDebitCard.cardId}" th:name="savedDebitCard"
-                                               th:value="${savedDebitCard.cardId}"
-                                               onclick="selectSavedCard(this, 'Debit Card')">
-                                        <label class="form-check-label" th:for="${savedDebitCard.cardId}"
-                                               th:text="${savedDebitCard.cardType} + ' - ' + ${savedDebitCard.cardHolderName} + ' - **' + ${savedDebitCard.cardNumber.substring(savedDebitCard.cardNumber.length() - 4)}"></label>
-                                    </div>
-
-                                    <!-- CVV Input Section (Initially Hidden) -->
-                                    <div id="cvvSectionDebit" class="ms-4 mt-2" style="display: none;">
-                                        <div class="d-flex align-items-center">
-                                            <input type="text" id="cvvInputDebit" class="form-control me-2" placeholder="Enter CVV" maxlength="3" style="width: 100px;">
-                                            <button type="button" class="btn btn-primary">Submit</button>
-                                        </div>
-                                    </div>
-
+                            <!-- Saved Debit Cards -->
+                            <div th:if="${paymentMode.name == 'DEBIT_CARD' && savedDebitCards != null && savedDebitCards.size() > 0}"
+                                 style="display: none" id="saved-debit-cards">
+                                <span class="text-primary ms-3">Previously Used Cards</span>
+                                <div th:each="savedDebitCard : ${savedDebitCards}" class="form-check ms-3">
+                                    <input class="form-check-input" type="radio"
+                                           th:id="${savedDebitCard.cardId}" th:name="savedDebitCard"
+                                           th:value="${savedDebitCard.cardId}"
+                                           onclick="selectSavedCard(this, 'Debit Card')">
+                                    <label class="form-check-label" th:for="${savedDebitCard.cardId}"
+                                           th:text="${savedDebitCard.cardType} + ' - ' + ${savedDebitCard.cardHolderName} + ' - **' + ${savedDebitCard.cardNumber.substring(savedDebitCard.cardNumber.length() - 4)}"></label>
                                 </div>
 
-                                <!-- Saved Credit Cards -->
-                                <div th:if="${paymentMode.name == 'CREDIT_CARD' && savedCreditCards != null && savedCreditCards.size() > 0}"
-                                     style="display: none" id="saved-credit-cards">
-                                    <span class="text-primary ms-3">Previously Used Cards</span>
-                                    <div th:each="savedCreditCard : ${savedCreditCards}" class="form-check ms-3">
-                                        <input class="form-check-input" type="radio"
-                                               th:id="${savedCreditCard.cardId}" th:name="savedCreditCard"
-                                               th:value="${savedCreditCard.cardId}"
-                                               onclick="selectSavedCard(this, 'Credit Card')">
-                                        <label class="form-check-label" th:for="${savedCreditCard.cardId}"
-                                               th:text="${savedCreditCard.cardType} + ' - ' + ${savedCreditCard.cardHolderName} + ' - **' + ${savedCreditCard.cardNumber.substring(savedCreditCard.cardNumber.length() - 4)}"></label>
-                                    </div>
-
-                                    <!-- CVV Input Section (Initially Hidden) -->
-                                    <div id="cvvSectionCredit" class="ms-4 mt-2" style="display: none;">
+                                <!-- CVV Input Section (Initially Hidden) -->
+                                <div id="cvvSectionDebit" class="ms-4 mt-2" style="display: none;">
+                                    <form th:action="@{/payments/otpValidation}">
                                         <div class="d-flex align-items-center">
-                                            <input type="text" id="cvvInputCredit" class="form-control me-2" placeholder="Enter CVV" maxlength="3" style="width: 100px;">
-                                            <button type="button" class="btn btn-primary">Submit</button>
+                                            <input type="text" id="cvvInputDebit" class="form-control me-2" placeholder="Enter CVV" maxlength="3" style="width: 100px;" required>
+                                            <button type="submit" class="btn btn-primary">Submit</button>
                                         </div>
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                            <!-- Hidden field to store the chosen card ID -->
-                            <input type="hidden" id="selectedCardId" name="selectedCardId">
-
-
-                            <!-- Card Details Section: Initially Hidden -->
-                            <div id="cardDetails" style="display: none;" class="mt-3">
-                                <!-- Row 1: Card Number and Card Holder Name -->
-                                <form id="cardDetailsForm" th:action="@{/payments/otpValidation}" method="post">
-                                    <div class="container">
-                                        <div class="row mb-2">
-                                            <div class="col-md-6">
-                                                <label for="cardNumber" class="form-label">Card Number</label>
-                                                <input type="text" id="cardNumber" name="cardNumber" class="form-control" maxlength="16"
-                                                       pattern="\d{16}" placeholder="Enter 16-digit card number" oninput="validateCardDetails()" required>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="cardHolderName" class="form-label">Card Holder Name</label>
-                                                <input type="text" id="cardHolderName" name="cardHolderName" class="form-control"
-                                                       placeholder="Enter card holder name" required>
-                                            </div>
-                                        </div>
-
-                                    <!-- Row 2: Expiry Date, CVV, and Proceed Button -->
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <label for="expiryDate" class="form-label">Expiry Date (MM/YY)</label>
-                                                <input type="text" id="expiryDate" class="form-control" placeholder="MM/YY"
-                                                       pattern="\d{2}/\d{2}" maxlength="5" oninput="formatExpiryDate(this); validateExpiryDate();" required>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <label for="cvv" class="form-label">CVV</label>
-                                                <input type="password" id="cvv" name="cvv" class="form-control" maxlength="3" pattern="\d{3}"
-                                                       placeholder="Enter CVV" required>
-                                            </div>
-
-                                            <div class="col-md-4 d-flex align-items-end">
-                                                <button id="proceedWithCardPayment" type="submit" class="btn btn-primary" onclick="updateCardDetails()">Proceed</button>
-                                            </div>
-                                        </div>
-
-                                            <input type="hidden" id="paymentModeCard" th:if="${isBookingIdPresent}" th:name="paymentModeChosen"/>
-                                            <input type="hidden" id="hiddenExpiryMonth" name="expiryMonth" />
-                                            <input type="hidden" id="hiddenExpiryYear" name="expiryYear" />
-                                            <input type="hidden" th:name="bookingIdForPayment" th:value="${booking.bookingId}" >
-
-                                    </div>
-                                </form>
-
-                            </div>
-
-                            <div id="bankOptions" style="display: none;" class="mt-3">
-                                <div class="d-flex align-items-center">
-                                    <label for="bankName" class="form-label me-2">Select Bank</label>
-                                    <select class="form-control me-2" th:name="bankName" id="bankName" onchange="updateBankSelection()">
-                                        <option
-                                                th:each="bankDetail : ${bankDetails}"
-                                                th:value="${bankDetail.bankName}"
-                                                th:text="${bankDetail.bankName}">
-
-                                        </option>
-                                    </select>
-                                    <form th:action="@{/payments/otpValidation}" method="post">
-                                        <input type="hidden" id="paymentModeBank" th:if="${isBookingIdPresent}" th:name="paymentModeChosen"/>
-                                        <input type="hidden" id="selectedBankForPayment" th:if="${isBookingIdPresent}" th:name="selectedBankForPayment">
-                                        <input type="hidden" th:name="bookingIdForPayment" th:value="${booking.bookingId}" >
-                                        <button type="submit" class="btn btn-primary ms-2">Proceed</button>
                                     </form>
                                 </div>
+
                             </div>
 
-                            <div id="walletDetails" style="display: none;" class="mt-3">
-                                <p><strong>User Email: </strong> <span th:text="${walletDetails.user.email}"></span></p>
-                                <p><strong>Wallet Balance: </strong> <span id="walletBalance" th:text="${walletDetails.balance}"></span></p>
+                            <!-- Saved Credit Cards -->
+                            <div th:if="${paymentMode.name == 'CREDIT_CARD' && savedCreditCards != null && savedCreditCards.size() > 0}"
+                                 style="display: none" id="saved-credit-cards">
+                                <span class="text-primary ms-3">Previously Used Cards</span>
+                                <div th:each="savedCreditCard : ${savedCreditCards}" class="form-check ms-3">
+                                    <input class="form-check-input" type="radio"
+                                           th:id="${savedCreditCard.cardId}" th:name="savedCreditCard"
+                                           th:value="${savedCreditCard.cardId}"
+                                           onclick="selectSavedCard(this, 'Credit Card')">
+                                    <label class="form-check-label" th:for="${savedCreditCard.cardId}"
+                                           th:text="${savedCreditCard.cardType} + ' - ' + ${savedCreditCard.cardHolderName} + ' - **' + ${savedCreditCard.cardNumber.substring(savedCreditCard.cardNumber.length() - 4)}"></label>
+                                </div>
 
+                                <!-- CVV Input Section (Initially Hidden) -->
+                                <div id="cvvSectionCredit" class="ms-4 mt-2" style="display: none;">
+                                    <div class="d-flex align-items-center">
+                                        <input type="text" id="cvvInputCredit" class="form-control me-2" placeholder="Enter CVV" maxlength="3" style="width: 100px;">
+                                        <button type="button" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Hidden field to store the chosen card ID -->
+                        <input type="hidden" id="selectedCardId" name="selectedCardId">
+
+
+                        <!-- Card Details Section: Initially Hidden -->
+                        <div id="cardDetails" style="display: none;" class="mt-3">
+                            <!-- Row 1: Card Number and Card Holder Name -->
+                            <form id="cardDetailsForm" th:action="@{/payments/otpValidation}" method="post">
+                                <div class="container">
+                                    <div class="row mb-2">
+                                        <div class="col-md-6">
+                                            <label for="cardNumber" class="form-label">Card Number</label>
+                                            <input type="text" id="cardNumber" name="cardNumber" class="form-control" maxlength="16"
+                                                   pattern="\d{16}" placeholder="Enter 16-digit card number" oninput="validateCardDetails()" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="cardHolderName" class="form-label">Card Holder Name</label>
+                                            <input type="text" id="cardHolderName" name="cardHolderName" class="form-control"
+                                                   placeholder="Enter card holder name" required>
+                                        </div>
+                                    </div>
+
+                                <!-- Row 2: Expiry Date, CVV, and Proceed Button -->
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label for="expiryDate" class="form-label">Expiry Date (MM/YY)</label>
+                                            <input type="text" id="expiryDate" class="form-control" placeholder="MM/YY"
+                                                   pattern="\d{2}/\d{2}" maxlength="5" oninput="formatExpiryDate(this); validateExpiryDate();" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="cvv" class="form-label">CVV</label>
+                                            <input type="password" id="cvv" name="cvv" class="form-control" maxlength="3" pattern="\d{3}"
+                                                   placeholder="Enter CVV" required>
+                                        </div>
+
+                                        <div class="col-md-4 d-flex align-items-end">
+                                            <button id="proceedWithCardPayment" type="submit" class="btn btn-primary" onclick="updateCardDetails()">Proceed</button>
+                                        </div>
+                                    </div>
+
+                                        <input type="hidden" id="paymentModeCard" th:if="${isBookingIdPresent}" th:name="paymentModeChosen"/>
+                                        <input type="hidden" id="hiddenExpiryMonth" name="expiryMonth" />
+                                        <input type="hidden" id="hiddenExpiryYear" name="expiryYear" />
+                                        <input type="hidden" th:name="bookingIdForPayment" th:value="${booking.bookingId}" >
+
+                                </div>
+                            </form>
+
+                        </div>
+
+                        <div id="bankOptions" style="display: none;" class="mt-3">
+                            <div class="d-flex align-items-center">
+                                <label for="bankName" class="form-label me-2">Select Bank</label>
+                                <select class="form-control me-2" th:name="bankName" id="bankName" onchange="updateBankSelection()">
+                                    <option
+                                            th:each="bankDetail : ${bankDetails}"
+                                            th:value="${bankDetail.bankName}"
+                                            th:text="${bankDetail.bankName}">
+
+                                    </option>
+                                </select>
                                 <form th:action="@{/payments/otpValidation}" method="post">
-                                    <input type="hidden" id="paymentModeWallet" th:if="${isBookingIdPresent}" th:name="paymentModeChosen"/>
+                                    <input type="hidden" id="paymentModeBank" th:if="${isBookingIdPresent}" th:name="paymentModeChosen"/>
+                                    <input type="hidden" id="selectedBankForPayment" th:if="${isBookingIdPresent}" th:name="selectedBankForPayment">
                                     <input type="hidden" th:name="bookingIdForPayment" th:value="${booking.bookingId}" >
-                                    <button id="walletProceedButton" type="submit" class="btn btn-primary">Proceed</button>
+                                    <button type="submit" class="btn btn-primary ms-2">Proceed</button>
                                 </form>
-                                <span id="walletWarning" class="text-danger" style="display: none;">Insufficient balance</span>
                             </div>
                         </div>
+
+                        <div id="walletDetails" style="display: none;" class="mt-3">
+                            <p><strong>User Email: </strong> <span th:text="${walletDetails.user.email}"></span></p>
+                            <p><strong>Wallet Balance: </strong> <span id="walletBalance" th:text="${walletDetails.balance}"></span></p>
+
+                            <form th:action="@{/payments/otpValidation}" method="post">
+                                <input type="hidden" id="paymentModeWallet" th:if="${isBookingIdPresent}" th:name="paymentModeChosen"/>
+                                <input type="hidden" th:name="bookingIdForPayment" th:value="${booking.bookingId}" >
+                                <button id="walletProceedButton" type="submit" class="btn btn-primary">Proceed</button>
+                            </form>
+                            <span id="walletWarning" class="text-danger" style="display: none;">Insufficient balance</span>
+                        </div>
                     </div>
+                </div>
 
-<!--                    <button th:if="${isBookingIdPresent}" type="submit" class="btn btn-success" name="action" value="completed">Mark Payment Completed</button>-->
-
-<!--                    <button th:if="${isBookingIdPresent}" type="submit" class="btn btn-danger" name="action" value="failed">Mark Payment Failed</button>-->
-<!--                </form>-->
 
                 <div th:if="${errorMessage != null}" class="alert alert-danger d-inline-block ml-3 mt-3" style="width: auto" >
                     <p th:text="${errorMessage}"></p>
@@ -227,10 +224,16 @@
             const savedCreditCardsSection = document.getElementById('saved-credit-cards');
             const cvvSavedDebitCardSection = document.getElementById('cvvSectionDebit');
             const cvvSavedCreditCardSection = document.getElementById('cvvSectionCredit');
-            savedCreditCardsSection.style.display = 'none';
-            savedDebitCardsSection.style.display = 'none';
-            cvvSavedDebitCardSection.style.display ='none';
-            cvvSavedCreditCardSection.style.display ='none';
+
+            if(savedCreditCardsSection) {
+                savedCreditCardsSection.style.display = 'none';
+                cvvSavedCreditCardSection.style.display ='none';
+            }
+
+            if(savedDebitCardsSection) {
+                savedDebitCardsSection.style.display = 'none';
+                cvvSavedDebitCardSection.style.display = 'none';
+            }
 
             document.getElementById('selectedCardId').value = "";
 
@@ -244,10 +247,10 @@
                 cardDetailsSection.style.display = 'block';
                 bankOptionsSection.style.display = 'none';
                 walletDetailsSection.style.display = 'none'
-                if(selectedElement.value === 'DEBIT_CARD') {
+                if(selectedElement.value === 'DEBIT_CARD' && savedDebitCardsSection) {
                     savedDebitCardsSection.style.display = 'block';
                     uncheckSavedCard('savedDebitCard');
-                } else {
+                } else if(selectedElement.value === 'CREDIT_CARD' && savedCreditCardsSection) {
                     savedCreditCardsSection.style.display = 'block';
                     uncheckSavedCard('savedCreditCard');
                 }
@@ -284,15 +287,21 @@
             document.getElementById('cardDetails').style.display = 'none';
             const cvvSectionDebit = document.getElementById('cvvSectionDebit');
             const cvvSectionCredit = document.getElementById('cvvSectionCredit');
-            cvvSectionDebit.style.display = 'none';
-            cvvSectionCredit.style.display = 'none';
+
+            if(cvvSectionDebit) {
+                cvvSectionDebit.style.display = 'none';
+            }
+
+            if(cvvSectionCredit) {
+                cvvSectionCredit.style.display = 'none';
+            }
 
             // Set the hidden field with the selected saved card ID
             document.getElementById('selectedCardId').value = savedCardRadio.value;
 
-            if (paymentMode === 'Debit Card') {
+            if (paymentMode === 'Debit Card' && cvvSectionDebit) {
                 cvvSectionDebit.style.display = 'block';
-            } else if (paymentMode === 'Credit Card') {
+            } else if (paymentMode === 'Credit Card' && cvvSectionCredit) {
                 cvvSectionCredit.style.display = 'block';
             }
         }
