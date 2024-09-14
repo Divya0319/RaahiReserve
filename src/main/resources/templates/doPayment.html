@@ -256,8 +256,12 @@
                 cvvSavedDebitCardSection.style.display = 'none';
             }
 
-            document.getElementById('selectedDebitCardID').value = "";
-            document.getElementById('selectedCreditCardID').value = "";
+            const selectedDebitCardID = document.getElementById('selectedDebitCardID');
+            const selectedCreditCardID = document.getElementById('selectedCreditCardID');
+            if(selectedDebitCardID)
+                selectedDebitCardID.value = "";
+            if(selectedCreditCardID)
+                selectedCreditCardID.value = "";
 
             const bankOptionsSection = document.getElementById('bankOptions');
             const walletDetailsSection = document.getElementById('walletDetails')
