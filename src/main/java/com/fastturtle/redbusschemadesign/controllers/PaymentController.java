@@ -4,11 +4,9 @@ import com.fastturtle.redbusschemadesign.dtos.PaymentRequest;
 import com.fastturtle.redbusschemadesign.dtos.PaymentRequestDTO;
 import com.fastturtle.redbusschemadesign.enums.CardType;
 import com.fastturtle.redbusschemadesign.enums.PaymentRefType;
-import com.fastturtle.redbusschemadesign.helpers.BusDataUtils;
 import com.fastturtle.redbusschemadesign.helpers.CardUtils;
 import com.fastturtle.redbusschemadesign.models.*;
 import com.fastturtle.redbusschemadesign.enums.PaymentMethod;
-import com.fastturtle.redbusschemadesign.repositories.BankDetailRepository;
 import com.fastturtle.redbusschemadesign.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -170,6 +168,10 @@ public class PaymentController {
                                       @RequestParam(value = "expiryYear", required = false) String expiryYear,
                                       @RequestParam(value = "cvv", required = false) String cvv,
                                       @RequestParam("bookingIdForPayment") Integer bookingId,
+                                      @RequestParam(value = "selectedDebitCardID", required = false) Integer selectedDebitCardID,
+                                      @RequestParam(value = "selectedCreditCardID", required = false) Integer selectedCreditCardID,
+                                      @RequestParam(value = "cvvInputDebit", required = false) String cvvInputDebit,
+                                      @RequestParam(value = "cvvInputCredit", required = false) String cvvInputCredit,
                                       Model model, Principal principal) {
         String loggedInUserName = principal.getName();
         User user = userService.findByUsername(loggedInUserName);
@@ -200,6 +202,30 @@ public class PaymentController {
                 paymentRequestDTO.setCvv(cvv);
                 paymentRequestDTO.setUserID(user.getUserId());
             }
+        } else if(selectedDebitCardID != null) {
+            CardDetails selectedCardDetails = cardDetailsService.findByID(selectedDebitCardID);
+            if(selectedCardDetails.getCvv().equals(cvvInputDebit)) {
+                paymentRequestDTO.setPaymentRefType(PaymentRefType.CARD);
+                paymentRequestDTO.setCardNo(selectedCardDetails.getCardNumber());
+                paymentRequestDTO.setCardCompany(CardUtils.getCardCompany(selectedCardDetails.getCardNumber()));
+                paymentRequestDTO.setCardHolderName(selectedCardDetails.getCardHolderName());
+                paymentRequestDTO.setExpiryMonth(selectedCardDetails.getExpiryMonth());
+                paymentRequestDTO.setExpiryYear(selectedCardDetails.getExpiryYear());
+                paymentRequestDTO.setCvv(cvvInputDebit);
+                paymentRequestDTO.setUserID(user.getUserId());
+            }
+        } else if(selectedCreditCardID != null) {
+            CardDetails selectedCardDetails = cardDetailsService.findByID(selectedCreditCardID);
+            if(selectedCardDetails.getCvv().equals(cvvInputCredit)) {
+                paymentRequestDTO.setPaymentRefType(PaymentRefType.CARD);
+                paymentRequestDTO.setCardNo(selectedCardDetails.getCardNumber());
+                paymentRequestDTO.setCardCompany(CardUtils.getCardCompany(selectedCardDetails.getCardNumber()));
+                paymentRequestDTO.setCardHolderName(selectedCardDetails.getCardHolderName());
+                paymentRequestDTO.setExpiryMonth(selectedCardDetails.getExpiryMonth());
+                paymentRequestDTO.setExpiryYear(selectedCardDetails.getExpiryYear());
+                paymentRequestDTO.setCvv(cvvInputDebit);
+                paymentRequestDTO.setUserID(user.getUserId());
+            }
         } else if(paymentMode == PaymentMethod.WALLET) {
             paymentRequestDTO.setPaymentRefType(PaymentRefType.USER);
             paymentRequestDTO.setUserID(user.getUserId());
@@ -209,10 +235,5 @@ public class PaymentController {
         model.addAttribute("paymentRequestDTO", paymentRequestDTO);
         return "securePaymentGateway";
     }
-
-    //TODO
-    //1. Integrate new payment gateway with Pay Now feature, now that pay later is done
-    //2. After payment is completed or failed now, bus number, and bus timing is not showing, or showing null in bookingResult page, rectify it
-    //3. Change timer from 2 minute to 4 minute from now.
 
 }

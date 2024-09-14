@@ -71,13 +71,13 @@
 
                                 <!-- CVV Input Section (Initially Hidden) -->
                                 <div id="cvvSectionDebit" class="ms-4 mt-2" style="display: none;">
-                                    <form th:action="@{/payments/otpValidation}">
+                                    <form th:action="@{/payments/otpValidation}" method="post">
 
                                         <!-- Hidden field to store the chosen card ID -->
-                                        <input type="hidden" id="selectedDebitCardId" name="selectedDebitCardId">
+                                        <input type="hidden" id="selectedDebitCardID" name="selectedDebitCardID">
 
                                         <div class="d-flex align-items-center">
-                                            <input type="text" id="cvvInputDebit" class="form-control me-2" placeholder="Enter CVV" maxlength="3" style="width: 100px;" required>
+                                            <input type="text" name="cvvInputDebit" class="form-control me-2" placeholder="Enter CVV" maxlength="3" style="width: 100px;" required>
                                             <button type="submit" class="btn btn-primary">Submit</button>
                                         </div>
                                     </form>
@@ -100,13 +100,13 @@
 
                                 <!-- CVV Input Section (Initially Hidden) -->
                                 <div id="cvvSectionCredit" class="ms-4 mt-2" style="display: none;">
-                                    <form th:action="@{/payments/otpValidation}">
+                                    <form th:action="@{/payments/otpValidation}" method="post">
 
                                         <!-- Hidden field to store the chosen card ID -->
-                                        <input type="hidden" id="selectedCreditCardId" name="selectedCreditCardId">
+                                        <input type="hidden" id="selectedCreditCardID" name="selectedCreditCardID">
 
                                         <div class="d-flex align-items-center">
-                                            <input type="text" id="cvvInputCredit" class="form-control me-2" placeholder="Enter CVV" maxlength="3" style="width: 100px;" required>
+                                            <input type="text" name="cvvInputCredit" class="form-control me-2" placeholder="Enter CVV" maxlength="3" style="width: 100px;" required>
                                             <button type="submit" class="btn btn-primary">Submit</button>
                                         </div>
                                     </form>
@@ -242,8 +242,8 @@
                 cvvSavedDebitCardSection.style.display = 'none';
             }
 
-            document.getElementById('selectedDebitCardId').value = "";
-            document.getElementById('selectedCreditCardId').value = "";
+            document.getElementById('selectedDebitCardID').value = "";
+            document.getElementById('selectedCreditCardID').value = "";
 
             const bankOptionsSection = document.getElementById('bankOptions');
             const walletDetailsSection = document.getElementById('walletDetails')
@@ -296,8 +296,8 @@
 
             const cvvSectionDebit = document.getElementById('cvvSectionDebit');
             const cvvSectionCredit = document.getElementById('cvvSectionCredit');
-            const hiddenSelectedDebitCard = document.getElementById('selectedDebitCardId');
-            const hiddenSelectedCreditCard = document.getElementById('selectedCreditCardId');
+            const hiddenSelectedDebitCard = document.getElementById('selectedDebitCardID');
+            const hiddenSelectedCreditCard = document.getElementById('selectedCreditCardID');
             hiddenSelectedDebitCard.value = "";
             hiddenSelectedCreditCard.value = "";
 

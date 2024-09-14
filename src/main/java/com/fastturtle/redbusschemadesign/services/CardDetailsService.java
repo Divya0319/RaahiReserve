@@ -18,4 +18,8 @@ public class CardDetailsService {
     public List<CardDetails> findCardsForUser(Integer userID) {
         return cardDetailRepository.findCardsForUser(userID);
     }
+
+    public CardDetails findByID(Integer id) {
+        return cardDetailRepository.findById(id).orElse(null);
+    }
 }
