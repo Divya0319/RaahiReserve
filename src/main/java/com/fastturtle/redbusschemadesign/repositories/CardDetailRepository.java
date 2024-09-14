@@ -16,4 +16,6 @@ public interface CardDetailRepository extends JpaRepository<CardDetails, Integer
 
     @Query("SELECT cd FROM CardDetails cd JOIN cd.linkedUser lu WHERE cd.linkedUser.userId = :userID")
     List<CardDetails> findCardsForUser(@Param("userID") Integer userID);
+
+    CardDetails findByCardNumberAndCardType(String cardNumber, CardType cardType);
 }

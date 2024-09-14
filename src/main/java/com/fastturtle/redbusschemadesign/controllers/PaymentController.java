@@ -204,28 +204,17 @@ public class PaymentController {
             }
         } else if(selectedDebitCardID != null) {
             CardDetails selectedCardDetails = cardDetailsService.findByID(selectedDebitCardID);
-            if(selectedCardDetails.getCvv().equals(cvvInputDebit)) {
-                paymentRequestDTO.setPaymentRefType(PaymentRefType.CARD);
-                paymentRequestDTO.setCardNo(selectedCardDetails.getCardNumber());
-                paymentRequestDTO.setCardCompany(CardUtils.getCardCompany(selectedCardDetails.getCardNumber()));
-                paymentRequestDTO.setCardHolderName(selectedCardDetails.getCardHolderName());
-                paymentRequestDTO.setExpiryMonth(selectedCardDetails.getExpiryMonth());
-                paymentRequestDTO.setExpiryYear(selectedCardDetails.getExpiryYear());
-                paymentRequestDTO.setCvv(cvvInputDebit);
-                paymentRequestDTO.setUserID(user.getUserId());
-            }
+
+            paymentRequestDTO.setPaymentRefType(PaymentRefType.CARD);
+            paymentRequestDTO.setCardNo(selectedCardDetails.getCardNumber());
+
         } else if(selectedCreditCardID != null) {
             CardDetails selectedCardDetails = cardDetailsService.findByID(selectedCreditCardID);
-            if(selectedCardDetails.getCvv().equals(cvvInputCredit)) {
-                paymentRequestDTO.setPaymentRefType(PaymentRefType.CARD);
-                paymentRequestDTO.setCardNo(selectedCardDetails.getCardNumber());
-                paymentRequestDTO.setCardCompany(CardUtils.getCardCompany(selectedCardDetails.getCardNumber()));
-                paymentRequestDTO.setCardHolderName(selectedCardDetails.getCardHolderName());
-                paymentRequestDTO.setExpiryMonth(selectedCardDetails.getExpiryMonth());
-                paymentRequestDTO.setExpiryYear(selectedCardDetails.getExpiryYear());
-                paymentRequestDTO.setCvv(cvvInputDebit);
-                paymentRequestDTO.setUserID(user.getUserId());
-            }
+
+            paymentRequestDTO.setPaymentRefType(PaymentRefType.CARD);
+            paymentRequestDTO.setCardNo(selectedCardDetails.getCardNumber());
+
+
         } else if(paymentMode == PaymentMethod.WALLET) {
             paymentRequestDTO.setPaymentRefType(PaymentRefType.USER);
             paymentRequestDTO.setUserID(user.getUserId());

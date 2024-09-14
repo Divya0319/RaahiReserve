@@ -76,6 +76,8 @@
 
                                         <!-- Hidden field to store the chosen card ID -->
                                         <input type="hidden" id="selectedDebitCardID" name="selectedDebitCardID">
+                                        <input type="hidden" name="paymentModeChosen" value="DEBIT_CARD"/>
+                                        <input type="hidden" name="bookingIdForPayment" th:value="${booking.bookingId}">
 
                                         <div class="d-flex align-items-center">
                                             <input type="text" id="cvvInputDebit" name="cvvInputDebit" class="form-control me-2" placeholder="Enter CVV" maxlength="3" style="width: 100px;" required>
@@ -109,6 +111,8 @@
 
                                         <!-- Hidden field to store the chosen card ID -->
                                         <input type="hidden" id="selectedCreditCardID" name="selectedCreditCardID">
+                                        <input type="hidden" name="paymentModeChosen" value="CREDIT_CARD"/>
+                                        <input type="hidden" name="bookingIdForPayment" th:value="${booking.bookingId}">
 
                                         <div class="d-flex align-items-center">
                                             <input type="text" id="cvvInputCredit" name="cvvInputCredit" class="form-control me-2" placeholder="Enter CVV" maxlength="3" style="width: 100px;" required>

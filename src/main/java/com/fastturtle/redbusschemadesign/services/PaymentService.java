@@ -115,13 +115,10 @@ public class PaymentService {
             payment.setPaymentStatus(PaymentStatus.FAILED);
         }
 
-        String last4DigitsOfCard = dto.getCardNo().substring(12);
         CardType cardType = dto.getPaymentMode() == PaymentMethod.DEBIT_CARD ? CardType.DEBIT : CardType.CREDIT;
 
-
-        List<CardDetails> cards = cardDetailRepository.findCardByEnding4DigitsAndType(Integer.parseInt(last4DigitsOfCard), cardType);
-        CardDetails cardDetails;
-        if(cards.isEmpty()) {
+        CardDetails cardDetails = cardDetailRepository.findByCardNumberAndCardType(dto.getCardNo(), cardType);
+        if(cardDetails == null) {
             User user = userRepository.findById(dto.getUserID()).get();
             cardDetails = new CardDetails();
             cardDetails.setCardType(cardType);
@@ -135,7 +132,7 @@ public class PaymentService {
             cardDetailRepository.save(cardDetails);
             payment.setPaymentReferenceId(cardDetails.getCardId());
         } else {
-            cardDetails = cards.get(0);
+
             payment.setPaymentReferenceId(cardDetails.getCardId());
         }
         payment.setPaymentReferenceType(PaymentRefType.CARD);
