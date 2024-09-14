@@ -64,6 +64,7 @@
                                     <input class="form-check-input" type="radio"
                                            th:id="${savedDebitCard.cardId}" th:name="savedDebitCard"
                                            th:value="${savedDebitCard.cardId}"
+                                           th:data-cvv="${savedDebitCard.cvv}"
                                            onclick="selectSavedCard(this, 'Debit Card')">
                                     <label class="form-check-label" th:for="${savedDebitCard.cardId}"
                                            th:text="${savedDebitCard.cardType} + ' - ' + ${savedDebitCard.cardHolderName} + ' - **' + ${savedDebitCard.cardNumber.substring(savedDebitCard.cardNumber.length() - 4)}"></label>
@@ -71,17 +72,20 @@
 
                                 <!-- CVV Input Section (Initially Hidden) -->
                                 <div id="cvvSectionDebit" class="ms-4 mt-2" style="display: none;">
-                                    <form th:action="@{/payments/otpValidation}" method="post">
+                                    <form id="savedDebitCardSubmissionForm" th:action="@{/payments/otpValidation}" method="post">
 
                                         <!-- Hidden field to store the chosen card ID -->
                                         <input type="hidden" id="selectedDebitCardID" name="selectedDebitCardID">
 
                                         <div class="d-flex align-items-center">
-                                            <input type="text" name="cvvInputDebit" class="form-control me-2" placeholder="Enter CVV" maxlength="3" style="width: 100px;" required>
-                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                            <input type="text" id="cvvInputDebit" name="cvvInputDebit" class="form-control me-2" placeholder="Enter CVV" maxlength="3" style="width: 100px;" required>
+                                            <button type="button" class="btn btn-primary" onclick="validateCVV('debit')">Submit</button>
                                         </div>
                                     </form>
                                 </div>
+
+                                <!-- Error message area -->
+                                <p id="cvvErrorDebit" style="color: red; display: none;">Invalid CVV. Please try again.</p>
 
                             </div>
 
@@ -93,6 +97,7 @@
                                     <input class="form-check-input" type="radio"
                                            th:id="${savedCreditCard.cardId}" th:name="savedCreditCard"
                                            th:value="${savedCreditCard.cardId}"
+                                           th:data-cvv="${savedCreditCard.cvv}"
                                            onclick="selectSavedCard(this, 'Credit Card')">
                                     <label class="form-check-label" th:for="${savedCreditCard.cardId}"
                                            th:text="${savedCreditCard.cardType} + ' - ' + ${savedCreditCard.cardHolderName} + ' - **' + ${savedCreditCard.cardNumber.substring(savedCreditCard.cardNumber.length() - 4)}"></label>
@@ -100,19 +105,24 @@
 
                                 <!-- CVV Input Section (Initially Hidden) -->
                                 <div id="cvvSectionCredit" class="ms-4 mt-2" style="display: none;">
-                                    <form th:action="@{/payments/otpValidation}" method="post">
+                                    <form id="savedCreditCardSubmissionForm" th:action="@{/payments/otpValidation}" method="post">
 
                                         <!-- Hidden field to store the chosen card ID -->
                                         <input type="hidden" id="selectedCreditCardID" name="selectedCreditCardID">
 
                                         <div class="d-flex align-items-center">
-                                            <input type="text" name="cvvInputCredit" class="form-control me-2" placeholder="Enter CVV" maxlength="3" style="width: 100px;" required>
-                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                            <input type="text" id="cvvInputCredit" name="cvvInputCredit" class="form-control me-2" placeholder="Enter CVV" maxlength="3" style="width: 100px;" required>
+                                            <button type="button" class="btn btn-primary" onclick="validateCVV('credit')">Submit</button>
                                         </div>
                                     </form>
                                 </div>
 
+                                <!-- Error message area -->
+                                <p id="cvvErrorCredit" style="color: red; display: none;">Invalid CVV. Please try again.</p>
+
                             </div>
+
+                            <input type="hidden" id="selectedSavedCardCVV" value=""/>
 
                         </div>
 
@@ -294,6 +304,10 @@
             document.getElementById(paymentMode).checked = false;
             document.getElementById('cardDetails').style.display = 'none';
 
+            let cvv = savedCardRadio.getAttribute('data-cvv');
+
+            document.getElementById("selectedSavedCardCVV").value = cvv;
+
             const cvvSectionDebit = document.getElementById('cvvSectionDebit');
             const cvvSectionCredit = document.getElementById('cvvSectionCredit');
             const hiddenSelectedDebitCard = document.getElementById('selectedDebitCardID');
@@ -327,6 +341,30 @@
             // Uncheck all saved card radio buttons
             const savedCards = document.getElementsByName(savedCardName);
             savedCards.forEach(card => card.checked = false);
+        }
+
+        function validateCVV(cardType) {
+            if(cardType === 'debit') {
+                let enteredCVV = document.getElementById("cvvInputDebit").value;
+                let savedCardCVV = document.getElementById("selectedSavedCardCVV").value;
+
+                if(enteredCVV !== savedCardCVV) {
+                    document.getElementById('cvvErrorDebit').style.display = 'block';
+                } else {
+                    document.getElementById('cvvErrorDebit').style.display = 'none';
+                    document.getElementById('savedDebitCardSubmissionForm').submit();
+                }
+            } else if(cardType === 'credit') {
+                let enteredCVV = document.getElementById("cvvInputCredit").value;
+                let savedCardCVV = document.getElementById("selectedSavedCardCVV").value;
+
+                if(enteredCVV !== savedCardCVV) {
+                    document.getElementById('cvvErrorCredit').style.display = 'block';
+                } else {
+                    document.getElementById('cvvErrorCredit').style.display = 'none';
+                    document.getElementById('savedCreditCardSubmissionForm').submit();
+                }
+            }
         }
 
         function formatExpiryDate(input) {
