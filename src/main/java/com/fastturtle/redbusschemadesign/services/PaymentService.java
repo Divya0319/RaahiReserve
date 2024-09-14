@@ -4,6 +4,7 @@ import com.fastturtle.redbusschemadesign.dtos.PaymentRequest;
 import com.fastturtle.redbusschemadesign.dtos.PaymentRequestDTO;
 import com.fastturtle.redbusschemadesign.enums.CardType;
 import com.fastturtle.redbusschemadesign.enums.PaymentRefType;
+import com.fastturtle.redbusschemadesign.helpers.DateUtils;
 import com.fastturtle.redbusschemadesign.models.*;
 import com.fastturtle.redbusschemadesign.enums.PaymentMethod;
 import com.fastturtle.redbusschemadesign.enums.PaymentStatus;
@@ -194,6 +195,13 @@ public class PaymentService {
             return response;
         } else {
             Optional<Payment> optionalPayment = paymentRepository.findByBookingId(bookingId);
+
+            // Formatted dates with ordinal suffixes
+            String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.get().getBookingDate());
+            String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.get().getTravelDate());
+
+            booking.get().setFormattedBookingDate(formattedBookingDate);
+            booking.get().setFormattedTravelDate(formattedTravelDate);
 
             Payment payment = optionalPayment.get();
 

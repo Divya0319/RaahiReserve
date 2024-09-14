@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Payment Gateway</title>
+    <title>Payment Facility</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -9,7 +9,7 @@
     <div class="container mt-5">
         <div class="card">
             <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-                <h2>Select Payment Mode</h2>
+                <h2>Payment Facility</h2>
 
                 <!-- Logged-in User Name -->
                 <span class="me-3">Logged in User: <strong><span th:text="${loggedInUserName}"></span></strong></span>
@@ -21,6 +21,9 @@
                 <div th:if="${isBookingIdPresent}">
                     <h5><strong>Booking ID: </strong> <span th:text="${booking.bookingId}"></span></h5>
                     <h5><strong>Total Amount: </strong> <span id="payableAmount" th:text="${booking.price}"></span></h5>
+                    <p><strong>Booking Date:</strong> <span th:text="${booking.formattedBookingDate}"></span>&nbsp; <strong>Travel Date:</strong> <span th:text="${booking.formattedTravelDate}"></span></p>
+                    <p><strong>No. of passengers:</strong> <span th:text="${booking.getPassengers().size()}"></span></p>
+
                 </div>
 
                 <form th:action="@{/payments/fetchBookingDetails}" method="post">
@@ -37,6 +40,8 @@
                         <div th:if="${booking != null}">
                             <h5><strong>Booking ID: </strong> <span th:text="${booking.bookingId}"></span></h5>
                             <h5><strong>Total Amount: </strong> <span th:text="${booking.price}"></span></h5>
+                            <p><strong>Booking Date:</strong> <span th:text="${booking.formattedBookingDate}"></span>&nbsp; <strong>Travel Date:</strong> <span th:text="${booking.formattedTravelDate}"></span></p>
+                            <p><strong>No. of passengers:</strong> <span th:text="${booking.getPassengers().size()}"></span></p>
 
                         </div>
                     </div>

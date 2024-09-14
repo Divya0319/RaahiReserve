@@ -48,6 +48,12 @@ public class Booking {
     @Column(name = "price")
     private float price;
 
+    @Transient
+    private String formattedBookingDate;
+
+    @Transient
+    private String formattedTravelDate;
+
     public Booking(User user, BusRoute busRoute, LocalDate bookingDate, LocalDate travelDate) {
         this.user = user;
         this.busRoute = busRoute;
@@ -131,5 +137,21 @@ public class Booking {
 
     public void setPrice(float price) {
         this.price = price;
+    }
+
+    public String getFormattedBookingDate() {
+        return formattedBookingDate;
+    }
+
+    public void setFormattedBookingDate(String formattedBookingDate) {
+        this.formattedBookingDate = formattedBookingDate;
+    }
+
+    public String getFormattedTravelDate() {
+        return formattedTravelDate;
+    }
+
+    public void setFormattedTravelDate(String formattedTravelDate) {
+        this.formattedTravelDate = formattedTravelDate;
     }
 }
