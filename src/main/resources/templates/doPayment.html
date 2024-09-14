@@ -211,13 +211,16 @@
                                 <input type="hidden" th:name="bookingIdForPayment" th:value="${booking.bookingId}" >
                                 <button id="walletProceedButton" type="submit" class="btn btn-primary">Proceed</button>
                             </form>
-                            <div id="walletWarning" class="d-inline-block" style="display: none;">
-                                <span  class="text-danger">Insufficient balance</span>
-                            </div>
 
-                            <div id="addBalanceDiv" class="d-inline-block" style="display: none;">
-                                <button type="button" class="btn btn-primary" id="addBalance">Add Balance</button>
-                            </div>
+                            <form th:action="@{/payments/addBalance}" method="get">
+                                <div id="walletWarning" class="d-inline-block" style="display: none;">
+                                    <span  class="text-danger">Insufficient balance</span>
+                                </div>
+
+                                <div id="addBalanceDiv" class="d-inline-block" style="display: none;">
+                                    <button type="submit" class="btn btn-primary" id="addBalance">Add Balance</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
