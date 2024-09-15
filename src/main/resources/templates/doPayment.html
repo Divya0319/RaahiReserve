@@ -168,7 +168,7 @@
                                         </div>
 
                                         <div class="col-md-4 d-flex align-items-end">
-                                            <button id="proceedWithCardPayment" type="submit" class="btn btn-primary" onclick="updateCardDetails()">Proceed</button>
+                                            <button id="proceedWithCardPayment" disabled type="submit" class="btn btn-primary" onclick="updateCardDetails()">Proceed</button>
                                         </div>
                                     </div>
 
@@ -212,12 +212,14 @@
                                 <button id="walletProceedButton" type="submit" class="btn btn-primary">Proceed</button>
                             </form>
 
-                            <form th:action="@{/payments/addBalance}" method="get">
-                                <div id="walletWarning" class="d-inline-block" style="display: none;">
+                            <form id="lowBalanceForm" th:action="@{/wallet/addBalance}" method="get" style="display: none;">
+                                <div class="d-inline-block">
                                     <span  class="text-danger">Insufficient balance</span>
                                 </div>
 
-                                <div id="addBalanceDiv" class="d-inline-block" style="display: none;">
+                                <input type="hidden" name="userID" th:value="${walletDetails.user.userId}"/>
+
+                                <div class="d-inline-block">
                                     <button type="submit" class="btn btn-primary" id="addBalance">Add Balance</button>
                                 </div>
                             </form>
@@ -280,8 +282,8 @@
             const bankOptionsSection = document.getElementById('bankOptions');
             const walletDetailsSection = document.getElementById('walletDetails')
             const walletProceedButton = document.getElementById('walletProceedButton');
-            const walletWarningText = document.getElementById('walletWarning');
-            const addBalanceDiv = document.getElementById('addBalanceDiv');
+            const lowBalanceForm = document.getElementById('lowBalanceForm');
+
 
             // Show or hide payment details based on the selected payment mode
             if (selectedElement.value === 'DEBIT_CARD' || selectedElement.value === 'CREDIT_CARD') {
@@ -308,13 +310,11 @@
                 const payableAmount = parseFloat(document.getElementById('payableAmount').textContent);
 
                 if (walletBalance >= payableAmount) {
-                    walletProceedButton.style.display = 'inline-block';
-                    walletWarningText.style.display = 'none';
-                    addBalanceDiv.style.display = 'none';
+                    walletProceedButton.style.display = 'block';
+                    lowBalanceForm.style.display = 'none';
                 } else {
                     walletProceedButton.style.display = 'none';
-                    walletWarningText.style.display = 'block';
-                    addBalanceDiv.style.display = 'block';
+                    lowBalanceForm.style.display = 'block'
                 }
 
             } else {
@@ -399,14 +399,6 @@
             }
         }
 
-        function submitOtp() {
-            const otpInput = document.getElementById('otpInput').value;
-
-            if (otpInput.trim() !== "") {
-                document.getElementById('otpInput').value = '';
-            }
-        }
-
         function updateBankSelection() {
             // Get the selected bank value from the dropdown
             const bankNameRadioButton = document.getElementById('bankName');
@@ -438,9 +430,9 @@
 
             // Validate card number and expiry date format
             if (isCardNumberValid && getCardCompany(cardNumber) !== 'Invalid Card') {
-                proceedButton.style.display = 'block'; // Show the button if both are valid
+                proceedButton.disabled = false; // Show the button if both are valid
             } else {
-                proceedButton.style.display = 'none'; // Hide the button if any are invalid
+                proceedButton.disabled = true; // Hide the button if any are invalid
             }
         }
 
@@ -449,9 +441,9 @@
             const proceedButton = document.getElementById('proceedWithCardPayment');
 
             if (isValidExpiryDate(expiryDate)) {
-                proceedButton.style.display = 'block'; // Show the button if valid
+                proceedButton.disabled = false; // Show the button if valid
             } else {
-                proceedButton.style.display = 'none'; // Hide the button if invalid
+                proceedButton.disabled = true; // Hide the button if invalid
             }
         }
 

@@ -225,14 +225,4 @@ public class PaymentController {
         return "securePaymentGateway";
     }
 
-    @GetMapping("/addBalance")
-    public String showWalletLoadScreen() {
-        return "walletLoadForm";
-    }
-
-    @PostMapping("/addBalance")
-    public String addBalanceToWallet() {
-        return "walletLoadForm";
-    }
-
 }

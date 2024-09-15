@@ -11,21 +11,17 @@
                 <h1>Add Balance to Wallet</h1>
             </div>
             <div class="card-body bg-light text-dark">
-                <form th:action="@{/payments/walletLoadForm}" method="post">
-                    <div class="form-group d-flex flex-column align-items-center">
+
+                <form th:action="@{/wallet/addBalance}" method="post">
+                    <div class="form-group d-flex flex-column align-items-center mt-3">
+
                         <div class="w-100 mb-3">
                             <label for="amount" class="form-label d-block">Enter Amount</label>
-                            <input type="number" id="amount" name="amount" class="form-control" required/>
+                            <input type="number" min="1" step="0.01" placeholder="0.00" id="amount" name="amount" class="form-control" required/>
                         </div>
 
-                        <div class="w-100 d-flex justify-content-center">
-                            <button type="submit" class="btn btn-success btn-lg w-100">Submit</button>
-                        </div>
-                    </div>
-                </form>
+                        <input type="hidden" name="userID" th:value="${userID}">
 
-                <form th:action="@{/payments/otpValidation}" method="post">
-                    <div class="form-group d-flex flex-column align-items-center mt-3">
                         <div class="w-100 mb-3">
                             <label for="otpInput" class="form-label d-block">Enter OTP</label>
                             <input type="text" id="otpInput" class="form-control" pattern="\d{6}" title="OTP must be exactly 6 digits" required oninput="if (this.value.length > 6) this.value = this.value.slice(0, 6);">
