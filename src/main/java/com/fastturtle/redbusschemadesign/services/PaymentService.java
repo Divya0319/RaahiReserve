@@ -183,6 +183,9 @@ public class PaymentService {
         payment.setAmount(booking.getPrice());
         payment.setPaymentDate(LocalDate.now());
 
+        User user = userRepository.findById(dto.getUserID()).get();
+        payment.setUser(user);
+
         paymentRepository.save(payment);
     }
 

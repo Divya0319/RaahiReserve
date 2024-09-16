@@ -182,8 +182,6 @@ public class PaymentController {
                                       @RequestParam("bookingIdForPayment") Integer bookingId,
                                       @RequestParam(value = "selectedDebitCardID", required = false) Integer selectedDebitCardID,
                                       @RequestParam(value = "selectedCreditCardID", required = false) Integer selectedCreditCardID,
-                                      @RequestParam(value = "cvvInputDebit", required = false) String cvvInputDebit,
-                                      @RequestParam(value = "cvvInputCredit", required = false) String cvvInputCredit,
                                       Model model, Principal principal) {
         String loggedInUserName = principal.getName();
         User user = userService.findByUsername(loggedInUserName);
