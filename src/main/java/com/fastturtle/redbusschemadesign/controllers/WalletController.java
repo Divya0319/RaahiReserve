@@ -24,18 +24,21 @@ public class WalletController {
     }
 
     @GetMapping("/addBalance")
-    public String showWalletLoadScreen(@RequestParam("userID") Integer userID, Model model) {
+    public String showWalletLoadScreen(@RequestParam("userID") Integer userID, @RequestParam("bookingId") Integer bookingId, Model model) {
         model.addAttribute("userID", userID);
+        model.addAttribute("bookingId", bookingId);
         return "walletLoadForm";
     }
 
     @PostMapping("/addBalance")
-    public String addBalanceToWallet(@RequestParam("userID") Integer userID, @RequestParam("amount") BigDecimal amount, RedirectAttributes redirectAttributes) {
+    public String addBalanceToWallet(@RequestParam("userID") Integer userID, @RequestParam("bookingId") Integer bookingId, @RequestParam("amount") BigDecimal amount, Model model) {
 
         BigDecimal updatedBalance = walletService.addBalanceToUserWallet(userID, amount);
 
-        redirectAttributes.addFlashAttribute("updatedBalance", updatedBalance);
+        model.addAttribute("updatedBalance", updatedBalance);
+        model.addAttribute("bookingId", bookingId);
+        model.addAttribute("isComingFromAddBalancePage", true);
 
-        return "redirect:/payments/fetchBookingDetails";
+        return "forward:/payments/fetchBookingDetails";
     }
 }

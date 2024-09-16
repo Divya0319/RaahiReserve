@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +58,10 @@ public class PaymentController {
     }
 
     @PostMapping("/fetchBookingDetails")
-    public String fetchBookingDetails(@RequestParam("bookingId") Integer bookingId, Model model, Principal principal) {
+    public String fetchBookingDetails(@RequestParam("bookingId") Integer bookingId,
+                                      @RequestParam(value = "updatedBalance", required = false) BigDecimal updatedBalance,
+                                      @RequestParam(value = "isComingFromAddBalancePage", required = false) Boolean isComingFromAddBalancePage,
+                                      Model model, Principal principal) {
         ResponseEntity<?> response = paymentService.checkPaymentStatusAndReturnBookingForBookingId(bookingId);
         if (response.getStatusCode() == HttpStatus.OK) {
             model.addAttribute("booking", response.getBody());
@@ -93,6 +97,14 @@ public class PaymentController {
 
         model.addAttribute("loggedInUserName", principal.getName());
         model.addAttribute("paymentModes", PaymentMethod.values());
+
+        if(updatedBalance != null) {
+            model.addAttribute("updatedBalance", updatedBalance);
+        }
+        if(isComingFromAddBalancePage != null) {
+            model.addAttribute("isComingFromAddBalancePage", isComingFromAddBalancePage);
+        }
+
         return "doPayment";
     }
 
