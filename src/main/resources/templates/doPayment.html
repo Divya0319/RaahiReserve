@@ -341,8 +341,12 @@
             const cvvSectionCredit = document.getElementById('cvvSectionCredit');
             const hiddenSelectedDebitCard = document.getElementById('selectedDebitCardID');
             const hiddenSelectedCreditCard = document.getElementById('selectedCreditCardID');
-            hiddenSelectedDebitCard.value = "";
-            hiddenSelectedCreditCard.value = "";
+            if(hiddenSelectedDebitCard) {
+                hiddenSelectedDebitCard.value = "";
+            }
+            if(hiddenSelectedCreditCard) {
+                hiddenSelectedCreditCard.value = "";
+            }
 
             if(cvvSectionDebit) {
                 cvvSectionDebit.style.display = 'none';
@@ -378,7 +382,7 @@
                 let savedCardCVV = document.getElementById("selectedSavedCardCVV").value;
 
                 if(enteredCVV !== savedCardCVV) {
-                    document.getElementById('cvvErrorDebit').style.display = 'block';
+                    showCvvErrorFor2Seconds('cvvErrorDebit');
                 } else {
                     document.getElementById('cvvErrorDebit').style.display = 'none';
                     document.getElementById('savedDebitCardSubmissionForm').submit();
@@ -388,12 +392,22 @@
                 let savedCardCVV = document.getElementById("selectedSavedCardCVV").value;
 
                 if(enteredCVV !== savedCardCVV) {
-                    document.getElementById('cvvErrorCredit').style.display = 'block';
+                    showCvvErrorFor2Seconds('cvvErrorCredit');
                 } else {
                     document.getElementById('cvvErrorCredit').style.display = 'none';
                     document.getElementById('savedCreditCardSubmissionForm').submit();
                 }
             }
+        }
+
+        function showCvvErrorFor2Seconds(cvvErrorId) {
+            let cvvError = document.getElementById(cvvErrorId);
+
+            cvvError.style.display = 'block';
+
+            setTimeout(function() {
+                cvvError.style.display = 'none';
+            }, 2000);
         }
 
         function formatExpiryDate(input) {
