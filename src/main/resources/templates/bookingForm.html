@@ -157,7 +157,7 @@
 
                     <div class="checkbox-container mt-3">
                         <input type="checkbox" id="addUserAsPassengerCheckBox" name="addUserAsPassenger">
-                        <label for="addUserAsPassengerCheckBox">Add User as passenger</label>
+                        <label for="addUserAsPassengerCheckBox">Add <span th:text="${loggedInUserName}"/> as passenger</label>
                     </div>
 
                     <label id="labelForUserSeatType" for="seatTypeForUserDropDown" class="form-label mt-1" style="display: none;">Seat Preference For User:</label>

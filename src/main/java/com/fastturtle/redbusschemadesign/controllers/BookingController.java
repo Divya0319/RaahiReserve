@@ -32,6 +32,8 @@ public class BookingController {
     private final RouteService routeService;
     private final BusService busService;
 
+    private User user;
+
     @Autowired
     public BookingController(BookingService bookingService, UserService userService, RouteService routeService, BusService busService) {
         this.bookingService = bookingService;
@@ -47,7 +49,11 @@ public class BookingController {
 
     @GetMapping("/averageCostOnDate")
     public String showAverageCostForm(Principal principal, Model model) {
-        model.addAttribute("loggedInUserName", principal.getName());
+
+        if(user == null) {
+            user = userService.findByUsername(principal.getName());
+        }
+        model.addAttribute("loggedInUserName", user.getFullName());
         return "averageCost";
     }
 
@@ -64,7 +70,10 @@ public class BookingController {
             model.addAttribute("errorMessage", errorMessage);
         }
 
-        model.addAttribute("loggedInUserName", principal.getName());
+        if(user == null) {
+            user = userService.findByUsername(principal.getName());
+        }
+        model.addAttribute("loggedInUserName", user.getFullName());
 
         return "averageCost";
     }
@@ -102,7 +111,10 @@ public class BookingController {
         model.addAttribute("seatPreferences", Arrays.asList("No Preference", SeatType.AISLE.name(), SeatType.WINDOW.name()));
         model.addAttribute("sources", routeService.findAllSources());
         model.addAttribute("destinations", routeService.findAllDestinations());
-        model.addAttribute("loggedInUserName", principal.getName());
+        if(user == null) {
+            user = userService.findByUsername(principal.getName());
+        }
+        model.addAttribute("loggedInUserName", user.getFullName());
 
         return "bookingForm";
     }
@@ -183,7 +195,10 @@ public class BookingController {
 
         // Clear any existing error message
         model.addAttribute("errorMessage", null);
-        model.addAttribute("loggedInUserName", principal.getName());
+        if(user == null) {
+            user = userService.findByUsername(principal.getName());
+        }
+        model.addAttribute("loggedInUserName", user.getFullName());
 
         return "bookingForm"; // Return to the same form view
     }
@@ -230,7 +245,10 @@ public class BookingController {
             model.addAttribute("selectedTravelDate", travelDate);
 
             if(principal != null) {
-                model.addAttribute("loggedInUserName", principal.getName());
+                if(user == null) {
+                    user = userService.findByUsername(principal.getName());
+                }
+                model.addAttribute("loggedInUserName", user.getFullName());
             }
 
 
@@ -265,7 +283,10 @@ public class BookingController {
             String errorMessage = ((Map<String, String>) response.getBody()).get("error");
 
             if(principal != null) {
-                model.addAttribute("loggedInUserName", principal.getName());
+                if(user == null) {
+                    user = userService.findByUsername(principal.getName());
+                }
+                model.addAttribute("loggedInUserName", user.getFullName());
             }
             model.addAttribute("errorMessage", errorMessage);
             return "bookingForm";
@@ -314,7 +335,10 @@ public class BookingController {
 
     @GetMapping("/findPassengersTraveledOnDate")
     public String showFindPassengersTravelledOnDatePage(Principal principal, Model model) {
-        model.addAttribute("loggedInUserName", principal.getName());
+        if(user == null) {
+            user = userService.findByUsername(principal.getName());
+        }
+        model.addAttribute("loggedInUserName", user.getFullName());
         return "findPassengersTraveledOnDate";
     }
 
@@ -335,7 +359,10 @@ public class BookingController {
 
         }
 
-        model.addAttribute("loggedInUserName", principal.getName());
+        if(user == null) {
+            user = userService.findByUsername(principal.getName());
+        }
+        model.addAttribute("loggedInUserName", user.getFullName());
 
 
         return "findPassengersTraveledOnDate";

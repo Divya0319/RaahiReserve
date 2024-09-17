@@ -32,6 +32,7 @@ public class PaymentController {
     private final BankDetailsService bankDetailsService;
     private final UserService userService;
     private final CardDetailsService cardDetailsService;
+    private User user;
 
     @Autowired
     public PaymentController(PaymentService paymentService, BookingService bookingService, BankDetailsService bankDetailsService, UserService userService, CardDetailsService cardDetailsService) {
@@ -95,7 +96,9 @@ public class PaymentController {
             model.addAttribute("isBookingIdPresent", false);
         }
 
-        model.addAttribute("loggedInUserName", principal.getName());
+        if(user == null) {
+            user = userService.findByUsername(principal.getName());
+        }
         model.addAttribute("paymentModes", PaymentMethod.values());
 
         if(updatedBalance != null) {
@@ -139,7 +142,9 @@ public class PaymentController {
             }
         }
 
-        model.addAttribute("loggedInUserName", principal.getName());
+        if(user == null) {
+            user = userService.findByUsername(principal.getName());
+        }
         model.addAttribute("isBookingIdPresent", bookingId != null);
         return "doPayment";
     }

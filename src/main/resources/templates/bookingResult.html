@@ -15,7 +15,7 @@
                 <div>
                     <p><strong>Booking ID:</strong> <span th:text="${booking.bookingId}"></span></p>
                     <p><strong>User:</strong>
-                        <span th:text="${booking.user.userName}"></span>
+                        <span th:text="${booking.user.fullName}"></span>
                         <span th:if="${booking.userPassenger}" class="text-success">(Added as Passenger)</span>
                         <span th:if="${!booking.userPassenger}" class="text-muted">(Not added as Passenger)</span>
                     </p>
