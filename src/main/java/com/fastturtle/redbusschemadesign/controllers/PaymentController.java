@@ -222,12 +222,14 @@ public class PaymentController {
 
             paymentRequestDTO.setPaymentRefType(PaymentRefType.CARD);
             paymentRequestDTO.setCardNo(selectedCardDetails.getCardNumber());
+            paymentRequestDTO.setCardCompany(selectedCardDetails.getCardCompany());
 
         } else if(selectedCreditCardID != null) {
             CardDetails selectedCardDetails = cardDetailsService.findByID(selectedCreditCardID);
 
             paymentRequestDTO.setPaymentRefType(PaymentRefType.CARD);
             paymentRequestDTO.setCardNo(selectedCardDetails.getCardNumber());
+            paymentRequestDTO.setCardCompany(selectedCardDetails.getCardCompany());
 
 
         } else if(paymentMode == PaymentMethod.WALLET) {
