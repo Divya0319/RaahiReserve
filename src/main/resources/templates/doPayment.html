@@ -73,7 +73,7 @@
                                            th:data-cvv="${savedDebitCard.cvv}"
                                            onclick="selectSavedCard(this, 'Debit Card')">
                                     <label class="form-check-label" th:for="${savedDebitCard.cardId}"
-                                           th:text="${savedDebitCard.cardType} + ' - ' + ${savedDebitCard.cardHolderName} + ' - **' + ${savedDebitCard.cardNumber.substring(savedDebitCard.cardNumber.length() - 4)}"></label>
+                                           th:text="${savedDebitCard.cardCompany} + '  ' + ${savedDebitCard.cardType} + '  ' + ${savedDebitCard.cardHolderName} + '  **' + ${savedDebitCard.cardNumber.substring(savedDebitCard.cardNumber.length() - 4)}"></label>
                                 </div>
 
                                 <!-- CVV Input Section (Initially Hidden) -->
@@ -108,7 +108,7 @@
                                            th:data-cvv="${savedCreditCard.cvv}"
                                            onclick="selectSavedCard(this, 'Credit Card')">
                                     <label class="form-check-label" th:for="${savedCreditCard.cardId}"
-                                           th:text="${savedCreditCard.cardType} + ' - ' + ${savedCreditCard.cardHolderName} + ' - **' + ${savedCreditCard.cardNumber.substring(savedCreditCard.cardNumber.length() - 4)}"></label>
+                                           th:text="${savedCreditCard.cardCompany} + '  ' + ${savedCreditCard.cardType} + '  ' + ${savedCreditCard.cardHolderName} + '  **' + ${savedCreditCard.cardNumber.substring(savedCreditCard.cardNumber.length() - 4)}"></label>
                                 </div>
 
                                 <!-- CVV Input Section (Initially Hidden) -->

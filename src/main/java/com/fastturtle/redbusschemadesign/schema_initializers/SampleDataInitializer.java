@@ -249,7 +249,7 @@ public class SampleDataInitializer {
 
             booking1Cost += seatCostForUser;
 
-            createAndSaveUserPassengerToBooking1(booking1, busSeatForUser);
+            createAndSaveUserPassengerToBooking(booking1, busSeatForUser);
 
         }
 
@@ -280,13 +280,13 @@ public class SampleDataInitializer {
 
     }
 
-    private void createAndSaveUserPassengerToBooking1(Booking booking1, BusSeat busSeatForUser) {
+    private void createAndSaveUserPassengerToBooking(Booking booking, BusSeat busSeatForUser) {
         Passenger userPassenger = new Passenger();
-        userPassenger.setName(booking1.getUser().getUserName());
-        userPassenger.setAge(booking1.getUser().getAge());
-        userPassenger.setGender(booking1.getUser().getGender());
+        userPassenger.setName(booking.getUser().getFullName());
+        userPassenger.setAge(booking.getUser().getAge());
+        userPassenger.setGender(booking.getUser().getGender());
         userPassenger.setBusSeat(busSeatForUser);
-        booking1.addPassenger(userPassenger);
+        booking.addPassenger(userPassenger);
     }
 
     private BusSeat saveAssignedSeatToBusSeatEntityForBooking(RandomSeatNumberProviderWithPreference rsnp, Bus busForBooking, SeatType seatPref) {
@@ -363,7 +363,7 @@ public class SampleDataInitializer {
 
             booking3Cost += seatCostForUser;
 
-            createAndSaveUserPassengerToBooking1(booking3, busSeatForUser);
+            createAndSaveUserPassengerToBooking(booking3, busSeatForUser);
 
         }
 

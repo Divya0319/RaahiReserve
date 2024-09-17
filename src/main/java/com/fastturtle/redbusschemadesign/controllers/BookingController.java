@@ -92,7 +92,10 @@ public class BookingController {
             }
         }
 
-        model.addAttribute("loggedInUserName", principal.getName());
+        if(user == null) {
+            user = userService.findByUsername(principal.getName());
+        }
+        model.addAttribute("loggedInUserName", user.getFullName());
 
         return "findPassengersForBooking";
     }
@@ -111,6 +114,9 @@ public class BookingController {
         model.addAttribute("seatPreferences", Arrays.asList("No Preference", SeatType.AISLE.name(), SeatType.WINDOW.name()));
         model.addAttribute("sources", routeService.findAllSources());
         model.addAttribute("destinations", routeService.findAllDestinations());
+        if(user == null) {
+            user = userService.findByUsername(principal.getName());
+        }
         if(user == null) {
             user = userService.findByUsername(principal.getName());
         }
@@ -170,7 +176,10 @@ public class BookingController {
 
         if (source.equals(destination)) {
             model.addAttribute("errorMessage", "Source and destination cannot be the same.");
-            model.addAttribute("loggedInUserName", principal.getName());
+            if(user == null) {
+                user = userService.findByUsername(principal.getName());
+            }
+            model.addAttribute("loggedInUserName", user.getFullName());
             
             return "bookingForm"; // Return to the same form view with an error message
         } else {
@@ -180,7 +189,10 @@ public class BookingController {
 
             if (availableBuses.isEmpty()) {
                 model.addAttribute("errorMessage", "No available buses found for given source and destination.");
-                model.addAttribute("loggedInUserName", principal.getName());
+                if(user == null) {
+                    user = userService.findByUsername(principal.getName());
+                }
+                model.addAttribute("loggedInUserName", user.getFullName());
 
                 return "bookingForm";
             } else {

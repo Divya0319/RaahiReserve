@@ -159,7 +159,7 @@ public class BookingService {
             bookingCost += seatCostForUser;
 
             Passenger userPassenger = new Passenger();
-            userPassenger.setName(booking.getUser().getUserName());
+            userPassenger.setName(booking.getUser().getFullName());
             userPassenger.setAge(booking.getUser().getAge());
             userPassenger.setGender(booking.getUser().getGender());
             userPassenger.setBusSeat(seatForUser);

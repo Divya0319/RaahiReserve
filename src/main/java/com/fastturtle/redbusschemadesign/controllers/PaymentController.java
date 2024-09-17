@@ -5,6 +5,7 @@ import com.fastturtle.redbusschemadesign.dtos.PaymentRequestDTO;
 import com.fastturtle.redbusschemadesign.enums.CardType;
 import com.fastturtle.redbusschemadesign.enums.PaymentRefType;
 import com.fastturtle.redbusschemadesign.helpers.CardUtils;
+import com.fastturtle.redbusschemadesign.helpers.DateUtils;
 import com.fastturtle.redbusschemadesign.models.*;
 import com.fastturtle.redbusschemadesign.enums.PaymentMethod;
 import com.fastturtle.redbusschemadesign.services.*;
@@ -130,13 +131,25 @@ public class PaymentController {
                     }
 
                 }
-                model.addAttribute("booking", booking.get());
+                String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.get().getBookingDate());
+                String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.get().getTravelDate());
+
+                Booking fetchedBooking = booking.get();
+                fetchedBooking.setFormattedBookingDate(formattedBookingDate);
+                fetchedBooking.setFormattedTravelDate(formattedTravelDate);
+
+                model.addAttribute("booking", fetchedBooking);
                 model.addAttribute("bankDetails", bankDetailsService.getAllBankDetails());
-                User loggedInUser = userService.findByUsername(principal.getName());
-                model.addAttribute("walletDetails", userService.getUserWalletByEmail(loggedInUser.getEmail()));
+                model.addAttribute("walletDetails", userService.getUserWalletByEmail(user.getEmail()));
                 model.addAttribute("isBookingIdPresent", true);
                 model.addAttribute("paymentModes", PaymentMethod.values());
+                model.addAttribute("loggedInUserName", user.getFullName());
+
             } else {
+                if(user == null) {
+                    user = userService.findByUsername(principal.getName());
+                }
+                model.addAttribute("loggedInUserName", user.getFullName());
                 model.addAttribute("error", "Invalid Booking ID");
                 return "doPayment";
             }
@@ -145,6 +158,7 @@ public class PaymentController {
         if(user == null) {
             user = userService.findByUsername(principal.getName());
         }
+        model.addAttribute("loggedInUserName", user.getFullName());
         model.addAttribute("isBookingIdPresent", bookingId != null);
         return "doPayment";
     }
