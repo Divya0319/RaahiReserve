@@ -65,6 +65,7 @@ public class SampleDataInitializer {
     Direction[] directions = {Direction.UP, Direction.DOWN, Direction.UP, Direction.UP, Direction.DOWN};
 
     String[] usernames = {"JohnDoe", "AliceSmith", "BobJohnson", "EmilyBrown", "MichaelDavis"};
+    String[] fullNames = {"John Doe", "Alice Smith", "Bob Johnson", "Emily Brown", "Michael Davis"};
     String[] passwords = {"doe@123", "smith@234", "john@345", "brown@456", "davis@567"};
     String[] emails = {"john.doe@gmail.com", "alice.smith@rediffmail.com", "bob.johnson@yahoo.in", "emily.brown@gmail.com",
             "michael.davis@rediffmail.com"};
@@ -206,7 +207,7 @@ public class SampleDataInitializer {
 
     private void createAndSaveUsers() {
         for(int i = 0; i < usernames.length; i++) {
-            User user = new User(usernames[i], passwordEncoder.encode(passwords[i]), emails[i], userAges[i], userGenders[i], phNos[i]);
+            User user = new User(usernames[i], fullNames[i], passwordEncoder.encode(passwords[i]), emails[i], userAges[i], userGenders[i], phNos[i]);
             userRepository.save(user);
         }
     }

@@ -13,6 +13,9 @@ public class User {
     @Column(name = "userName", nullable = false)
     private String userName;
 
+    @Column(name = "fullName", nullable = false)
+    private String fullName;
+
     @Column(name = "password", nullable = false)
     private String password;
 
@@ -28,8 +31,9 @@ public class User {
 
     private String phoneNumber;
 
-    public User(String userName, String password, String email, int age, Gender gender, String phoneNumber) {
+    public User(String userName, String fullName, String password, String email, int age, Gender gender, String phoneNumber) {
         this.userName = userName;
+        this.fullName = fullName;
         this.password = password;
         this.email = email;
         this.age = age;
@@ -54,6 +58,14 @@ public class User {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getPassword() {
