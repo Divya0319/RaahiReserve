@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Include your stylesheets here -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<!-- Include loader fragment -->
+<div th:replace="fragments/loader :: loader"></div>
+
+<!-- Your content here -->
+<div th:fragment="content">
+    <div th:insert="~{::content}"></div>
+</div>
+
+<!-- Include scripts here -->
+<script th:src="@{/js/scripts.js}"></script>
+</body>
+</html>
