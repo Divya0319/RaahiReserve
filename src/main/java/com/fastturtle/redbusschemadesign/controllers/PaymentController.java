@@ -238,18 +238,43 @@ public class PaymentController {
                 validatorChain.addValidator(new CardHolderNameValidator());
 
                 // Validate the request
-                List<String> errorMessages = validatorChain.validate(cardDetails, paymentRequest);
+                List<String> cardValidationErrorMessages = validatorChain.validate(cardDetails, paymentRequest);
 
-                if(!errorMessages.isEmpty()) {
-                    for(String errorMessage : errorMessages) {
-                        System.out.println(errorMessage);
+                if(!cardValidationErrorMessages.isEmpty()) {
+                    Optional<Booking> booking = bookingService.findByBookingId(bookingId);
+                    model.addAttribute("cardValidationErrorMessages", cardValidationErrorMessages);
+
+                    // Add any additional data needed by the doPayment page here
+                    List<CardDetails> savedCards = cardDetailsService.findCardsForUser(user.getUserId());
+                    if (!savedCards.isEmpty()) {
+                        Map<CardType, List<CardDetails>> groupedCards = savedCards.stream().collect(Collectors.groupingBy(CardDetails::getCardType));
+                        if (groupedCards.containsKey(CardType.DEBIT)) {
+                            model.addAttribute("savedDebitCards", groupedCards.get(CardType.DEBIT));
+                        }
+                        if (groupedCards.containsKey(CardType.CREDIT)) {
+                            model.addAttribute("savedCreditCards", groupedCards.get(CardType.CREDIT));
+                        }
                     }
 
-                    return "errors";
-                } else {
-                    return "success";
+                    String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.get().getBookingDate());
+                    String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.get().getTravelDate());
+
+                    Booking fetchedBooking = booking.get();
+                    fetchedBooking.setFormattedBookingDate(formattedBookingDate);
+                    fetchedBooking.setFormattedTravelDate(formattedTravelDate);
+
+                    model.addAttribute("booking", fetchedBooking);
+                    model.addAttribute("bankDetails", bankDetailsService.getAllBankDetails());
+                    model.addAttribute("walletDetails", userService.getUserWalletByEmail(user.getEmail()));
+                    model.addAttribute("loggedInUserName", user.getFullName());
+                    model.addAttribute("isBookingIdPresent", true);
+                    model.addAttribute("paymentModes", PaymentMethod.values());
+                    model.addAttribute("chosenModeBeforeInvalidCardDetail", paymentMode);
+
+                    return "doPayment";
                 }
             }
+
             String cardCompany = CardUtils.getCardCompany(cardNumber);
 
             if(!cardCompany.equals("Invalid Card")) {

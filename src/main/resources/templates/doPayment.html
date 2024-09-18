@@ -56,7 +56,9 @@
                             <input class="form-check-input" type="radio"
                                    th:id="${paymentMode}" th:name="paymentMode"
                                    th:value="${paymentMode.name}" required
-                                   th:checked="${isComingFromAddBalancePage != null and paymentMode.name() == 'WALLET'}"
+                                   th:checked="${(chosenModeBeforeInvalidCardDetail != null and chosenModeBeforeInvalidCardDetail == 'DEBIT_CARD' and paymentMode.name() == 'DEBIT_CARD')
+                                   or (chosenModeBeforeInvalidCardDetail != null and chosenModeBeforeInvalidCardDetail == 'CREDIT_CARD' and paymentMode.name() == 'CREDIT_CARD')
+                                   or (isComingFromAddBalancePage != null and paymentMode.name() == 'WALLET')}"
                                    onclick="togglePaymentDetails(this)">
                             <label class="form-check-label" th:for="${paymentMode}" th:text="${paymentMode}"></label>
 
