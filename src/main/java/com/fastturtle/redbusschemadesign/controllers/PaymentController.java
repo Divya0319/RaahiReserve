@@ -9,6 +9,7 @@ import com.fastturtle.redbusschemadesign.helpers.DateUtils;
 import com.fastturtle.redbusschemadesign.models.*;
 import com.fastturtle.redbusschemadesign.enums.PaymentMethod;
 import com.fastturtle.redbusschemadesign.services.*;
+import com.fastturtle.redbusschemadesign.validators.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -219,6 +220,36 @@ public class PaymentController {
         }
 
         if(cardNumber != null) {
+
+            CardDetails cardDetails = cardDetailsService.findByCardNumber(cardNumber);
+
+            if(cardDetails != null) {
+
+                PaymentRequestDTO paymentRequest = new PaymentRequestDTO();
+                paymentRequest.setCardHolderName(cardHolderName);
+                paymentRequest.setCvv(cvv);
+                paymentRequest.setExpiryMonth(Byte.valueOf(expiryMonth));
+                paymentRequest.setExpiryYear(Integer.valueOf(expiryYear));
+
+                PaymentValidatorChain validatorChain = new PaymentValidatorChain();
+                validatorChain.addValidator(new ExpiryMonthValidator());
+                validatorChain.addValidator(new ExpiryYearValidator());
+                validatorChain.addValidator(new CVVValidator());
+                validatorChain.addValidator(new CardHolderNameValidator());
+
+                // Validate the request
+                List<String> errorMessages = validatorChain.validate(cardDetails, paymentRequest);
+
+                if(!errorMessages.isEmpty()) {
+                    for(String errorMessage : errorMessages) {
+                        System.out.println(errorMessage);
+                    }
+
+                    return "errors";
+                } else {
+                    return "success";
+                }
+            }
             String cardCompany = CardUtils.getCardCompany(cardNumber);
 
             if(!cardCompany.equals("Invalid Card")) {

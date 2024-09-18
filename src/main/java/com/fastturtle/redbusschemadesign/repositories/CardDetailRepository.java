@@ -18,4 +18,6 @@ public interface CardDetailRepository extends JpaRepository<CardDetails, Integer
     List<CardDetails> findCardsForUser(@Param("userID") Integer userID);
 
     CardDetails findByCardNumberAndCardType(String cardNumber, CardType cardType);
+
+    CardDetails findByCardNumber(String cardNumber);
 }

@@ -22,4 +22,8 @@ public class CardDetailsService {
     public CardDetails findByID(Integer id) {
         return cardDetailRepository.findById(id).orElse(null);
     }
+
+    public CardDetails findByCardNumber(String cardNo) {
+        return cardDetailRepository.findByCardNumber(cardNo);
+    }
 }
