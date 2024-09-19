@@ -242,7 +242,6 @@ public class PaymentController {
 
                 if(!cardValidationErrorMessages.isEmpty()) {
                     Optional<Booking> booking = bookingService.findByBookingId(bookingId);
-                    model.addAttribute("cardValidationErrorMessages", cardValidationErrorMessages);
 
                     // Add any additional data needed by the doPayment page here
                     List<CardDetails> savedCards = cardDetailsService.findCardsForUser(user.getUserId());
@@ -269,7 +268,15 @@ public class PaymentController {
                     model.addAttribute("loggedInUserName", user.getFullName());
                     model.addAttribute("isBookingIdPresent", true);
                     model.addAttribute("paymentModes", PaymentMethod.values());
-                    model.addAttribute("chosenModeBeforeInvalidCardDetail", paymentMode);
+                    model.addAttribute("chosenModeBeforeInvalidCardDetail", paymentMode.name());
+
+                    String errorMessageHead = "The card you entered matches one you've used before, but some details (like the expiry date or CVV) seem incorrect. Please double-check your information.";
+                    model.addAttribute("cardValidationErrorMessageHeading", errorMessageHead);
+                    model.addAttribute("cardValidationErrorMessages", cardValidationErrorMessages);
+                    model.addAttribute("alreadySavedCardNo", cardNumber);
+                    model.addAttribute("invalidCardHolder", cardHolderName);
+                    model.addAttribute("invalidExpiryDate", expiryMonth + "/" + expiryYear);
+                    model.addAttribute("paymentModeChosen", paymentMode);
 
                     return "doPayment";
                 }

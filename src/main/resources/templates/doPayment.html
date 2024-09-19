@@ -66,7 +66,7 @@
 
                             <!-- Saved Debit Cards -->
                             <div th:if="${paymentMode.name == 'DEBIT_CARD' && savedDebitCards != null && savedDebitCards.size() > 0}"
-                                 style="display: none" id="saved-debit-cards">
+                                 th:style="${chosenModeBeforeInvalidCardDetail != null && chosenModeBeforeInvalidCardDetail == 'DEBIT_CARD'} ? 'display: block;' : 'display: none;'" id="saved-debit-cards">
                                 <span class="text-primary ms-3">Previously Used Cards</span>
                                 <div th:each="savedDebitCard : ${savedDebitCards}" class="form-check ms-3">
                                     <input class="form-check-input" type="radio"
@@ -101,7 +101,7 @@
 
                             <!-- Saved Credit Cards -->
                             <div th:if="${paymentMode.name == 'CREDIT_CARD' && savedCreditCards != null && savedCreditCards.size() > 0}"
-                                 style="display: none" id="saved-credit-cards">
+                                 th:style="${chosenModeBeforeInvalidCardDetail != null && chosenModeBeforeInvalidCardDetail == 'CREDIT_CARD'} ? 'display: block;' : 'display: none;'" id="saved-credit-cards">
                                 <span class="text-primary ms-3">Previously Used Cards</span>
                                 <div th:each="savedCreditCard : ${savedCreditCards}" class="form-check ms-3">
                                     <input class="form-check-input" type="radio"
@@ -140,7 +140,7 @@
 
 
                         <!-- Card Details Section: Initially Hidden -->
-                        <div id="cardDetails" style="display: none;" class="mt-3">
+                        <div id="cardDetails" th:style="${chosenModeBeforeInvalidCardDetail != null} ? 'display: block;' : 'display: none;'" class="mt-3">
                             <!-- Row 1: Card Number and Card Holder Name -->
                             <form id="cardDetailsForm" th:action="@{/payments/otpValidation}" method="post">
                                 <div class="container">
@@ -148,11 +148,13 @@
                                         <div class="col-md-6">
                                             <label for="cardNumber" class="form-label">Card Number</label>
                                             <input type="text" id="cardNumber" name="cardNumber" class="form-control" maxlength="16"
+                                                   th:value="${(alreadySavedCardNo != null) ? alreadySavedCardNo : ''}"
                                                    pattern="\d{16}" placeholder="Enter 16-digit card number" oninput="validateCardDetails()" required>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="cardHolderName" class="form-label">Card Holder Name</label>
                                             <input type="text" id="cardHolderName" name="cardHolderName" class="form-control"
+                                                   th:value="${(invalidCardHolder != null) ? invalidCardHolder : ''}"
                                                    placeholder="Enter card holder name" required>
                                         </div>
                                     </div>
@@ -162,6 +164,7 @@
                                         <div class="col-md-4">
                                             <label for="expiryDate" class="form-label">Expiry Date (MM/YY)</label>
                                             <input type="text" id="expiryDate" class="form-control" placeholder="MM/YY"
+                                                   th:value="${(invalidExpiryDate != null) ? invalidExpiryDate : ''}"
                                                    pattern="\d{2}/\d{2}" maxlength="5" oninput="formatExpiryDate(this); validateExpiryDate();" required>
                                         </div>
                                         <div class="col-md-4">
@@ -171,11 +174,29 @@
                                         </div>
 
                                         <div class="col-md-4 d-flex align-items-end">
-                                            <button id="proceedWithCardPayment" disabled type="submit" class="btn btn-primary" onclick="updateCardDetails()">Proceed</button>
+                                            <div class="flex-grow-1">
+                                                <button id="proceedWithCardPayment" disabled type="submit" class="btn btn-primary" onclick="updateCardDetails()">Proceed</button>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <!-- Card Validation Error Messages -->
+                                    <div class="row mt-2">
+                                        <div class="col-12">
+
+                                            <!-- Card Validation Error Messages -->
+                                            <p th:if="${cardValidationErrorMessageHeading != null}"><span style="color: red" th:text="${cardValidationErrorMessageHeading}"/></p>
+                                            <div th:if="${cardValidationErrorMessages != null}">
+                                                <ul>
+                                                    <li th:each="errorMessage : ${cardValidationErrorMessages}" th:text="${errorMessage}" style="color: red;"></li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
 
-                                        <input type="hidden" id="paymentModeCard" th:if="${isBookingIdPresent}" th:name="paymentModeChosen"/>
+                                        <input type="hidden" id="paymentModeCard" th:if="${isBookingIdPresent}" th:name="paymentModeChosen" th:value="${(chosenModeBeforeInvalidCardDetail != null) ? chosenModeBeforeInvalidCardDetail : ''}"/>
                                         <input type="hidden" id="hiddenExpiryMonth" name="expiryMonth" />
                                         <input type="hidden" id="hiddenExpiryYear" name="expiryYear" />
                                         <input type="hidden" th:name="bookingIdForPayment" th:value="${booking.bookingId}" >
