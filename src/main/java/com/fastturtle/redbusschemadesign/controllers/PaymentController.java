@@ -101,6 +101,7 @@ public class PaymentController {
             user = userService.findByUsername(principal.getName());
         }
         model.addAttribute("paymentModes", PaymentMethod.values());
+        model.addAttribute("loggedInUserName", user.getFullName());
 
         if(updatedBalance != null) {
             model.addAttribute("updatedBalance", updatedBalance);
