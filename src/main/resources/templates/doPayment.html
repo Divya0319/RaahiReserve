@@ -147,9 +147,9 @@
                                     <div class="row mb-2">
                                         <div class="col-md-6">
                                             <label for="cardNumber" class="form-label">Card Number</label>
-                                            <input type="text" id="cardNumber" name="cardNumber" class="form-control" maxlength="16"
+                                            <input type="text" id="cardNumber" name="cardNumber" class="form-control" maxlength="19"
                                                    th:value="${(alreadySavedCardNo != null) ? alreadySavedCardNo : ''}"
-                                                   pattern="\d{16}" placeholder="Enter 16-digit card number" oninput="validateCardDetails()" required>
+                                                   placeholder="XXXX XXXX XXXX XXXX" oninput="validateCardDetails()" required>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="cardHolderName" class="form-label">Card Holder Name</label>
@@ -463,14 +463,21 @@
         }
 
         function validateCardDetails() {
-            const cardNumber = document.getElementById('cardNumber').value;
+            const cardNumberField = document.getElementById('cardNumber').value;
+            let cardNumber = cardNumberField.value.replace(/\D/g, ''); // Remove all non-digit characters
             const proceedButton = document.getElementById('proceedWithCardPayment');
 
-            // Check if card number is exactly 16 digits
-            const isCardNumberValid = cardNumber.length === 16 && /^\d{16}$/.test(cardNumber);
+            // Format the card number with spaces every 4 digits
+            cardNumberField.value = cardNumber.match(/.{1,4}/g)?.join(' ') || cardNumber;
+
+            // Proceed with validation (remove spaces for validation purposes)
+            const cardNumberWithoutSpaces = cardNumberField.value.replace(/\s+/g, '');
+
+            // Check if card number is exactly 16 digits and numeric
+            const isCardNumberValid = cardNumberWithoutSpaces.length === 16 && /^\d{16}$/.test(cardNumber);
 
             // Validate card number and expiry date format
-            if (isCardNumberValid && getCardCompany(cardNumber) !== 'Invalid Card') {
+            if (isCardNumberValid && getCardCompany(cardNumberWithoutSpaces) !== 'Invalid Card') {
                 proceedButton.disabled = false; // Show the button if both are valid
             } else {
                 proceedButton.disabled = true; // Hide the button if any are invalid
@@ -524,6 +531,12 @@
         // Initialize hidden input on page load
         document.addEventListener('DOMContentLoaded', () => {
             updateBankSelection(); // Call function to initialize hidden input
+        });
+
+        document.getElementById('cardNumber').addEventListener('input', function(e) {
+            let cardNumber = e.target.value.replace(/\D/g, ''); // Remove all non-digit characters
+            cardNumber = cardNumber.match(/.{1,4}/g)?.join(' ') || cardNumber; // Insert space every 4 digits
+            e.target.value = cardNumber;
         });
 
 

@@ -102,6 +102,7 @@ public class PaymentController {
             user = userService.findByUsername(principal.getName());
         }
         model.addAttribute("paymentModes", PaymentMethod.values());
+        model.addAttribute("loggedInUserName", user.getFullName());
 
         if(updatedBalance != null) {
             model.addAttribute("updatedBalance", updatedBalance);
@@ -211,6 +212,12 @@ public class PaymentController {
         PaymentRequestDTO paymentRequestDTO = new PaymentRequestDTO();
         paymentRequestDTO.setBookingId(bookingId);
         paymentRequestDTO.setPaymentMode(paymentMode);
+        String cardNumberWithSpaces = "";
+
+        if(cardNumber != null) {
+            cardNumberWithSpaces = cardNumber;
+            cardNumber = cardNumber.replaceAll("\\s", "");
+        }
 
         if(selectedBankForPayment != null) {
             model.addAttribute("selectedBankForPayment", selectedBankForPayment);
@@ -270,10 +277,10 @@ public class PaymentController {
                     model.addAttribute("paymentModes", PaymentMethod.values());
                     model.addAttribute("chosenModeBeforeInvalidCardDetail", paymentMode.name());
 
-                    String errorMessageHead = "The card you entered matches one you've used before, but some details (like the expiry date or CVV) seem incorrect. Please double-check your information.";
+                    String errorMessageHead = "The card you entered matches one you've used before, but some details seem incorrect. Please double-check the following:";
                     model.addAttribute("cardValidationErrorMessageHeading", errorMessageHead);
                     model.addAttribute("cardValidationErrorMessages", cardValidationErrorMessages);
-                    model.addAttribute("alreadySavedCardNo", cardNumber);
+                    model.addAttribute("alreadySavedCardNo", cardNumberWithSpaces);
                     model.addAttribute("invalidCardHolder", cardHolderName);
                     model.addAttribute("invalidExpiryDate", expiryMonth + "/" + expiryYear);
                     model.addAttribute("paymentModeChosen", paymentMode);
