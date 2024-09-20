@@ -318,5 +318,14 @@ public class PaymentController {
         model.addAttribute("paymentRequestDTO", paymentRequestDTO);
         return "securePaymentGateway";
     }
+	
+	//TODO 1. Add Modify booking option
+	//2.User can add or remove passengers from existing booking
+	//3. Add a bank account entity which should be linked to netbanking, and debit cards.
+	//4. Link every debit card with a bank account, and every bank account should have a bank balance, so that it can be deducted when booking is done.
+	//5. Add bank balance to netbanking as well
+	//6. Add credit limit and available credit limit to credit cards, also, for newly added credit cards, assign some default credit limit, depending on card company.
+	//7. Also add option to cancel a booking, if its payment is not yet done. And, it should be cancellable only 48 hours before travelling date and time.
+	//8. If feasible, add a job scheduler, which cancels a booking automatically, if its payment is not done 24 hours before travelling.
 
 }
