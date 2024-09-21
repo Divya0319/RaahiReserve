@@ -1,5 +1,6 @@
 package com.fastturtle.redbusschemadesign.repositories;
 
+import com.fastturtle.redbusschemadesign.enums.PaymentStatus;
 import com.fastturtle.redbusschemadesign.models.Booking;
 import com.fastturtle.redbusschemadesign.models.Bus;
 import com.fastturtle.redbusschemadesign.models.Passenger;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,4 +28,15 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     @Query("SELECT bus FROM Booking b JOIN b.busRoute.bus bus WHERE b.bookingId = :bookingId")
     Bus findBusForBooking(@Param("bookingId") int bookingId);
+
+    @Query("SELECT b FROM Booking b " +
+            "JOIN b.payment p " +
+            "WHERE p.paymentStatus IN (:pendingStatus, :failedStatus) " +
+            "AND :currentDateTime < b.travelDate " +  // Compare current date
+            "AND b.travelDate.atTime(b.busRoute.busTiming) BETWEEN :currentDateTime AND :thresholdDateTime")
+    List<Booking> findBookingsWithPendingOrFailedPaymentAndTravelInNext48Hours(
+            @Param("pendingStatus") PaymentStatus pendingStatus,
+            @Param("failedStatus") PaymentStatus failedStatus,
+            @Param("currentDateTime") LocalDateTime currentDateTime,
+            @Param("thresholdDateTime") LocalDateTime thresholdDateTime);
 }

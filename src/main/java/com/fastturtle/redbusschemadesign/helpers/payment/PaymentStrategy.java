@@ -1,4 +1,4 @@
-package com.fastturtle.redbusschemadesign.payment;
+package com.fastturtle.redbusschemadesign.helpers.payment;
 
 import com.fastturtle.redbusschemadesign.models.Booking;
 import com.fastturtle.redbusschemadesign.enums.PaymentStatus;

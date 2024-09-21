@@ -5,6 +5,7 @@ import com.fastturtle.redbusschemadesign.enums.BookingStatus;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -166,5 +167,23 @@ public class Booking {
 
     public void setBookingStatus(BookingStatus bookingStatus) {
         this.bookingStatus = bookingStatus;
+    }
+
+    public LocalDateTime getTravelDateTime() {
+        if (travelDate != null && busRoute != null && busRoute.getBus() != null) {
+            return travelDate.atTime(busRoute.getBus().getBusTiming());
+        }
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return "Booking{" +
+                "bookingId=" + bookingId +
+                ", bookingDate=" + bookingDate +
+                ", travelDate=" + travelDate +
+                ", bookingStatus=" + bookingStatus +
+                ", price=" + price +
+                '}';
     }
 }

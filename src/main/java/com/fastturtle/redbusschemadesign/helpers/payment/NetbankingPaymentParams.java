@@ -1,4 +1,4 @@
-package com.fastturtle.redbusschemadesign.payment;
+package com.fastturtle.redbusschemadesign.helpers.payment;
 
 public class NetbankingPaymentParams extends PaymentParams {
     private String bankNamePrefix;

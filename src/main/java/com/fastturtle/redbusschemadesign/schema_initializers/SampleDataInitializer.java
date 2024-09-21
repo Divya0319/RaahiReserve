@@ -3,8 +3,8 @@ package com.fastturtle.redbusschemadesign.schema_initializers;
 import com.fastturtle.redbusschemadesign.enums.*;
 import com.fastturtle.redbusschemadesign.helpers.DateUtils;
 import com.fastturtle.redbusschemadesign.helpers.RandomSeatNumberProviderWithPreference;
+import com.fastturtle.redbusschemadesign.helpers.payment.*;
 import com.fastturtle.redbusschemadesign.models.*;
-import com.fastturtle.redbusschemadesign.payment.*;
 import com.fastturtle.redbusschemadesign.repositories.*;
 import jakarta.annotation.PostConstruct;
 
@@ -21,7 +21,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-//@Component
+@Component
 public class SampleDataInitializer {
 
     // Sample data for Bus
@@ -77,7 +77,8 @@ public class SampleDataInitializer {
             LocalDate.parse(DateUtils.convertDateFormat("03/09/2023")),
             LocalDate.parse(DateUtils.convertDateFormat("10/09/2023")),
             LocalDate.parse(DateUtils.convertDateFormat("12/12/2023")),
-            LocalDate.parse(DateUtils.convertDateFormat("08/08/2024"))
+            LocalDate.parse(DateUtils.convertDateFormat("08/08/2024")),
+            LocalDate.parse(DateUtils.convertDateFormat("01/09/2024"))
     };
 
     LocalDate[] paymentDates = {
@@ -85,15 +86,17 @@ public class SampleDataInitializer {
             LocalDate.parse(DateUtils.convertDateFormat("08/10/2023")),
             LocalDate.parse(DateUtils.convertDateFormat("15/09/2023")),
             LocalDate.parse(DateUtils.convertDateFormat("12/12/2023")),
-            LocalDate.parse(DateUtils.convertDateFormat("15/08/2024"))
+            LocalDate.parse(DateUtils.convertDateFormat("15/08/2024")),
+            LocalDate.parse(DateUtils.convertDateFormat("01/09/2024"))
     };
 
     LocalDate[] travelDates = {
-            LocalDate.parse(DateUtils.convertDateFormat("03/10/2023")),
+            LocalDate.parse(DateUtils.convertDateFormat("22/09/2024")),
             LocalDate.parse(DateUtils.convertDateFormat("10/10/2023")),
             LocalDate.parse(DateUtils.convertDateFormat("15/09/2023")),
             LocalDate.parse(DateUtils.convertDateFormat("03/01/2024")),
-            LocalDate.parse(DateUtils.convertDateFormat("25/08/2024"))
+            LocalDate.parse(DateUtils.convertDateFormat("25/08/2024")),
+            LocalDate.parse(DateUtils.convertDateFormat("22/09/2024"))
     };
 
     // Sample data for Passenger
@@ -149,7 +152,7 @@ public class SampleDataInitializer {
     private final BankDetailRepository bankDetailRepository;
     private final CardDetailRepository cardDetailRepository;
 
-//    @Autowired
+    @Autowired
     public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder, UserWalletRepository userWalletRepository, BankDetailRepository bankDetailRepository, BankDetailRepository bankDetailRepository1, CardDetailRepository cardDetailRepository) {
         this.busRepository = busRepository;
         this.routeRepository = routeRepository;
@@ -178,13 +181,14 @@ public class SampleDataInitializer {
         createAndSaveUserWallets();
 
         RandomSeatNumberProviderWithPreference rsnp = new RandomSeatNumberProviderWithPreference(busRepository, busSeatRepository);
-        Booking booking1 = createAndSaveBooking1(rsnp);
+        createAndSaveBooking1(rsnp);
         Booking booking2 = createAndSaveBooking2(rsnp);
         Booking booking3 = createAndSaveBooking3(rsnp);
         Booking booking4 = createAndSaveBooking4(rsnp);
         Booking booking5 = createAndSaveBooking5(rsnp);
+        createAndSaveBooking6(rsnp);
 
-        markingTravelForBooking(booking1);
+//        markingTravelForBooking(booking1);
         markingTravelForBooking(booking2);
         markingTravelForBooking(booking3);
         markingTravelForBooking(booking4);
@@ -229,7 +233,7 @@ public class SampleDataInitializer {
         seatCostRepository.save(seatCost3);
     }
 
-    private Booking createAndSaveBooking1(RandomSeatNumberProviderWithPreference rsnp) {
+    private void createAndSaveBooking1(RandomSeatNumberProviderWithPreference rsnp) {
         BusRoute busRouteForBooking1 = busRouteRepository.findById(4).get();
 
         Booking booking1 = new Booking(userRepository.findById(4).get(), busRouteForBooking1, bookingDates[0], travelDates[0]);
@@ -277,7 +281,7 @@ public class SampleDataInitializer {
                 bookingWithPaymentAdded.getPassengers().size());
         busRepository.save(busForBooking1);
 
-        return bookingRepository.save(bookingWithPaymentAdded);
+        bookingRepository.save(bookingWithPaymentAdded);
 
     }
 
@@ -475,6 +479,58 @@ public class SampleDataInitializer {
         } else {
             return null;
         }
+    }
+
+    private void createAndSaveBooking6(RandomSeatNumberProviderWithPreference rsnp) {
+        BusRoute busRouteForBooking = busRouteRepository.findById(14).get();
+
+        Booking booking = new Booking(userRepository.findById(2).get(), busRouteForBooking, bookingDates[5], travelDates[5]);
+
+        booking.setUserPassenger(true);
+
+        Bus busForBooking = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking).get(0);
+        rsnp.setBusNo(busForBooking.getBusNo());
+
+        Float bookingCost = 0.0f;
+
+        if(booking.isUserPassenger()) {
+            BusSeat busSeatForUser = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking, SeatType.AISLE);
+
+            BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(busSeatForUser);
+            Float seatCostForUser = seatCostRepository.findCostByBusType(busTypeForUser);
+
+            bookingCost += seatCostForUser;
+
+            createAndSaveUserPassengerToBooking(booking, busSeatForUser);
+
+        }
+
+        BusSeat busSeat1 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking, SeatType.WINDOW);
+
+        BusSeat busSeat2 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking, SeatType.WINDOW);
+
+        BusType busTypeForSeat1 = busSeatRepository.findBusTypeFromBusSeat(busSeat1);
+        Float seatCostForSeat1 = seatCostRepository.findCostByBusType(busTypeForSeat1);
+
+        BusType busTypeForSeat2 = busSeatRepository.findBusTypeFromBusSeat(busSeat2);
+        Float seatCostForSeat2 = seatCostRepository.findCostByBusType(busTypeForSeat2);
+
+
+        booking.addPassenger(new Passenger(passengerNames[7], passengerAges[7], passengerGenders[7], busSeat1));
+        booking.addPassenger(new Passenger(passengerNames[8], passengerAges[8], passengerGenders[8], busSeat2));
+
+        bookingCost = bookingCost + seatCostForSeat1 + seatCostForSeat2;
+        booking.setPrice(bookingCost);
+        booking.setBookingStatus(BookingStatus.CREATED);
+
+        Booking bookingWithPaymentAdded = createAndSavePendingPaymentForBooking(booking);
+
+        busForBooking.setAvailableSeats(busForBooking.getAvailableSeats() -
+                bookingWithPaymentAdded.getPassengers().size());
+        busRepository.save(busForBooking);
+
+        bookingRepository.save(bookingWithPaymentAdded);
+
     }
 
     private Booking createAndSavePendingPaymentForBooking(Booking booking) {

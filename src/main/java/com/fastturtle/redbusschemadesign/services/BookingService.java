@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -256,6 +257,22 @@ public class BookingService {
 
     public Optional<List<Passenger>> findPassengersTraveledOnDate(LocalDate travelDate) {
         return passengerRepository.findPassengersByTravelDate(travelDate);
+    }
+
+    public Bus findBusForBooking(int bookingId) {
+        return bookingRepository.findBusForBooking(bookingId);
+    }
+
+    public List<Booking> getBookingsWithinNext48HoursWithPendingOrFailedPayment() {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime thresholdDateTime = currentDateTime.plusHours(48);
+
+        return bookingRepository.findBookingsWithPendingOrFailedPaymentAndTravelInNext48Hours(
+                PaymentStatus.PENDING,
+                PaymentStatus.FAILED,
+                currentDateTime,
+                thresholdDateTime
+        );
     }
 
 }
