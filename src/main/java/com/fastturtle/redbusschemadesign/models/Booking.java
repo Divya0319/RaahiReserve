@@ -169,13 +169,6 @@ public class Booking {
         this.bookingStatus = bookingStatus;
     }
 
-    public LocalDateTime getTravelDateTime() {
-        if (travelDate != null && busRoute != null && busRoute.getBus() != null) {
-            return travelDate.atTime(busRoute.getBus().getBusTiming());
-        }
-        return null;
-    }
-
     @Override
     public String toString() {
         return "Booking{" +

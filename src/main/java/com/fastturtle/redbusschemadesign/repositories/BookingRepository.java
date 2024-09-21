@@ -32,11 +32,9 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     @Query("SELECT b FROM Booking b " +
             "JOIN b.payment p " +
             "WHERE p.paymentStatus IN (:pendingStatus, :failedStatus) " +
-            "AND :currentDateTime < b.travelDate " +  // Compare current date
-            "AND b.travelDate.atTime(b.busRoute.busTiming) BETWEEN :currentDateTime AND :thresholdDateTime")
-    List<Booking> findBookingsWithPendingOrFailedPaymentAndTravelInNext48Hours(
+            "AND :currentDate < b.travelDate")
+    List<Booking> findBookingsWithPendingOrFailedPayments(
             @Param("pendingStatus") PaymentStatus pendingStatus,
             @Param("failedStatus") PaymentStatus failedStatus,
-            @Param("currentDateTime") LocalDateTime currentDateTime,
-            @Param("thresholdDateTime") LocalDateTime thresholdDateTime);
+            @Param("currentDate") LocalDate currentDate);
 }

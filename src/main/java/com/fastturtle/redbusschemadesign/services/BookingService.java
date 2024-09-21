@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingService {
@@ -264,15 +265,20 @@ public class BookingService {
     }
 
     public List<Booking> getBookingsWithinNext48HoursWithPendingOrFailedPayment() {
+        List<Booking> bookings = bookingRepository.findBookingsWithPendingOrFailedPayments(
+                PaymentStatus.PENDING, PaymentStatus.FAILED, LocalDate.now());
+
         LocalDateTime currentDateTime = LocalDateTime.now();
         LocalDateTime thresholdDateTime = currentDateTime.plusHours(48);
 
-        return bookingRepository.findBookingsWithPendingOrFailedPaymentAndTravelInNext48Hours(
-                PaymentStatus.PENDING,
-                PaymentStatus.FAILED,
-                currentDateTime,
-                thresholdDateTime
-        );
+        // Filter bookings whose travelDate and busTiming combined are within 48 hours
+        return bookings.stream()
+                .filter(booking -> {
+                    LocalDateTime travelDateTime = booking.getTravelDate()
+                            .atTime(booking.getBusRoute().getBus().getBusTiming());
+                    return travelDateTime.isAfter(currentDateTime) && travelDateTime.isBefore(thresholdDateTime);
+                })
+                .collect(Collectors.toList());
     }
 
 }
