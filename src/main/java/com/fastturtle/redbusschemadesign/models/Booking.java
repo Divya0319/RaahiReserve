@@ -1,6 +1,7 @@
 package com.fastturtle.redbusschemadesign.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fastturtle.redbusschemadesign.enums.BookingStatus;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -29,6 +30,10 @@ public class Booking {
 
     @Column(name = "travelDate")
     private LocalDate travelDate;
+
+    @Column(name = "bookingStatus")
+    @Enumerated(EnumType.STRING)
+    private BookingStatus bookingStatus;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable
@@ -153,5 +158,13 @@ public class Booking {
 
     public void setFormattedTravelDate(String formattedTravelDate) {
         this.formattedTravelDate = formattedTravelDate;
+    }
+
+    public BookingStatus getBookingStatus() {
+        return bookingStatus;
+    }
+
+    public void setBookingStatus(BookingStatus bookingStatus) {
+        this.bookingStatus = bookingStatus;
     }
 }

@@ -1,0 +1,15 @@
+SET FOREIGN_KEY_CHECKS = FALSE;
+drop table bank_details;
+drop table booking;
+drop table booking_passenger;
+drop table bus;
+drop table bus_route;
+drop table bus_seat;
+drop table card_details;
+drop table passenger;
+drop table payment;
+drop table route;
+drop table seat_cost;
+drop table user;
+drop table user_wallet;
+SET FOREIGN_KEY_CHECKS = true;

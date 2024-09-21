@@ -269,6 +269,7 @@ public class SampleDataInitializer {
 
         booking1Cost = booking1Cost + seatCostForSeat1 + seatCostForSeat2;
         booking1.setPrice(booking1Cost);
+        booking1.setBookingStatus(BookingStatus.CREATED);
 
         Booking bookingWithPaymentAdded = createAndSavePendingPaymentForBooking(booking1);
 
@@ -322,6 +323,7 @@ public class SampleDataInitializer {
 
         booking2.addPassenger(new Passenger(passengerNames[2], passengerAges[2], passengerGenders[2], busSeat3));
         booking2.setPrice(seatCostForSeat3);
+        booking2.setBookingStatus(BookingStatus.CREATED);
 
         // Doing payment for Booking 2 via User wallet
         User user = userRepository.findByUserName("AliceSmith");
@@ -377,6 +379,7 @@ public class SampleDataInitializer {
 
         booking3Cost = booking3Cost + seatCostForSeat4;
         booking3.setPrice(booking3Cost);
+        booking3.setBookingStatus(BookingStatus.CREATED);
 
         CardPaymentStrategy cps = new CardPaymentStrategy(cardDetailRepository);
         CardPaymentParams cardPaymentParams = new CardPaymentParams();
@@ -416,6 +419,7 @@ public class SampleDataInitializer {
         booking4.addPassenger(new Passenger(passengerNames[4], passengerAges[4], passengerGenders[4], busSeat5));
 
         booking4.setPrice(seatCostForSeat5);
+        booking4.setBookingStatus(BookingStatus.CREATED);
 
         NetbankingPaymentStrategy nbps = new NetbankingPaymentStrategy(bankDetailRepository);
         NetbankingPaymentParams netbankingPaymentParams = new NetbankingPaymentParams();
@@ -452,6 +456,7 @@ public class SampleDataInitializer {
         booking5.addPassenger(new Passenger(passengerNames[5], passengerAges[5], passengerGenders[5], busSeat6));
 
         booking5.setPrice(seatCostForSeat6);
+        booking5.setBookingStatus(BookingStatus.CREATED);
 
         NetbankingPaymentStrategy nbps = new NetbankingPaymentStrategy((bankDetailRepository));
         NetbankingPaymentParams netbankingPaymentParams = new NetbankingPaymentParams();
