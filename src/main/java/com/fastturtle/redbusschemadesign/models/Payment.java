@@ -10,7 +10,9 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "payment")
+@Table(name = "payment", indexes = {
+        @Index(name = "idx_payment_status", columnList = "paymentStatus")
+})
 public class Payment {
 
     @Id
@@ -26,7 +28,7 @@ public class Payment {
     @Column(name = "amount", nullable = false)
     private float amount;
 
-    @Column(name = "payment_date")
+    @Column(name = "paymentDate")
     private LocalDate paymentDate;
 
     @Enumerated(EnumType.STRING)
