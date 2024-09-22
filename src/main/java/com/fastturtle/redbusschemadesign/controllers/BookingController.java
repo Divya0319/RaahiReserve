@@ -31,15 +31,17 @@ public class BookingController {
     private final UserService userService;
     private final RouteService routeService;
     private final BusService busService;
+    private final SeatCostService seatCostService;
 
     private User user;
 
     @Autowired
-    public BookingController(BookingService bookingService, UserService userService, RouteService routeService, BusService busService) {
+    public BookingController(BookingService bookingService, UserService userService, RouteService routeService, BusService busService, SeatCostService seatCostService) {
         this.bookingService = bookingService;
         this.userService = userService;
         this.routeService = routeService;
         this.busService = busService;
+        this.seatCostService = seatCostService;
     }
 
     @PostMapping("/book")
@@ -108,6 +110,8 @@ public class BookingController {
         Map<BusType, List<Bus>> busesByType = new HashMap<>();
         model.addAttribute("busesByType", busesByType);
 
+        Map<BusType, List<SeatCost>> seatCostsByType = new HashMap<>();
+        model.addAttribute("seatCostsByType", seatCostsByType);
 
         model.addAttribute("passengers", passengers);
         model.addAttribute("genders", Gender.values());
@@ -137,8 +141,9 @@ public class BookingController {
                                     Model model, Principal principal) {
 
         Map<BusType, List<Bus>> busesByType = busService.getAllBusesGroupedByTypeFilterBySourceAndDestination(source, destination);
+        Map<BusType, List<SeatCost>> seatCostsByType = seatCostService.getAllSeatCostsGroupedByBusType();
 
-        //  // Format bus number and bus timing for each bus
+        // Format bus number and bus timing for each bus
         for(Map.Entry<BusType, List<Bus>> entry : busesByType.entrySet()) {
             List<Bus> buses = entry.getValue();
 
@@ -164,6 +169,7 @@ public class BookingController {
         }
 
         model.addAttribute("busesByType", busesByType);
+        model.addAttribute("seatCostsByType", seatCostsByType);
 
         model.addAttribute("genders", Gender.values());
         model.addAttribute("seatPreferences", Arrays.asList("No Preference", SeatType.AISLE.name(), SeatType.WINDOW.name()));

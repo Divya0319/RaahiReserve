@@ -1,5 +1,6 @@
 package com.fastturtle.redbusschemadesign.services;
 
+import com.fastturtle.redbusschemadesign.enums.BookingStatus;
 import com.fastturtle.redbusschemadesign.models.Booking;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,9 @@ public class BookingCancellationService {
         logger.info("Cancelling unpaid bookings");
         for (Booking booking : bookings) {
             logger.info("Booking details : {}", booking);
+
+//            booking.setBookingStatus(BookingStatus.CANCELLED);
+//            logger.info("Booking {} is cancelled now", booking.getBookingId());
         }
     }
 
