@@ -443,7 +443,7 @@ public class SampleDataInitializer {
         netbankingPaymentParams.setReceivedOtp(343532);
         netbankingPaymentParams.setPaymentDate(paymentDates[2]);
 
-        booking4 = nbps.processPayment(booking4, PaymentStatus.COMPLETED, netbankingPaymentParams);
+        booking4 = nbps.processPayment(booking4, PaymentStatus.FAILED, netbankingPaymentParams);
 
         if(booking4 != null) {
             busForBooking4.setAvailableSeats(busForBooking4.getAvailableSeats() -
@@ -548,6 +548,7 @@ public class SampleDataInitializer {
     private Booking createAndSavePendingPaymentForBooking(Booking booking) {
         Payment payment = new Payment();
         payment.setPaymentStatus(PaymentStatus.PENDING);
+        System.out.println("Payment pending");
 
         payment.setPaymentMethod(null);
         payment.setAmount(0.00f);

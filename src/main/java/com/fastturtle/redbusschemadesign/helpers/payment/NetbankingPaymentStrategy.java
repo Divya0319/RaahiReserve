@@ -33,14 +33,21 @@ public class NetbankingPaymentStrategy implements PaymentStrategy {
         int receivedOtp = netbankingPaymentParams.getReceivedOtp();
         String otpString = String.valueOf(receivedOtp);
         if(otpString.length() == 6) {
-            System.out.println("OTP verified successfully");
-            payment.setPaymentStatus(PaymentStatus.COMPLETED);
+            if(paymentStatus == PaymentStatus.COMPLETED) {
+                System.out.println("OTP verified successfully");
+                payment.setPaymentStatus(PaymentStatus.COMPLETED);
+
+            } else {
+                System.out.println("Payment Failed");
+                payment.setPaymentStatus(PaymentStatus.FAILED);
+
+            }
             payment.setBooking(booking);
             payment.setAmount(booking.getPrice());
             payment.setPaymentDate(paymentParams.getPaymentDate());
             booking.setPayment(payment);
-
             return booking;
+
 
         } else {
             System.out.println("Invalid OTP");
