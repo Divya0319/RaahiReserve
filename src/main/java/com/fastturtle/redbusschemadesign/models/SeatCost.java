@@ -1,6 +1,7 @@
 package com.fastturtle.redbusschemadesign.models;
 
 import com.fastturtle.redbusschemadesign.enums.BusType;
+import com.fastturtle.redbusschemadesign.enums.SeatType;
 import jakarta.persistence.*;
 
 @Entity
@@ -15,6 +16,10 @@ public class SeatCost {
     @Enumerated(EnumType.STRING)
     @Column(name = "busType")
     private BusType busType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "seatType")
+    private SeatType seatType;
 
     @Column(name = "cost")
     private float cost;
@@ -33,6 +38,14 @@ public class SeatCost {
 
     public void setBusType(BusType busType) {
         this.busType = busType;
+    }
+
+    public SeatType getSeatType() {
+        return seatType;
+    }
+
+    public void setSeatType(SeatType seatType) {
+        this.seatType = seatType;
     }
 
     public float getCost() {

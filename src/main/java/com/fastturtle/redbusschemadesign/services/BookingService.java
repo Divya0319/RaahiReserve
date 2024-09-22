@@ -156,7 +156,7 @@ public class BookingService {
             busSeatRepository.save(seatForUser);
 
             BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(seatForUser);
-            Float seatCostForUser = seatCostRepository.findCostByBusType(busTypeForUser);
+            Float seatCostForUser = seatCostRepository.findCostByBusTypeAnAndSeatType(busTypeForUser, seatForUser.getSeatType());
 
             bookingCost += seatCostForUser;
 
@@ -192,8 +192,8 @@ public class BookingService {
 
             busSeatRepository.save(seatForPassenger);
 
-            Float seatCostForUser = seatCostRepository.findCostByBusType(
-                    busSeatRepository.findBusTypeFromBusSeat(seatForPassenger));
+            Float seatCostForUser = seatCostRepository.findCostByBusTypeAnAndSeatType(
+                    busSeatRepository.findBusTypeFromBusSeat(seatForPassenger), seatForPassenger.getSeatType());
             bookingCost += seatCostForUser;
 
             p.setBusSeat(seatForPassenger);
