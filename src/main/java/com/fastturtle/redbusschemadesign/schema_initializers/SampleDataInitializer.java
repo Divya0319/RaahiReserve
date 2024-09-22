@@ -84,19 +84,19 @@ public class SampleDataInitializer {
     LocalDate[] paymentDates = {
             LocalDate.parse(DateUtils.convertDateFormat("08/09/2023")),
             LocalDate.parse(DateUtils.convertDateFormat("08/10/2023")),
-            LocalDate.parse(DateUtils.convertDateFormat("15/09/2023")),
+            LocalDate.parse(DateUtils.convertDateFormat("15/09/2024")),
             LocalDate.parse(DateUtils.convertDateFormat("12/12/2023")),
             LocalDate.parse(DateUtils.convertDateFormat("15/08/2024")),
             LocalDate.parse(DateUtils.convertDateFormat("01/09/2024"))
     };
 
     LocalDate[] travelDates = {
-            LocalDate.parse(DateUtils.convertDateFormat("22/09/2024")),
-            LocalDate.parse(DateUtils.convertDateFormat("10/10/2023")),
             LocalDate.parse(DateUtils.convertDateFormat("15/09/2023")),
+            LocalDate.parse(DateUtils.convertDateFormat("10/10/2023")),
+            LocalDate.parse(DateUtils.convertDateFormat("23/09/2024")),
             LocalDate.parse(DateUtils.convertDateFormat("03/01/2024")),
             LocalDate.parse(DateUtils.convertDateFormat("25/08/2024")),
-            LocalDate.parse(DateUtils.convertDateFormat("22/09/2024"))
+            LocalDate.parse(DateUtils.convertDateFormat("24/09/2024"))
     };
 
     // Sample data for Passenger
