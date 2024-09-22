@@ -22,16 +22,16 @@ public class BookingCancellationService {
         this.bookingService = bookingService;
     }
 
-    @Scheduled(initialDelay = 0, fixedDelay = 30000)
-    private void checkAndCancelUnpaidBookings() {
-        List<Booking> bookings = bookingService.getBookingsWithinNext48HoursWithPendingOrFailedPayment();
-        logger.info("Cancelling unpaid bookings");
-        for (Booking booking : bookings) {
-            logger.info("Booking details : {}", booking);
-
-//            booking.setBookingStatus(BookingStatus.CANCELLED);
-//            logger.info("Booking {} is cancelled now", booking.getBookingId());
-        }
-    }
+//    @Scheduled(initialDelay = 0, fixedDelay = 30000)
+//    private void checkAndCancelUnpaidBookings() {
+//        List<Booking> bookings = bookingService.getBookingsWithinNext48HoursWithPendingOrFailedPayment();
+//        logger.info("Cancelling unpaid bookings");
+//        for (Booking booking : bookings) {
+//            logger.info("Booking details : {}", booking);
+//
+////            booking.setBookingStatus(BookingStatus.CANCELLED);
+////            logger.info("Booking {} is cancelled now", booking.getBookingId());
+//        }
+//    }
 
 }

@@ -21,7 +21,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+//@Component
 public class SampleDataInitializer {
 
     // Sample data for Bus
@@ -152,7 +152,7 @@ public class SampleDataInitializer {
     private final BankDetailRepository bankDetailRepository;
     private final CardDetailRepository cardDetailRepository;
 
-    @Autowired
+//    @Autowired
     public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder, UserWalletRepository userWalletRepository, BankDetailRepository bankDetailRepository, BankDetailRepository bankDetailRepository1, CardDetailRepository cardDetailRepository) {
         this.busRepository = busRepository;
         this.routeRepository = routeRepository;
