@@ -228,11 +228,8 @@
         // Pass Thymeleaf variables to JavaScript
 
         const genders = ['MALE', 'FEMALE', 'OTHER'];
-        const seatPreferences = ['No Preference', 'AISLE', 'WINDOW'];
         // Convert Thymeleaf data to a JavaScript object
         const seatCostsByType = /*[[${seatCostsByType}]]*/ {};
-
-        console.log("SeatCostByType : " + JSON.stringify(seatCostsByType, null, 2));
 
         $('#add-passenger').click(function () {
             const newForm = `
@@ -251,7 +248,7 @@
 
 
                    <div class="mt-3">
-                        <label for="seatCost-${passengerIndex}" class="mt-3">Seat Cost:</label>
+                        <label for="seatCost-${passengerIndex}" class="mt-3">Seat Preference:</label>
                             <select id="seatCost-${passengerIndex}" class="form-control" name="passengers[${passengerIndex}].busSeat.seatCostId">
                                 <option value="">No Preference</option>
                                 ${Object.keys(seatCostsByType).map(type => `
@@ -348,6 +345,32 @@
                         }
                     });
                 }
+            });
+
+            document.getElementById("add-passenger").addEventListener("click", function () {
+                // Your code to dynamically add the new form here (existing logic)
+
+                // Ensure form is appended before trying to modify it
+                setTimeout(function () {
+                    const selectedType = document.getElementById("busTypeDropdown").value; // Get currently selected bus type
+                    const newPassengerIndex = document.querySelectorAll(".passenger-form").length - 1; // Index of the newly added form
+                    const newFormSeatPreferenceSelect = document.querySelector(`select[name="passengers[${newPassengerIndex}].busSeat.seatType"]`);
+
+                    if (newFormSeatPreferenceSelect) {
+                        // Clear existing options
+                        newFormSeatPreferenceSelect.innerHTML = '<option value="">No Preference</option>';
+
+                        // Populate the seat preference dropdown based on the selected bus type
+                        if (selectedType && seatCostsByType[selectedType]) {
+                            seatCostsByType[selectedType].forEach(function (seatCost) {
+                                const option = document.createElement('option');
+                                option.value = seatCost.seatCostId;
+                                option.textContent = `${seatCost.seatType} - ${seatCost.cost}`;
+                                newFormSeatPreferenceSelect.appendChild(option); // Add new options dynamically
+                            });
+                        }
+                    }
+                }, 0); // Delay to allow form to be appended
             });
 
             // Triggering the change event programmatically to update the hidden input on page load
