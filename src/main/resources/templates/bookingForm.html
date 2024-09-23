@@ -160,7 +160,7 @@
                         <label for="addUserAsPassengerCheckBox">Add <span th:text="${loggedInUserName}"/> as passenger</label>
                     </div>
 
-                    <div id="seatTypeForUserDiv" style="display: none;" class="mt-3" th:each="entry : ${seatCostsByType}" th:data-type="${entry.key.name}">
+                    <div id="seatTypeForUserDiv" th:class="bus-container" class="mt-3" th:each="entry : ${seatCostsByType}" th:data-type="${entry.key.name}">
                         <label for="seatTypeForUserDropDown" class="mt-3" >Seat Preference:</label>
                         <select id="seatTypeForUserDropDown" name="seatTypeForUser" class="form-control">
                             <option value="">No Preference</option>
@@ -332,12 +332,17 @@
 
                 document.querySelector('input[name="busType"]').value = selectedType;
 
+                // Clear existing options in seat preference dropdown
+                const seatTypeForUserDropDown = document.getElementById("seatTypeForUserDropDown");
+                seatTypeForUserDropDown.innerHTML = '<option value="">No Preference</option>'; // Reset to default option
+
                 if (selectedType === "") {
                     busContainers.forEach(function (container) {
                         container.style.display = "none"; // Hiding all containers if no bus type selected
                     });
                     selectedBusIdInput.value = "";
                 } else {
+                    console.log('Seat Costs for selected type:', seatCostsByType[selectedType]);
                     busContainers.forEach(function (container) {
                         const containerType = container.getAttribute("data-type"); // Getting the bus type from data attribute
                         if (selectedType === containerType) {

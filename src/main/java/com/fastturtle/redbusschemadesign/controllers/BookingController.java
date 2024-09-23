@@ -144,12 +144,6 @@ public class BookingController {
         Map<BusType, List<Bus>> busesByType = busService.getAllBusesGroupedByTypeFilterBySourceAndDestination(source, destination);
         Map<BusType, List<SeatCost>> seatCostsByType = seatCostService.getAllSeatCostsGroupedByBusType();
 
-        List<SeatCost> allSeatCosts = seatCostsByType.values()
-                .stream()
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-        model.addAttribute("allSeatCosts", allSeatCosts);
-
         // Format bus number and bus timing for each bus
         for(Map.Entry<BusType, List<Bus>> entry : busesByType.entrySet()) {
             List<Bus> buses = entry.getValue();
