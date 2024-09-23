@@ -248,8 +248,8 @@
 
 
                    <div class="mt-3">
-                        <label for="seatCost-${passengerIndex}" class="mt-3">Seat Preference:</label>
-                            <select id="seatCost-${passengerIndex}" class="form-control" name="passengers[${passengerIndex}].busSeat.seatCostId">
+                        <label for="seatPreference-${passengerIndex}" class="mt-3">Seat Preference:</label>
+                            <select id="seatPreference-${passengerIndex}" class="form-control" name="passengers[${passengerIndex}].busSeat.seatType">
                                 <option value="">No Preference</option>
                                 ${Object.keys(seatCostsByType).map(type => `
                                     ${seatCostsByType[type].map(seatCost => `
@@ -263,6 +263,8 @@
             `;
 
             $('#passenger-forms').append(newForm);
+
+            updateSeatPreferences(document.getElementById("busTypeDropdown").value);
 
             handleAgeValidation(document.getElementById(`age-${passengerIndex}`));
 
@@ -345,32 +347,8 @@
                         }
                     });
                 }
-            });
 
-            document.getElementById("add-passenger").addEventListener("click", function () {
-                // Your code to dynamically add the new form here (existing logic)
-
-                // Ensure form is appended before trying to modify it
-                setTimeout(function () {
-                    const selectedType = document.getElementById("busTypeDropdown").value; // Get currently selected bus type
-                    const newPassengerIndex = document.querySelectorAll(".passenger-form").length - 1; // Index of the newly added form
-                    const newFormSeatPreferenceSelect = document.querySelector(`select[name="passengers[${newPassengerIndex}].busSeat.seatType"]`);
-
-                    if (newFormSeatPreferenceSelect) {
-                        // Clear existing options
-                        newFormSeatPreferenceSelect.innerHTML = '<option value="">No Preference</option>';
-
-                        // Populate the seat preference dropdown based on the selected bus type
-                        if (selectedType && seatCostsByType[selectedType]) {
-                            seatCostsByType[selectedType].forEach(function (seatCost) {
-                                const option = document.createElement('option');
-                                option.value = seatCost.seatCostId;
-                                option.textContent = `${seatCost.seatType} - ${seatCost.cost}`;
-                                newFormSeatPreferenceSelect.appendChild(option); // Add new options dynamically
-                            });
-                        }
-                    }
-                }, 0); // Delay to allow form to be appended
+                updateSeatPreferences(selectedType);
             });
 
             // Triggering the change event programmatically to update the hidden input on page load
@@ -384,6 +362,26 @@
 
         function updateSelectedBusId(radio) {
             document.getElementById('selectedBusId').value = radio.value;
+        }
+
+        function updateSeatPreferences(selectedType) {
+            const passengerForms = document.querySelectorAll(".passenger-form");
+            passengerForms.forEach((form, index) => {
+                const seatPreferenceSelect = form.querySelector(`#seatPreference-${index}`);
+                console.log("Seat Preference Select ", seatPreferenceSelect);
+                console.log("Selected Bus Type ", selectedType);
+                if (seatPreferenceSelect) {
+                    seatPreferenceSelect.innerHTML = '<option value="">No Preference</option>'; // Clear existing options
+                    if (selectedType && seatCostsByType[selectedType]) {
+                        seatCostsByType[selectedType].forEach(seatCost => {
+                            const option = document.createElement('option');
+                            option.value = seatCost.seatCostId;
+                            option.textContent = `${seatCost.seatType} - ${seatCost.cost}`;
+                            seatPreferenceSelect.appendChild(option); // Add new options dynamically
+                        });
+                    }
+                }
+            });
         }
 
     </script>
