@@ -155,12 +155,12 @@
                     <input type="hidden" name="travelDate" th:value="''" id="hiddenTravelDate" />
                     <input type="hidden" id="selectedBusId" name="busId" value="" />
 
-                    <div class="checkbox-container mt-3">
+                    <div id="addUserAsPassengerCheckBoxDiv" class="checkbox-container mt-3" style="display: none;">
                         <input type="checkbox" id="addUserAsPassengerCheckBox" name="addUserAsPassenger">
                         <label for="addUserAsPassengerCheckBox">Add <span th:text="${loggedInUserName}"/> as passenger</label>
                     </div>
 
-                    <div id="seatTypeForUserDiv" th:class="bus-container" class="mt-3" th:each="entry : ${seatCostsByType}" th:data-type="${entry.key.name}">
+                    <div id="seatTypeForUserDiv" class="mt-3" th:each="entry : ${seatCostsByType}" th:data-type="${entry.key.name}">
                         <label for="seatTypeForUserDropDown" class="mt-3" >Seat Preference:</label>
                         <select id="seatTypeForUserDropDown" name="seatTypeForUser" class="form-control">
                             <option value="">No Preference</option>
@@ -316,7 +316,7 @@
             document.getElementById("addUserAsPassengerCheckBox").addEventListener("change", function () {
                 let userSeatTypeDiv = document.getElementById("seatTypeForUserDiv");
                 if (this.checked) {
-                    userSeatTypeDiv.style.display = "inline-block"; // Show the dropdown
+                    userSeatTypeDiv.style.display = "block"; // Show the dropdown
                 } else {
                     userSeatTypeDiv.style.display = "none"; // Hide the dropdown
                 }
@@ -324,36 +324,28 @@
 
             document.getElementById("busTypeDropdown").addEventListener("change", function () {
                 const selectedType = this.value; // Get selected bus type
-
-                const busContainers = document.querySelectorAll(".bus-container"); // All bus containers
                 const selectedBusIdInput = document.getElementById("selectedBusId"); // Hidden input for bus ID
 
                 selectedBusIdInput.value = "";
-
                 document.querySelector('input[name="busType"]').value = selectedType;
 
                 // Clear existing options in seat preference dropdown
                 const seatTypeForUserDropDown = document.getElementById("seatTypeForUserDropDown");
-                seatTypeForUserDropDown.innerHTML = '<option value="">No Preference</option>'; // Reset to default option
-
-                if (selectedType === "") {
-                    busContainers.forEach(function (container) {
-                        container.style.display = "none"; // Hiding all containers if no bus type selected
-                    });
-                    selectedBusIdInput.value = "";
-                } else {
-                    console.log('Seat Costs for selected type:', seatCostsByType[selectedType]);
-                    busContainers.forEach(function (container) {
-                        const containerType = container.getAttribute("data-type"); // Getting the bus type from data attribute
-                        if (selectedType === containerType) {
-                            container.style.display = "block"; // Showing matching buses
-                        } else {
-                            container.style.display = "none"; // Hiding non-matching buses
-                        }
-                    });
+                if (seatTypeForUserDropDown) {
+                    seatTypeForUserDropDown.innerHTML = '<option value="">No Preference</option>'; // Reset to default option
                 }
 
-                updateSeatPreferences(selectedType);
+                if (selectedType !== "") {
+                    // Update seat preferences for user dropdown and other forms
+                    updateSeatPreferences(selectedType);
+                    updateSeatPreferencesForUserDropDown(selectedType);
+
+                    // Show the checkbox only if a valid bus type is selected
+                    document.getElementById('addUserAsPassengerCheckBoxDiv').style.display = "block";
+                } else {
+                    // Hide the checkbox if no bus type is selected
+                    document.getElementById('addUserAsPassengerCheckBoxDiv').style.display = "none";
+                }
             });
 
             // Triggering the change event programmatically to update the hidden input on page load
@@ -373,8 +365,6 @@
             const passengerForms = document.querySelectorAll(".passenger-form");
             passengerForms.forEach((form, index) => {
                 const seatPreferenceSelect = form.querySelector(`#seatPreference-${index}`);
-                console.log("Seat Preference Select ", seatPreferenceSelect);
-                console.log("Selected Bus Type ", selectedType);
                 if (seatPreferenceSelect) {
                     seatPreferenceSelect.innerHTML = '<option value="">No Preference</option>'; // Clear existing options
                     if (selectedType && seatCostsByType[selectedType]) {
@@ -387,6 +377,21 @@
                     }
                 }
             });
+        }
+
+        function updateSeatPreferencesForUserDropDown(selectedType) {
+            const seatTypeForUserDropDown = document.getElementById("seatTypeForUserDropDown");
+            if (seatTypeForUserDropDown) {
+                seatTypeForUserDropDown.innerHTML = '<option value="">No Preference</option>'; // Clear existing options
+                if (selectedType && seatCostsByType[selectedType]) {
+                    seatCostsByType[selectedType].forEach(seatCost => {
+                        const option = document.createElement('option');
+                        option.value = seatCost.seatCostId;
+                        option.textContent = `${seatCost.seatType} - ${seatCost.cost}`;
+                        seatTypeForUserDropDown.appendChild(option); // Add new options dynamically
+                    });
+                }
+            }
         }
 
     </script>
