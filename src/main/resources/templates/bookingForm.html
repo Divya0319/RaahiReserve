@@ -160,14 +160,11 @@
                         <label for="addUserAsPassengerCheckBox">Add <span th:text="${loggedInUserName}"/> as passenger</label>
                     </div>
 
-                    <div id="seatTypeForUserDiv" class="mt-3" th:each="entry : ${seatCostsByType}" th:data-type="${entry.key.name}" style="display: none">
-                        <label for="seatTypeForUserDropDown" class="mt-3" >Seat Preference:</label>
+                    <div id="seatTypeForUserDiv" class="mt-3" style="display: none">
+                        <label for="seatTypeForUserDropDown" class="mt-3" >Seat Preference for <span th:text="${loggedInUserName}"/>:</label>
                         <select id="seatTypeForUserDropDown" name="seatTypeForUser" class="form-control">
                             <option value="">No Preference</option>
-                            <option th:each="seatCost : ${entry.value}"
-                                    th:value="${seatCost.seatType.name()}"
-                                    th:text="${seatCost.seatType} + ' - ' + ${seatCost.cost}">
-                            </option>
+
                         </select>
                     </div>
 
@@ -184,14 +181,11 @@
                                 <option th:each="gender : ${genders}" th:value="${gender}" th:text="${gender}">Gender</option>
                             </select>
 
-                            <div class="bus-container mt-3" th:each="entry : ${seatCostsByType}" th:data-type="${entry.key.name}">
+                            <div class="mt-3">
                                 <label for="seatPreference-0" class="mt-3">Seat Preference:</label>
                                 <select id="seatPreference-0" class="form-control" name="passengers[0].busSeat.seatType">
                                     <option value="">No Preference</option>
-                                    <option th:each="seatCost : ${entry.value}"
-                                            th:value="${seatCost.seatType.name()}"
-                                            th:text="${seatCost.seatType} + ' - ' + ${seatCost.cost}">
-                                    </option>
+
                                 </select>
                             </div>
 
@@ -251,11 +245,7 @@
                         <label for="seatPreference-${passengerIndex}" class="mt-3">Seat Preference:</label>
                             <select id="seatPreference-${passengerIndex}" class="form-control" name="passengers[${passengerIndex}].busSeat.seatType">
                                 <option value="">No Preference</option>
-                                ${Object.keys(seatCostsByType).map(type => `
-                                    ${seatCostsByType[type].map(seatCost => `
-                                        <option value="${seatCost.seatCostId}">${seatCost.seatType} - ${seatCost.cost}</option>
-                                    `).join('')}
-                                `).join('')}
+
                             </select>
                     </div>
 
@@ -264,7 +254,7 @@
 
             $('#passenger-forms').append(newForm);
 
-            updateSeatPreferences(document.getElementById("busTypeDropdown").value);
+            updateSeatPreferencesDynamicDropDown(document.getElementById("busTypeDropdown").value);
 
             handleAgeValidation(document.getElementById(`age-${passengerIndex}`));
 
@@ -317,7 +307,7 @@
                 let userSeatTypeDiv = document.getElementById("seatTypeForUserDiv");
                 let selectedBusType = document.getElementById("busTypeDropdown").value;
                 if (this.checked) {
-                    updateSeatPreferencesForUserDropDown(selectedBusType)
+                    updateSeatPreferencesStaticDropDown(selectedBusType, 'seatTypeForUserDropDown')
                     userSeatTypeDiv.style.display = "block"; // Show the dropdown
                 } else {
                     userSeatTypeDiv.style.display = "none"; // Hide the dropdown
@@ -342,7 +332,6 @@
                     });
                     selectedBusIdInput.value = "";
                 } else {
-                    console.log('Seat Costs for selected type:', seatCostsByType[selectedType]);
                     busContainers.forEach(function (container) {
                         const containerType = container.getAttribute("data-type"); // Getting the bus type from data attribute
                         if (selectedType === containerType) {
@@ -353,11 +342,13 @@
                     });
                 }
 
-                updateSeatPreferences(selectedType);
+                updateSeatPreferencesStaticDropDown(selectedType, 'seatPreference-0')
+
+                updateSeatPreferencesDynamicDropDown(selectedType);
 
                 let seatTypeForUserDropDown = document.getElementById('seatTypeForUserDiv');
                 if(seatTypeForUserDropDown && seatTypeForUserDropDown.style.display === "block") {
-                    updateSeatPreferencesForUserDropDown(selectedType);
+                    updateSeatPreferencesStaticDropDown(selectedType, 'seatTypeForUserDropDown');
                 }
             });
 
@@ -374,18 +365,17 @@
             document.getElementById('selectedBusId').value = radio.value;
         }
 
-        function updateSeatPreferences(selectedType) {
+        function updateSeatPreferencesDynamicDropDown(selectedType) {
             const passengerForms = document.querySelectorAll(".passenger-form");
             passengerForms.forEach((form, index) => {
                 const seatPreferenceSelect = form.querySelector(`#seatPreference-${index}`);
-                console.log("Seat Preference Select ", seatPreferenceSelect);
-                console.log("Selected Bus Type ", selectedType);
                 if (seatPreferenceSelect) {
                     seatPreferenceSelect.innerHTML = '<option value="">No Preference</option>'; // Clear existing options
                     if (selectedType && seatCostsByType[selectedType]) {
                         seatCostsByType[selectedType].forEach(seatCost => {
+                            console.log("Seat Type dynamic name : ", seatCost.seatType);
                             const option = document.createElement('option');
-                            option.value = seatCost.seatType.name();
+                            option.value = seatCost.seatType;
                             option.textContent = `${seatCost.seatType} - ${seatCost.cost}`;
                             seatPreferenceSelect.appendChild(option); // Add new options dynamically
                         });
@@ -394,14 +384,15 @@
             });
         }
 
-        function updateSeatPreferencesForUserDropDown(selectedType) {
-            const seatTypeForUserDropDown = document.getElementById("seatTypeForUserDropDown");
+        function updateSeatPreferencesStaticDropDown(selectedType, elementId) {
+            const seatTypeForUserDropDown = document.getElementById(elementId);
             if (seatTypeForUserDropDown) {
                 seatTypeForUserDropDown.innerHTML = '<option value="">No Preference</option>'; // Clear existing options
                 if (selectedType && seatCostsByType[selectedType]) {
                     seatCostsByType[selectedType].forEach(seatCost => {
+                        console.log("Seat Type static name : ", seatCost.seatType);
                         const option = document.createElement('option');
-                        option.value = seatCost.seatType.name();
+                        option.value = seatCost.seatType;
                         option.textContent = `${seatCost.seatType} - ${seatCost.cost}`;
                         seatTypeForUserDropDown.appendChild(option); // Add new options dynamically
                     });
