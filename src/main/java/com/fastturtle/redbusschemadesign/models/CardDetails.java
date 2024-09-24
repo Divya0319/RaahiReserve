@@ -40,6 +40,17 @@ public class CardDetails {
     @JoinColumn(name = "linked_user_id")
     private User linkedUser;
 
+    @ManyToOne
+    @JoinColumn(name = "bank_id")
+    private BankDetails bankDetails;
+
+    @Column(name = "totalCreditLimit")
+    private long totalCreditLimit;
+
+    @Column(name = "availableCreditLimit")
+    private long availableCreditLimit;
+
+
     public CardDetails(String cardNumber, String cardHolderName, CardType cardType, String cardCompany, Byte expiryMonth, Integer expiryYear, String cvv, Boolean isActive) {
         this.cardNumber = cardNumber;
         this.cardHolderName = cardHolderName;
@@ -133,5 +144,29 @@ public class CardDetails {
 
     public void setLinkedUser(User linkedUser) {
         this.linkedUser = linkedUser;
+    }
+
+    public BankDetails getBankDetails() {
+        return bankDetails;
+    }
+
+    public void setBankDetails(BankDetails bankDetails) {
+        this.bankDetails = bankDetails;
+    }
+
+    public long getTotalCreditLimit() {
+        return totalCreditLimit;
+    }
+
+    public void setTotalCreditLimit(long totalCreditLimit) {
+        this.totalCreditLimit = totalCreditLimit;
+    }
+
+    public long getAvailableCreditLimit() {
+        return availableCreditLimit;
+    }
+
+    public void setAvailableCreditLimit(long availableCreditLimit) {
+        this.availableCreditLimit = availableCreditLimit;
     }
 }
