@@ -165,7 +165,7 @@
                         <select id="seatTypeForUserDropDown" name="seatTypeForUser" class="form-control">
                             <option value="">No Preference</option>
                             <option th:each="seatCost : ${entry.value}"
-                                    th:value="${seatCost.seatCostId}"
+                                    th:value="${seatCost.seatType.name()}"
                                     th:text="${seatCost.seatType} + ' - ' + ${seatCost.cost}">
                             </option>
                         </select>
@@ -189,7 +189,7 @@
                                 <select id="seatPreference-0" class="form-control" name="passengers[0].busSeat.seatType">
                                     <option value="">No Preference</option>
                                     <option th:each="seatCost : ${entry.value}"
-                                            th:value="${seatCost.seatCostId}"
+                                            th:value="${seatCost.seatType.name()}"
                                             th:text="${seatCost.seatType} + ' - ' + ${seatCost.cost}">
                                     </option>
                                 </select>
@@ -385,7 +385,7 @@
                     if (selectedType && seatCostsByType[selectedType]) {
                         seatCostsByType[selectedType].forEach(seatCost => {
                             const option = document.createElement('option');
-                            option.value = seatCost.seatCostId;
+                            option.value = seatCost.seatType.name();
                             option.textContent = `${seatCost.seatType} - ${seatCost.cost}`;
                             seatPreferenceSelect.appendChild(option); // Add new options dynamically
                         });
@@ -401,7 +401,7 @@
                 if (selectedType && seatCostsByType[selectedType]) {
                     seatCostsByType[selectedType].forEach(seatCost => {
                         const option = document.createElement('option');
-                        option.value = seatCost.seatCostId;
+                        option.value = seatCost.seatType.name();
                         option.textContent = `${seatCost.seatType} - ${seatCost.cost}`;
                         seatTypeForUserDropDown.appendChild(option); // Add new options dynamically
                     });
