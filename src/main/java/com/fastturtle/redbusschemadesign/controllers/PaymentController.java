@@ -334,5 +334,6 @@ public class PaymentController {
 	//6. Add credit limit and available credit limit to credit cards, also, for newly added credit cards, assign some default credit limit, depending on card company.
 	//7. Also add option to cancel a booking, if its payment is not yet done. And, it should be cancellable only 48 hours before travelling date and time.
 	//8. If feasible, add a job scheduler, which cancels a booking automatically, if its payment is not done 24 hours before travelling.
+    //9. Resolve issue of auto transaction cancellation giving 500 error, because of PaymentRefType coming null
 
 }
