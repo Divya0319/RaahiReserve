@@ -1,4 +1,5 @@
 SET FOREIGN_KEY_CHECKS = FALSE;
+drop table bank_account;
 drop table bank_details;
 drop table booking;
 drop table booking_passenger;

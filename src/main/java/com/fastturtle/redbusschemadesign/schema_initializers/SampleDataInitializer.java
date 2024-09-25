@@ -1,6 +1,7 @@
 package com.fastturtle.redbusschemadesign.schema_initializers;
 
 import com.fastturtle.redbusschemadesign.enums.*;
+import com.fastturtle.redbusschemadesign.helpers.CardUtils;
 import com.fastturtle.redbusschemadesign.helpers.DateUtils;
 import com.fastturtle.redbusschemadesign.helpers.RandomSeatNumberProviderWithPreference;
 import com.fastturtle.redbusschemadesign.helpers.payment.*;
@@ -20,8 +21,9 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
-//@Component
+@Component
 public class SampleDataInitializer {
 
     // Sample data for Bus
@@ -151,9 +153,10 @@ public class SampleDataInitializer {
     private final UserWalletRepository userWalletRepository;
     private final BankDetailRepository bankDetailRepository;
     private final CardDetailRepository cardDetailRepository;
+    private final BankAccountRepository bankAccountRepository;
 
-//    @Autowired
-    public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder, UserWalletRepository userWalletRepository, BankDetailRepository bankDetailRepository, BankDetailRepository bankDetailRepository1, CardDetailRepository cardDetailRepository) {
+    @Autowired
+    public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder, UserWalletRepository userWalletRepository, BankDetailRepository bankDetailRepository, BankDetailRepository bankDetailRepository1, CardDetailRepository cardDetailRepository, BankAccountRepository bankAccountRepository) {
         this.busRepository = busRepository;
         this.routeRepository = routeRepository;
         this.busRouteRepository = busRouteRepository;
@@ -166,6 +169,7 @@ public class SampleDataInitializer {
         this.userWalletRepository = userWalletRepository;
         this.bankDetailRepository = bankDetailRepository1;
         this.cardDetailRepository = cardDetailRepository;
+        this.bankAccountRepository = bankAccountRepository;
     }
 
     @PostConstruct
@@ -176,8 +180,9 @@ public class SampleDataInitializer {
         creatingAndSavingSeatCosts();
         createAndInsert10MoreBuses();
 
-        createAndSaveCardDetails();
         createAndSaveBankDetails();
+        createAndSaveBankAccounts();
+        createAndSaveCardDetails();
         createAndSaveUserWallets();
 
         RandomSeatNumberProviderWithPreference rsnp = new RandomSeatNumberProviderWithPreference(busRepository, busSeatRepository);
@@ -716,6 +721,17 @@ public class SampleDataInitializer {
 
         for(int i = 0; i < cardNumbers.length; i++) {
             CardDetails cardDetails = new CardDetails(cardNumbers[i], cardHolderNames[i], cardTypes[i], cardCompanies[i], expiryMonths[i], expiryYears[i], cVVs[i], true);
+            List<BankAccount> bankAccounts = bankAccountRepository.findAll();
+            Random random = new Random();
+            int randomIndex = random.nextInt(bankAccounts.size());
+
+            if(cardTypes[i] == CardType.CREDIT) {
+                CardUtils cardUtils = new CardUtils(cardCompanies[i]);
+                cardDetails.setTotalCreditLimit(cardUtils.getCreditLimit());
+                cardDetails.setAvailableCreditLimit((long) (cardUtils.getCreditLimit() - (0.1 * cardUtils.getCreditLimit())));
+            } else {
+                cardDetails.setBankAccount(bankAccounts.get(randomIndex));
+            }
             cardDetails.setLinkedUser(users.get(i));
             cardDetailRepository.save(cardDetails);
 
@@ -762,6 +778,112 @@ public class SampleDataInitializer {
             uw.setUser(user);
             userWalletRepository.save(uw);
         }
+    }
+
+    private void createAndSaveBankAccounts() {
+
+        long[] accountNos = {
+                76845738593728L, 63748749393257L, 75839572749314L, 58349347583274L,
+                89347598374584L, 94756382739275L, 75839284759348L, 47382947593857L,
+                69238475293784L, 58392847539472L, 84927364582397L, 29384756294837L,
+                57293847592385L, 72938475938475L, 93847592834758L, 47382958394729L,
+                84572938475829L, 29583749384759L, 57294837458392L, 58374938472957L
+        };
+
+        double[] balances = {
+               359309, 648384, 20000, 10000, 5638,
+                55000, 26849, 17394, 32859, 60000,
+                31847, 47295, 340000, 19428, 10424,
+                52842, 40000, 24234, 12340, 42899
+
+        };
+
+        String[] ifscCodes = {
+                "HDFC8459375",
+                "AXIS4875392",
+                "SBI4858363",
+                "ICICI4759438",
+                "BOB6583947",
+                "AXIS4305392",
+                "CANARA6483926",
+                "YES6273549",
+                "PNB6483520",
+                "ALHBD7305733",
+                "HDFC8452075",
+                "YES6483549",
+                "AXIS4065392",
+                "ICICI4399438",
+                "PNB6482620",
+                "SBI4831363",
+                "BOB6545947",
+                "ALHBD7495733",
+                "GRMN6483925",
+                "CANARA6419926",
+        };
+
+        String[] branchCodes = {
+                "0348",
+                "4620",
+                "6205",
+                "2493",
+                "2940",
+                "3240",
+                "5720",
+                "7402",
+                "6205",
+                "8401",
+                "5920",
+                "5927",
+                "7284",
+                "8193",
+                "7283",
+                "8294",
+                "6284",
+                "0947",
+                "1874",
+                "2749",
+        };
+
+        String[] branchNames = {
+                "Andheri(East)",
+                "Bandra",
+                "Urla",
+                "Borsi",
+                "Jail Road",
+                "Pendra",
+                "Housing Board Colony",
+                "Bemetara",
+                "Boriwali",
+                "Sindhiya Nagar",
+                "BTM Layout Stage 2",
+                "Bhilai-3",
+                "Pachpedi Naka",
+                "Dhaur",
+                "Sector 6-A Market",
+                "Kusumkasa",
+                "Hudco",
+                "Malviya Chowk",
+                "Gudiyari",
+                "Kurud",
+        };
+
+        int[] bankDetailsFK = new int[]{
+                1,2,3,4,5,
+                2,6,8,7,9,
+                1,8,2,4,7,
+                3,5,9,10,6
+        };
+
+        for(int i = 0; i < accountNos.length; i++) {
+            BankDetails bankDetails = bankDetailRepository.findById(bankDetailsFK[i]).get();
+            BankAccount bankAccount = new BankAccount(
+                    accountNos[i], balances[i], ifscCodes[i], branchCodes[i], branchNames[i]
+            );
+            bankAccount.setBankDetails(bankDetails);
+            bankAccountRepository.save(bankAccount);
+
+        }
+
     }
 
 }

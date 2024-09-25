@@ -9,8 +9,11 @@ public class BankAccount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "accountNo")
+    @Column(name = "accountNo", nullable = false, unique = true)
     private long accountNo;
+
+    @Column(name = "balance", nullable = false)
+    private double balance;
 
     @Column(name = "ifscCode")
     private String ifscCode;
@@ -29,8 +32,9 @@ public class BankAccount {
 
     }
 
-    public BankAccount(long accountNo, String ifscCode, String branchCode, String branchName) {
+    public BankAccount(long accountNo, double balance, String ifscCode, String branchCode, String branchName) {
         this.accountNo = accountNo;
+        this.balance = balance;
         this.ifscCode = ifscCode;
         this.branchCode = branchCode;
         this.branchName = branchName;
@@ -50,6 +54,14 @@ public class BankAccount {
 
     public void setAccountNo(long accountNo) {
         this.accountNo = accountNo;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
     }
 
     public String getIfscCode() {

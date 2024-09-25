@@ -41,8 +41,8 @@ public class CardDetails {
     private User linkedUser;
 
     @ManyToOne
-    @JoinColumn(name = "bank_id")
-    private BankDetails bankDetails;
+    @JoinColumn(name = "bank_account_id")
+    private BankAccount bankAccount;
 
     @Column(name = "totalCreditLimit")
     private long totalCreditLimit;
@@ -146,12 +146,12 @@ public class CardDetails {
         this.linkedUser = linkedUser;
     }
 
-    public BankDetails getBankDetails() {
-        return bankDetails;
+    public BankAccount getBankAccount() {
+        return bankAccount;
     }
 
-    public void setBankDetails(BankDetails bankDetails) {
-        this.bankDetails = bankDetails;
+    public void setBankAccount(BankAccount bankAccount) {
+        this.bankAccount = bankAccount;
     }
 
     public long getTotalCreditLimit() {
