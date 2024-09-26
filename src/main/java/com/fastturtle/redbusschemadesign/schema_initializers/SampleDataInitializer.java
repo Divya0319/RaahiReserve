@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-@Component
+//@Component
 public class SampleDataInitializer {
 
     // Sample data for Bus
@@ -158,7 +158,7 @@ public class SampleDataInitializer {
     private final BankAccountRepository bankAccountRepository;
     private final CardFactorySelector cardFactorySelector;
 
-    @Autowired
+//    @Autowired
     public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder, UserWalletRepository userWalletRepository, BankDetailRepository bankDetailRepository, BankDetailRepository bankDetailRepository1, CardDetailRepository cardDetailRepository, BankAccountRepository bankAccountRepository, CardFactorySelector cardFactorySelector) {
         this.busRepository = busRepository;
         this.routeRepository = routeRepository;

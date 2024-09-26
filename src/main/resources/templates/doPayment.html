@@ -463,7 +463,7 @@
         }
 
         function validateCardDetails() {
-            const cardNumberField = document.getElementById('cardNumber').value;
+            const cardNumberField = document.getElementById('cardNumber');
             let cardNumber = cardNumberField.value.replace(/\D/g, ''); // Remove all non-digit characters
             const proceedButton = document.getElementById('proceedWithCardPayment');
 
@@ -479,8 +479,10 @@
             // Validate card number and expiry date format
             if (isCardNumberValid && getCardCompany(cardNumberWithoutSpaces) !== 'Invalid Card') {
                 proceedButton.disabled = false; // Show the button if both are valid
+                return true;
             } else {
                 proceedButton.disabled = true; // Hide the button if any are invalid
+                return false;
             }
         }
 
@@ -488,7 +490,7 @@
             const expiryDate = document.getElementById('expiryDate').value;
             const proceedButton = document.getElementById('proceedWithCardPayment');
 
-            if (isValidExpiryDate(expiryDate)) {
+            if (isValidExpiryDate(expiryDate) && validateCardDetails()) {
                 proceedButton.disabled = false; // Show the button if valid
             } else {
                 proceedButton.disabled = true; // Hide the button if invalid
