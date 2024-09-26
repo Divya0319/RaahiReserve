@@ -20,7 +20,7 @@
 
                 <div th:if="${isBookingIdPresent}">
                     <h5><strong>Booking ID: </strong> <span th:text="${booking.bookingId}"></span></h5>
-                    <h5><strong>Total Amount: </strong> <span id="payableAmount" th:text="${booking.price}"></span></h5>
+                    <h5><strong>Payable Amount: </strong> <span id="payableAmount" th:text="${booking.price}"></span></h5>
                     <p><strong>Booking Date:</strong> <span th:text="${booking.formattedBookingDate}"></span>&nbsp; <strong>Travel Date:</strong> <span th:text="${booking.formattedTravelDate}"></span></p>
                     <p><strong>No. of passengers:</strong> <span th:text="${booking.getPassengers().size()}"></span></p>
 
@@ -39,7 +39,7 @@
                         </div>
                         <div th:if="${booking != null}">
                             <h5><strong>Booking ID: </strong> <span th:text="${booking.bookingId}"></span></h5>
-                            <h5><strong>Total Amount: </strong> <span th:text="${booking.price}"></span></h5>
+                            <h5><strong>Payable Amount: </strong> <span th:text="${booking.price}"></span></h5>
                             <p><strong>Booking Date:</strong> <span th:text="${booking.formattedBookingDate}"></span>&nbsp; <strong>Travel Date:</strong> <span th:text="${booking.formattedTravelDate}"></span></p>
                             <p><strong>No. of passengers:</strong> <span th:text="${booking.getPassengers().size()}"></span></p>
 
@@ -147,9 +147,11 @@
                                     <div class="row mb-2">
                                         <div class="col-md-6">
                                             <label for="cardNumber" class="form-label">Card Number</label>
-                                            <input type="text" id="cardNumber" name="cardNumber" class="form-control" maxlength="19"
+                                            <input type="text" id="cardNumber" name="cardNumber" class="form-control" maxlength="19" data-error-text="Invalid card number"
                                                    th:value="${(alreadySavedCardNo != null) ? alreadySavedCardNo : ''}"
                                                    placeholder="XXXX XXXX XXXX XXXX" oninput="validateCardDetails()" required>
+
+                                            <span id="cardNumberError" class="text-danger mt-2 ml-2" style="display:none;"></span>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="cardHolderName" class="form-label">Card Holder Name</label>
@@ -163,9 +165,11 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <label for="expiryDate" class="form-label">Expiry Date (MM/YY)</label>
-                                            <input type="text" id="expiryDate" class="form-control" placeholder="MM/YY"
+                                            <input type="text" id="expiryDate" class="form-control" placeholder="MM/YY" data-error-text="Invalid expiry date"
                                                    th:value="${(invalidExpiryDate != null) ? invalidExpiryDate : ''}"
                                                    pattern="\d{2}/\d{2}" maxlength="5" oninput="formatExpiryDate(this); validateExpiryDate();" required>
+
+                                            <span id="expiryDateError" class="text-danger mt-2 ml-2" style="display:none;"></span>
                                         </div>
                                         <div class="col-md-4">
                                             <label for="cvv" class="form-label">CVV</label>
@@ -466,6 +470,8 @@
             const cardNumberField = document.getElementById('cardNumber');
             let cardNumber = cardNumberField.value.replace(/\D/g, ''); // Remove all non-digit characters
             const proceedButton = document.getElementById('proceedWithCardPayment');
+            const errorText = cardNumberField.getAttribute("data-error-text");
+            const cardNumberError = document.getElementById('cardNumberError');
 
             // Format the card number with spaces every 4 digits
             cardNumberField.value = cardNumber.match(/.{1,4}/g)?.join(' ') || cardNumber;
@@ -479,21 +485,32 @@
             // Validate card number and expiry date format
             if (isCardNumberValid && getCardCompany(cardNumberWithoutSpaces) !== 'Invalid Card') {
                 proceedButton.disabled = false; // Show the button if both are valid
+                cardNumberError.style.display = 'none';
                 return true;
             } else {
                 proceedButton.disabled = true; // Hide the button if any are invalid
+                cardNumberError.textContent = errorText;
+                cardNumberError.style.display = 'block';
                 return false;
             }
         }
 
         function validateExpiryDate() {
-            const expiryDate = document.getElementById('expiryDate').value;
+            const expiryDateField = document.getElementById('expiryDate');
+            const expiryDate = expiryDateField.value;
             const proceedButton = document.getElementById('proceedWithCardPayment');
+            const errorText = expiryDateField.getAttribute("data-error-text");
+            const expiryDateError = document.getElementById('expiryDateError');
 
             if (isValidExpiryDate(expiryDate) && validateCardDetails()) {
                 proceedButton.disabled = false; // Show the button if valid
+                expiryDateError.style.display = 'none';
             } else {
                 proceedButton.disabled = true; // Hide the button if invalid
+                if(!isValidExpiryDate(expiryDate)) {
+                    expiryDateError.textContent = errorText;
+                    expiryDateError.style.display = 'block';
+                }
             }
         }
 
