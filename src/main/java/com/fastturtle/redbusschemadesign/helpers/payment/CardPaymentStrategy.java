@@ -32,7 +32,7 @@ public class CardPaymentStrategy implements PaymentStrategy {
         payment.setPaymentStatus(paymentStatus);
 
         // Doing payment via Debit Card
-        CardDetails cardDetails = cardDetailRepository.findCardByEnding4DigitsAndType(cardParams.getLast4Digits(), CardType.DEBIT).get(0);
+        CardDetails cardDetails = cardDetailRepository.findCardByEnding4Digits(cardParams.getLast4Digits()).get(0);
 
         payment.setPaymentReferenceId(cardDetails.getCardId());
         payment.setPaymentReferenceType(PaymentRefType.CARD);

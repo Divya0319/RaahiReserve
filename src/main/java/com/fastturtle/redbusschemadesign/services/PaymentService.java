@@ -126,7 +126,8 @@ public class PaymentService {
 
         CardType cardType = dto.getPaymentMode() == PaymentMethod.DEBIT_CARD ? CardType.DEBIT : CardType.CREDIT;
 
-        CardDetails cardDetails = cardDetailRepository.findByCardNumberAndCardType(dto.getCardNo(), cardType);
+        CardDetails cardDetails = cardDetailRepository.findByCardNumber(dto.getCardNo());
+
         if(cardDetails == null) {
             User user = userRepository.findById(dto.getUserID()).get();
 
