@@ -1,9 +1,11 @@
 package com.fastturtle.redbusschemadesign.services;
 
+import com.fastturtle.redbusschemadesign.dtos.CardDTO;
 import com.fastturtle.redbusschemadesign.dtos.PaymentRequest;
 import com.fastturtle.redbusschemadesign.dtos.PaymentRequestDTO;
 import com.fastturtle.redbusschemadesign.enums.CardType;
 import com.fastturtle.redbusschemadesign.enums.PaymentRefType;
+import com.fastturtle.redbusschemadesign.factories.CardFactorySelector;
 import com.fastturtle.redbusschemadesign.helpers.DateUtils;
 import com.fastturtle.redbusschemadesign.models.*;
 import com.fastturtle.redbusschemadesign.enums.PaymentMethod;
@@ -29,14 +31,20 @@ public class PaymentService {
     private final CardDetailRepository cardDetailRepository;
     private final UserWalletRepository userWalletRepository;
     private final UserRepository userRepository;
+    private final BankAccountRepository bankAccountRepository;
+    private final BankDetailRepository bankDetailRepository;
+    private final CardFactorySelector cardFactorySelector;
 
     @Autowired
-    public PaymentService(PaymentRepository paymentRepository, BookingRepository bookingRepository, CardDetailRepository cardDetailRepository, UserWalletRepository userWalletRepository, UserRepository userRepository) {
+    public PaymentService(PaymentRepository paymentRepository, BookingRepository bookingRepository, CardDetailRepository cardDetailRepository, UserWalletRepository userWalletRepository, UserRepository userRepository, BankAccountRepository bankAccountRepository, BankDetailRepository bankDetailRepository, CardFactorySelector cardFactorySelector) {
         this.paymentRepository = paymentRepository;
         this.bookingRepository = bookingRepository;
         this.cardDetailRepository = cardDetailRepository;
         this.userWalletRepository = userWalletRepository;
         this.userRepository = userRepository;
+        this.bankAccountRepository = bankAccountRepository;
+        this.bankDetailRepository = bankDetailRepository;
+        this.cardFactorySelector = cardFactorySelector;
     }
 
     public ResponseEntity<?> makePayment(PaymentRequest paymentRequest) {
@@ -121,17 +129,22 @@ public class PaymentService {
         CardDetails cardDetails = cardDetailRepository.findByCardNumberAndCardType(dto.getCardNo(), cardType);
         if(cardDetails == null) {
             User user = userRepository.findById(dto.getUserID()).get();
-            cardDetails = new CardDetails();
-            cardDetails.setCardType(cardType);
-            cardDetails.setCardNumber(dto.getCardNo());
-            cardDetails.setCardCompany(dto.getCardCompany());
-            cardDetails.setCardHolderName(dto.getCardHolderName());
-            cardDetails.setCvv(dto.getCvv());
-            cardDetails.setExpiryMonth(dto.getExpiryMonth());
-            cardDetails.setExpiryYear(dto.getExpiryYear());
+
+            if(cardType == CardType.DEBIT) {
+                List<BankAccount> bankAccounts = bankAccountRepository.findAll();
+                CardDTO cardDTO = convertToCardDTO(dto);
+                cardDetails = cardFactorySelector.createCard(cardDTO, cardType, bankAccounts);
+
+            } else {
+                List<BankDetails> banks = bankDetailRepository.findAll();
+                CardDTO cardDTO = convertToCardDTO(dto);
+                cardDetails = cardFactorySelector.createCard(cardDTO, cardType, banks);
+
+            }
             cardDetails.setLinkedUser(user);
             cardDetailRepository.save(cardDetails);
             payment.setPaymentReferenceId(cardDetails.getCardId());
+
         } else {
 
             payment.setPaymentReferenceId(cardDetails.getCardId());
@@ -142,6 +155,18 @@ public class PaymentService {
 
         paymentRepository.save(payment);
 
+    }
+
+    private CardDTO convertToCardDTO(PaymentRequestDTO dto) {
+        CardDTO cardDTO = new CardDTO();
+        cardDTO.setCardNumber(dto.getCardNo());
+        cardDTO.setCardHolderName(dto.getCardHolderName());
+        cardDTO.setCardCompany(dto.getCardCompany());
+        cardDTO.setExpiryMonth(dto.getExpiryMonth());
+        cardDTO.setExpiryYear(dto.getExpiryYear());
+        cardDTO.setCvv(dto.getCvv());
+
+        return cardDTO;
     }
 
     private void processBankPayment(PaymentRequestDTO dto) {

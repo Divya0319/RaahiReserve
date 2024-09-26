@@ -1,6 +1,8 @@
 package com.fastturtle.redbusschemadesign.schema_initializers;
 
+import com.fastturtle.redbusschemadesign.dtos.CardDTO;
 import com.fastturtle.redbusschemadesign.enums.*;
+import com.fastturtle.redbusschemadesign.factories.CardFactorySelector;
 import com.fastturtle.redbusschemadesign.helpers.CardUtils;
 import com.fastturtle.redbusschemadesign.helpers.DateUtils;
 import com.fastturtle.redbusschemadesign.helpers.RandomSeatNumberProviderWithPreference;
@@ -23,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-//@Component
+@Component
 public class SampleDataInitializer {
 
     // Sample data for Bus
@@ -154,9 +156,10 @@ public class SampleDataInitializer {
     private final BankDetailRepository bankDetailRepository;
     private final CardDetailRepository cardDetailRepository;
     private final BankAccountRepository bankAccountRepository;
+    private final CardFactorySelector cardFactorySelector;
 
-//    @Autowired
-    public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder, UserWalletRepository userWalletRepository, BankDetailRepository bankDetailRepository, BankDetailRepository bankDetailRepository1, CardDetailRepository cardDetailRepository, BankAccountRepository bankAccountRepository) {
+    @Autowired
+    public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder, UserWalletRepository userWalletRepository, BankDetailRepository bankDetailRepository, BankDetailRepository bankDetailRepository1, CardDetailRepository cardDetailRepository, BankAccountRepository bankAccountRepository, CardFactorySelector cardFactorySelector) {
         this.busRepository = busRepository;
         this.routeRepository = routeRepository;
         this.busRouteRepository = busRouteRepository;
@@ -170,6 +173,7 @@ public class SampleDataInitializer {
         this.bankDetailRepository = bankDetailRepository1;
         this.cardDetailRepository = cardDetailRepository;
         this.bankAccountRepository = bankAccountRepository;
+        this.cardFactorySelector = cardFactorySelector;
     }
 
     @PostConstruct
@@ -720,22 +724,34 @@ public class SampleDataInitializer {
         List<User> users = userRepository.findAll();
 
         for(int i = 0; i < cardNumbers.length; i++) {
-            CardDetails cardDetails = new CardDetails(cardNumbers[i], cardHolderNames[i], cardTypes[i], cardCompanies[i], expiryMonths[i], expiryYears[i], cVVs[i], true);
-            List<BankAccount> bankAccounts = bankAccountRepository.findAll();
-            Random random = new Random();
-            int randomIndex = random.nextInt(bankAccounts.size());
+            CardDetails cardDetails;
+            CardDTO cardDTO = createCardDTO(cardNumbers[i], cardHolderNames[i], cardCompanies[i], expiryMonths[i], expiryYears[i], cVVs[i]);
 
-            if(cardTypes[i] == CardType.CREDIT) {
-                CardUtils cardUtils = new CardUtils(cardCompanies[i]);
-                cardDetails.setTotalCreditLimit(cardUtils.getCreditLimit());
-                cardDetails.setAvailableCreditLimit((long) (cardUtils.getCreditLimit() - (0.1 * cardUtils.getCreditLimit())));
+            if(cardTypes[i] == CardType.DEBIT) {
+                List<BankAccount> bankAccounts = bankAccountRepository.findAll();
+                cardDetails = cardFactorySelector.createCard(cardDTO, CardType.DEBIT, bankAccounts);
+
             } else {
-                cardDetails.setBankAccount(bankAccounts.get(randomIndex));
+                List<BankDetails> banks = bankDetailRepository.findAll();
+                cardDetails = cardFactorySelector.createCard(cardDTO, CardType.CREDIT, banks);
+
             }
+
             cardDetails.setLinkedUser(users.get(i));
             cardDetailRepository.save(cardDetails);
 
         }
+    }
+
+    private CardDTO createCardDTO(String cardNumber, String cardHolderName, String cardCompany, Byte expiryMonth, Integer expiryYear, String cvv) {
+        CardDTO cardDTO = new CardDTO();
+        cardDTO.setCardNumber(cardNumber);
+        cardDTO.setCardHolderName(cardHolderName);
+        cardDTO.setCardCompany(cardCompany);
+        cardDTO.setExpiryMonth(expiryMonth);
+        cardDTO.setExpiryYear(expiryYear);
+        cardDTO.setCvv(cvv);
+        return cardDTO;
     }
 
     private void createAndSaveBankDetails() {

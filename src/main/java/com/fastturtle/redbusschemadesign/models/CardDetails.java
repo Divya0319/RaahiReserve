@@ -4,8 +4,10 @@ import com.fastturtle.redbusschemadesign.enums.CardType;
 import jakarta.persistence.*;
 
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "card_type", discriminatorType = DiscriminatorType.STRING)
 @Table(name = "cardDetails")
-public class CardDetails {
+public abstract class CardDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,10 +18,6 @@ public class CardDetails {
 
     @Column(name = "cardHolderName", nullable = false)
     private String cardHolderName;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "cardType", nullable = false)
-    private CardType cardType;
 
     @Column(name = "cardCompany")
     private String cardCompany;
@@ -40,21 +38,10 @@ public class CardDetails {
     @JoinColumn(name = "linked_user_id")
     private User linkedUser;
 
-    @ManyToOne
-    @JoinColumn(name = "bank_account_id")
-    private BankAccount bankAccount;
 
-    @Column(name = "totalCreditLimit")
-    private long totalCreditLimit;
-
-    @Column(name = "availableCreditLimit")
-    private long availableCreditLimit;
-
-
-    public CardDetails(String cardNumber, String cardHolderName, CardType cardType, String cardCompany, Byte expiryMonth, Integer expiryYear, String cvv, Boolean isActive) {
+    public CardDetails(String cardNumber, String cardHolderName, String cardCompany, Byte expiryMonth, Integer expiryYear, String cvv, Boolean isActive) {
         this.cardNumber = cardNumber;
         this.cardHolderName = cardHolderName;
-        this.cardType = cardType;
         this.cardCompany = cardCompany;
         this.expiryMonth = expiryMonth;
         this.expiryYear = expiryYear;
@@ -88,14 +75,6 @@ public class CardDetails {
 
     public void setCardHolderName(String cardHolderName) {
         this.cardHolderName = cardHolderName;
-    }
-
-    public CardType getCardType() {
-        return cardType;
-    }
-
-    public void setCardType(CardType cardType) {
-        this.cardType = cardType;
     }
 
     public String getCardCompany() {
@@ -146,27 +125,6 @@ public class CardDetails {
         this.linkedUser = linkedUser;
     }
 
-    public BankAccount getBankAccount() {
-        return bankAccount;
-    }
+    public abstract CardType getCardType();
 
-    public void setBankAccount(BankAccount bankAccount) {
-        this.bankAccount = bankAccount;
-    }
-
-    public long getTotalCreditLimit() {
-        return totalCreditLimit;
-    }
-
-    public void setTotalCreditLimit(long totalCreditLimit) {
-        this.totalCreditLimit = totalCreditLimit;
-    }
-
-    public long getAvailableCreditLimit() {
-        return availableCreditLimit;
-    }
-
-    public void setAvailableCreditLimit(long availableCreditLimit) {
-        this.availableCreditLimit = availableCreditLimit;
-    }
 }
