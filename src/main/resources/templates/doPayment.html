@@ -502,14 +502,17 @@
             const errorText = expiryDateField.getAttribute("data-error-text");
             const expiryDateError = document.getElementById('expiryDateError');
 
-            if (isValidExpiryDate(expiryDate) && validateCardDetails()) {
-                proceedButton.disabled = false; // Show the button if valid
+            const validExpiry = isValidExpiryDate(expiryDate);
+            const validCardDetails = validateCardDetails();
+
+            if (validExpiry && validCardDetails) {
+                proceedButton.disabled = false;
                 expiryDateError.style.display = 'none';
             } else {
-                proceedButton.disabled = true; // Hide the button if invalid
-                if(!isValidExpiryDate(expiryDate)) {
+                proceedButton.disabled = true;
+                expiryDateError.style.display = validExpiry ? 'none' : 'block';
+                if(!validExpiry) {
                     expiryDateError.textContent = errorText;
-                    expiryDateError.style.display = 'block';
                 }
             }
         }
