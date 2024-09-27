@@ -69,7 +69,7 @@
                             <button type="submit" class="btn btn-success mr-2">Pay Now</button>
                         </form>
 
-                        <a href="/redbus/bookings/create" class="btn btn-primary mt-3 ms-3">Pay Later</a>
+                        <a href="/swiftseat/bookings/create" class="btn btn-primary mt-3 ms-3">Pay Later</a>
                 </div>
             </div>
 
@@ -86,10 +86,10 @@
             </div>
 
             <div th:if="${successMessage != null || failureMessage != null}">
-                <a href="/redbus/bookings/create" class="btn btn-primary mt-3">Create Another Booking</a>
+                <a href="/swiftseat/bookings/create" class="btn btn-primary mt-3">Create Another Booking</a>
             </div>
             <div th:if="${successMessage != null || failureMessage != null}">
-                <a href="/redbus" class="btn btn-secondary mt-3">Back to Home</a>
+                <a href="/swiftseat" class="btn btn-secondary mt-3">Back to Home</a>
             </div>
 
 

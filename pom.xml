@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.fastturtle</groupId>
-    <artifactId>RedBusSchemaDesign</artifactId>
+    <artifactId>SwiftSeat</artifactId>
     <version>1.0</version>
-    <name>RedBusSchemaDesign</name>
-    <description>RedBusSchemaDesign</description>
+    <name>SwiftSeat</name>
+    <description>SwiftSeat</description>
     <url/>
     <licenses>
         <license/>
