@@ -334,6 +334,8 @@ public class PaymentController {
 	//6. Add credit limit and available credit limit to credit cards, also, for newly added credit cards, assign some default credit limit, depending on card company.
 	//7. Also add option to cancel a booking, if its payment is not yet done. And, it should be cancellable only 48 hours before travelling date and time.
 	//8. If feasible, add a job scheduler, which cancels a booking automatically, if its payment is not done 24 hours before travelling.
-    //9. Issue found, proceed button is enabled even when an invalid card number is entered(even without starting 1,4,5,6), or even when it is not of 16 digitd
+    //9. Change the booking status from created to completed, if all the passengers are travelled in it.
+    //10. When a booking is cancelled, vacate all the seats occupied by passengers in it.
+    //11. Add UI changes to payment page, to show only those banks in netbanking, in which user has bank account.
 
 }
