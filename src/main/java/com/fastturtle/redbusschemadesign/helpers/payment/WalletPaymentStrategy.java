@@ -44,11 +44,11 @@ public class WalletPaymentStrategy implements PaymentStrategy {
                 String otpString = String.valueOf(receivedOtp);
                 if(otpString.length() == 6) {
                     if(paymentStatus == PaymentStatus.COMPLETED) {
-                        System.out.println("OTP verified successfully");
+                        System.out.println("OTP verified successfully : " + + booking.getPrice() + " " + booking.getTravelDate());
                         payment.setPaymentStatus(PaymentStatus.COMPLETED);
 
                     } else {
-                        System.out.println("Payment Failed");
+                        System.out.println("Payment Failed: " + + booking.getPrice() + " " + booking.getTravelDate());
                         payment.setPaymentStatus(PaymentStatus.FAILED);
 
                     }
@@ -70,7 +70,7 @@ public class WalletPaymentStrategy implements PaymentStrategy {
             }
 
         } else {
-            System.out.println("Insufficient balance for payment of booking id: " + booking.getBookingId());
+            System.out.println("Insufficient balance for payment of booking id: " + + booking.getPrice() + " " + booking.getTravelDate());
         }
 
         return null;

@@ -30,7 +30,7 @@ public class NetbankingPaymentStrategy implements PaymentStrategy {
         payment.setPaymentStatus(paymentStatus);
 
         BankDetails bankDetails = bankDetailRepository.findByBankNameStartsWith(netbankingPaymentParams.getBankNamePrefix()).get(0);
-        BankAccount bankAccount = bankAccountRepository.findBankAccountByBankDetails(bankDetails);
+        BankAccount bankAccount = bankAccountRepository.findBankAccountByBankDetailsAndUserID(bankDetails, netbankingPaymentParams.getUserId());
 
         payment.setPaymentReferenceId(bankAccount.getId());
         payment.setPaymentReferenceType(PaymentRefType.BANK);
@@ -40,11 +40,11 @@ public class NetbankingPaymentStrategy implements PaymentStrategy {
             if(paymentStatus == PaymentStatus.COMPLETED) {
                 bankAccount.setBalance(bankAccount.getBalance() - booking.getPrice());
                 bankAccountRepository.save(bankAccount);
-                System.out.println("OTP verified successfully");
+                System.out.println("OTP verified successfully: " + + booking.getPrice() + " " + booking.getTravelDate());
                 payment.setPaymentStatus(PaymentStatus.COMPLETED);
 
             } else {
-                System.out.println("Payment Failed");
+                System.out.println("Payment Failed: " + + booking.getPrice() + " " + booking.getTravelDate());
                 payment.setPaymentStatus(PaymentStatus.FAILED);
 
             }

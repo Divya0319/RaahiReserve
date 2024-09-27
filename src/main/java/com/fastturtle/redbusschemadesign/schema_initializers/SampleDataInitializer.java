@@ -406,7 +406,7 @@ public class SampleDataInitializer {
         booking3.setPrice(booking3Cost);
         booking3.setBookingStatus(BookingStatus.CREATED);
 
-        CardPaymentStrategy cps = new CardPaymentStrategy(cardDetailRepository);
+        CardPaymentStrategy cps = new CardPaymentStrategy(cardDetailRepository, bankAccountRepository);
         CardPaymentParams cardPaymentParams = new CardPaymentParams();
         cardPaymentParams.setLast4Digits(6789);
         cardPaymentParams.setPaymentDate(paymentDates[4]);
@@ -449,10 +449,11 @@ public class SampleDataInitializer {
         NetbankingPaymentStrategy nbps = new NetbankingPaymentStrategy(bankDetailRepository, bankAccountRepository);
         NetbankingPaymentParams netbankingPaymentParams = new NetbankingPaymentParams();
         netbankingPaymentParams.setBankNamePrefix("HDFC");
+        netbankingPaymentParams.setUserId(1);
         netbankingPaymentParams.setReceivedOtp(343532);
         netbankingPaymentParams.setPaymentDate(paymentDates[2]);
 
-        booking4 = nbps.processPayment(booking4, PaymentStatus.FAILED, netbankingPaymentParams);
+        booking4 = nbps.processPayment(booking4, PaymentStatus.COMPLETED, netbankingPaymentParams);
 
         if(booking4 != null) {
             busForBooking4.setAvailableSeats(busForBooking4.getAvailableSeats() -
@@ -483,13 +484,14 @@ public class SampleDataInitializer {
         booking5.setPrice(seatCostForSeat6);
         booking5.setBookingStatus(BookingStatus.CREATED);
 
-        NetbankingPaymentStrategy nbps = new NetbankingPaymentStrategy(bankDetailRepository, bankAccountRepository);
-        NetbankingPaymentParams netbankingPaymentParams = new NetbankingPaymentParams();
-        netbankingPaymentParams.setReceivedOtp(457433);
-        netbankingPaymentParams.setPaymentDate(paymentDates[4]);
-        netbankingPaymentParams.setBankNamePrefix("Axis");
+        CardPaymentStrategy cps = new CardPaymentStrategy(cardDetailRepository, bankAccountRepository);
+        CardPaymentParams cardPaymentParams = new CardPaymentParams();
+        cardPaymentParams.setLast4Digits(5678);
+        cardPaymentParams.setPaymentDate(paymentDates[4]);
+        cardPaymentParams.setReceivedOtp(457433);
+        cardPaymentParams.setCardType(CardType.CREDIT);
 
-        booking5 = nbps.processPayment(booking5, PaymentStatus.COMPLETED, netbankingPaymentParams);
+        booking5 = cps.processPayment(booking5, PaymentStatus.COMPLETED, cardPaymentParams);
 
         if(booking5 != null) {
             busForBooking5.setAvailableSeats(busForBooking5.getAvailableSeats() -
@@ -557,7 +559,7 @@ public class SampleDataInitializer {
     private Booking createAndSavePendingPaymentForBooking(Booking booking) {
         Payment payment = new Payment();
         payment.setPaymentStatus(PaymentStatus.PENDING);
-        System.out.println("Payment pending");
+        System.out.println("Payment pending: " + booking.getPrice() + " " + booking.getTravelDate());
 
         payment.setPaymentMethod(null);
         payment.setAmount(0.00f);
