@@ -118,12 +118,6 @@ public class PaymentService {
             payment.setPaymentMethod(PaymentMethod.CREDIT_CARD);
         }
 
-        if(dto.getAction().equals("completed")) {
-            payment.setPaymentStatus(PaymentStatus.COMPLETED);
-        } else {
-            payment.setPaymentStatus(PaymentStatus.FAILED);
-        }
-
         CardType cardType = dto.getPaymentMode() == PaymentMethod.DEBIT_CARD ? CardType.DEBIT : CardType.CREDIT;
 
         CardDetails cardDetails = cardDetailRepository.findByCardNumber(dto.getCardNo());
@@ -147,9 +141,33 @@ public class PaymentService {
             payment.setPaymentReferenceId(cardDetails.getCardId());
 
         } else {
-
             payment.setPaymentReferenceId(cardDetails.getCardId());
         }
+
+        if(dto.getAction().equals("completed")) {
+            boolean isPaymentCompleted = false;
+
+            if(cardType == CardType.DEBIT && cardDetails instanceof DebitCardDetails debitCardDetails) {
+                BankAccount bankAccount = debitCardDetails.getBankAccount();
+                if(bankAccount.getBalance() >= booking.getPrice()) {
+                    bankAccount.setBalance(bankAccount.getBalance() - booking.getPrice());
+                    bankAccountRepository.save(bankAccount);
+                    isPaymentCompleted = true;
+                }
+            } else if(cardType == CardType.CREDIT && cardDetails instanceof CreditCardDetails creditCardDetails) {
+                long availableCreditLimit = creditCardDetails.getAvailableCreditLimit();
+                if(availableCreditLimit >= booking.getPrice()) {
+                    creditCardDetails.setAvailableCreditLimit(availableCreditLimit - (long) booking.getPrice());
+                    isPaymentCompleted = true;
+                }
+            }
+
+            payment.setPaymentStatus(isPaymentCompleted ? PaymentStatus.COMPLETED : PaymentStatus.FAILED);
+
+        } else if(dto.getAction().equals("failed")) {
+            payment.setPaymentStatus(PaymentStatus.FAILED);
+        }
+
         payment.setPaymentReferenceType(PaymentRefType.CARD);
         payment.setAmount(booking.getPrice());
         payment.setPaymentDate(LocalDate.now());
@@ -173,15 +191,18 @@ public class PaymentService {
     private void processBankPayment(PaymentRequestDTO dto) {
         Booking booking = bookingRepository.findByBookingId(dto.getBookingId()).orElse(null);
         Payment payment = booking.getPayment();
+        BankAccount bankAccount = bankAccountRepository.findBankAccountByBankDetails_BankIdAndUser_UserId(dto.getBankID(), dto.getUserID()).get(0);
         payment.setPaymentMethod(PaymentMethod.NETBANKING);
 
         if(dto.getAction().equals("completed")) {
             payment.setPaymentStatus(PaymentStatus.COMPLETED);
+            bankAccount.setBalance(bankAccount.getBalance() - booking.getPrice());
+            bankAccountRepository.save(bankAccount);
         } else {
             payment.setPaymentStatus(PaymentStatus.FAILED);
         }
 
-        payment.setPaymentReferenceId(dto.getBankID());
+        payment.setPaymentReferenceId(bankAccount.getId());
         payment.setPaymentReferenceType(PaymentRefType.BANK);
         payment.setAmount(booking.getPrice());
         payment.setPaymentDate(LocalDate.now());

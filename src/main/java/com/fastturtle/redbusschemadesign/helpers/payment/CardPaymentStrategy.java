@@ -39,7 +39,6 @@ public class CardPaymentStrategy implements PaymentStrategy {
 
         CardType cardType = cardParams.getCardType();
 
-        // Doing payment via Debit Card
         List<CardDetails> cardDetails = cardDetailRepository.findCardByEnding4Digits(cardParams.getLast4Digits());
         List<CardDetails> filteredCards = cardDetails.stream().filter(
                 cardType == CardType.DEBIT ?
