@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-//@Component
+@Component
 public class SampleDataInitializer {
 
     // Sample data for Bus
@@ -158,7 +158,7 @@ public class SampleDataInitializer {
     private final BankAccountRepository bankAccountRepository;
     private final CardFactorySelector cardFactorySelector;
 
-//    @Autowired
+    @Autowired
     public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder, UserWalletRepository userWalletRepository, BankDetailRepository bankDetailRepository, BankDetailRepository bankDetailRepository1, CardDetailRepository cardDetailRepository, BankAccountRepository bankAccountRepository, CardFactorySelector cardFactorySelector) {
         this.busRepository = busRepository;
         this.routeRepository = routeRepository;
@@ -446,7 +446,7 @@ public class SampleDataInitializer {
         booking4.setPrice(seatCostForSeat5);
         booking4.setBookingStatus(BookingStatus.CREATED);
 
-        NetbankingPaymentStrategy nbps = new NetbankingPaymentStrategy(bankDetailRepository);
+        NetbankingPaymentStrategy nbps = new NetbankingPaymentStrategy(bankDetailRepository, bankAccountRepository);
         NetbankingPaymentParams netbankingPaymentParams = new NetbankingPaymentParams();
         netbankingPaymentParams.setBankNamePrefix("HDFC");
         netbankingPaymentParams.setReceivedOtp(343532);
@@ -483,7 +483,7 @@ public class SampleDataInitializer {
         booking5.setPrice(seatCostForSeat6);
         booking5.setBookingStatus(BookingStatus.CREATED);
 
-        NetbankingPaymentStrategy nbps = new NetbankingPaymentStrategy((bankDetailRepository));
+        NetbankingPaymentStrategy nbps = new NetbankingPaymentStrategy(bankDetailRepository, bankAccountRepository);
         NetbankingPaymentParams netbankingPaymentParams = new NetbankingPaymentParams();
         netbankingPaymentParams.setReceivedOtp(457433);
         netbankingPaymentParams.setPaymentDate(paymentDates[4]);
@@ -815,26 +815,26 @@ public class SampleDataInitializer {
         };
 
         String[] ifscCodes = {
-                "HDFC8459375",
-                "AXIS4875392",
-                "SBI4858363",
-                "ICICI4759438",
-                "BOB6583947",
-                "AXIS4305392",
-                "CANARA6483926",
-                "YES6273549",
-                "PNB6483520",
-                "ALHBD7305733",
-                "HDFC8452075",
-                "YES6483549",
-                "AXIS4065392",
-                "ICICI4399438",
-                "PNB6482620",
-                "SBI4831363",
-                "BOB6545947",
-                "ALHBD7495733",
-                "GRMN6483925",
-                "CANARA6419926",
+                "HDFC8459375",  // 0
+                "AXIS4875392",  // 1
+                "SBI4858363",   // 2
+                "ICICI4759438", // 3
+                "BOB6583947",  // 4
+                "AXIS4305392",  // 5
+                "CANARA6483926",  // 6
+                "YES6273549",  // 7
+                "PNB6483520",  // 8
+                "ALHBD7305733",  // 9
+                "HDFC8452075",  // 10
+                "YES6483549",  // 11
+                "AXIS4065392",  // 12
+                "ICICI4399438",  // 13
+                "PNB6482620",  // 14
+                "SBI4831363",  // 15
+                "BOB6545947",  // 16
+                "ALHBD7495733",  // 17
+                "GRMN6483925",  // 18
+                "CANARA6419926",  // 19
         };
 
         String[] branchCodes = {
@@ -900,6 +900,39 @@ public class SampleDataInitializer {
 
         }
 
+        assignUsersToBankAccounts();
+
+    }
+
+    private void assignUsersToBankAccounts() {
+        List<BankAccount> bankAccounts = bankAccountRepository.findAll();
+
+        bankAccounts.get(0).setUser(userRepository.findById(1).get());
+        bankAccounts.get(5).setUser(userRepository.findById(1).get());
+        bankAccounts.get(14).setUser(userRepository.findById(1).get());
+        bankAccounts.get(19).setUser(userRepository.findById(1).get());
+
+        bankAccounts.get(1).setUser(userRepository.findById(2).get());
+        bankAccounts.get(6).setUser(userRepository.findById(2).get());
+        bankAccounts.get(11).setUser(userRepository.findById(2).get());
+        bankAccounts.get(16).setUser(userRepository.findById(2).get());
+
+        bankAccounts.get(2).setUser(userRepository.findById(3).get());
+        bankAccounts.get(7).setUser(userRepository.findById(3).get());
+        bankAccounts.get(13).setUser(userRepository.findById(3).get());
+        bankAccounts.get(17).setUser(userRepository.findById(3).get());
+
+        bankAccounts.get(3).setUser(userRepository.findById(4).get());
+        bankAccounts.get(8).setUser(userRepository.findById(4).get());
+        bankAccounts.get(10).setUser(userRepository.findById(4).get());
+        bankAccounts.get(18).setUser(userRepository.findById(4).get());
+
+        bankAccounts.get(4).setUser(userRepository.findById(5).get());
+        bankAccounts.get(9).setUser(userRepository.findById(5).get());
+        bankAccounts.get(12).setUser(userRepository.findById(5).get());
+        bankAccounts.get(15).setUser(userRepository.findById(5).get());
+
+        bankAccountRepository.saveAll(bankAccounts);
     }
 
 }

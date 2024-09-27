@@ -28,6 +28,10 @@ public class BankAccount {
     @JoinColumn(name = "bank_id")
     private BankDetails bankDetails;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     public BankAccount() {
 
     }
@@ -94,5 +98,13 @@ public class BankAccount {
 
     public void setBankDetails(BankDetails bankDetails) {
         this.bankDetails = bankDetails;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

@@ -4,6 +4,7 @@ import com.fastturtle.redbusschemadesign.enums.PaymentMethod;
 import com.fastturtle.redbusschemadesign.enums.PaymentRefType;
 import com.fastturtle.redbusschemadesign.enums.PaymentStatus;
 import com.fastturtle.redbusschemadesign.models.*;
+import com.fastturtle.redbusschemadesign.repositories.BankAccountRepository;
 import com.fastturtle.redbusschemadesign.repositories.BankDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,10 +13,12 @@ import org.springframework.stereotype.Component;
 public class NetbankingPaymentStrategy implements PaymentStrategy {
 
     private final BankDetailRepository bankDetailRepository;
+    private final BankAccountRepository bankAccountRepository;
 
     @Autowired
-    public NetbankingPaymentStrategy(BankDetailRepository bankDetailRepository) {
+    public NetbankingPaymentStrategy(BankDetailRepository bankDetailRepository, BankAccountRepository bankAccountRepository) {
         this.bankDetailRepository = bankDetailRepository;
+        this.bankAccountRepository = bankAccountRepository;
     }
 
     @Override
@@ -27,13 +30,16 @@ public class NetbankingPaymentStrategy implements PaymentStrategy {
         payment.setPaymentStatus(paymentStatus);
 
         BankDetails bankDetails = bankDetailRepository.findByBankNameStartsWith(netbankingPaymentParams.getBankNamePrefix()).get(0);
+        BankAccount bankAccount = bankAccountRepository.findBankAccountByBankDetails(bankDetails);
 
-        payment.setPaymentReferenceId(bankDetails.getBankId());
+        payment.setPaymentReferenceId(bankAccount.getId());
         payment.setPaymentReferenceType(PaymentRefType.BANK);
         int receivedOtp = netbankingPaymentParams.getReceivedOtp();
         String otpString = String.valueOf(receivedOtp);
         if(otpString.length() == 6) {
             if(paymentStatus == PaymentStatus.COMPLETED) {
+                bankAccount.setBalance(bankAccount.getBalance() - booking.getPrice());
+                bankAccountRepository.save(bankAccount);
                 System.out.println("OTP verified successfully");
                 payment.setPaymentStatus(PaymentStatus.COMPLETED);
 
