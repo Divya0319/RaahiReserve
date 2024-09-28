@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.fastturtle</groupId>
-    <artifactId>SwiftSeat</artifactId>
+    <artifactId>RaahiReserve</artifactId>
     <version>1.0</version>
-    <name>SwiftSeat</name>
-    <description>SwiftSeat</description>
+    <name>RaahiReserve</name>
+    <description>RaahiReserve</description>
     <url/>
     <licenses>
         <license/>
