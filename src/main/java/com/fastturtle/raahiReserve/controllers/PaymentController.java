@@ -241,6 +241,7 @@ public class PaymentController {
             paymentRequestDTO.setPaymentRefType(PaymentRefType.BANK);
             int bankID = bankDetailsService.finBankIDByBankName(selectedBankForPayment);
             paymentRequestDTO.setBankID(bankID);
+            paymentRequestDTO.setUserID(user.getUserId());
         }
 
         if(cardNumber != null) {
