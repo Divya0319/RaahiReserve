@@ -35,17 +35,17 @@ public class PaymentController {
     private final BankDetailsService bankDetailsService;
     private final UserService userService;
     private final CardDetailsService cardDetailsService;
-    private final BankAccountRepository bankAccountRepository;
+    private final BankAccountService bankAccountService;
     private User user;
 
     @Autowired
-    public PaymentController(PaymentService paymentService, BookingService bookingService, BankDetailsService bankDetailsService, UserService userService, CardDetailsService cardDetailsService, BankAccountRepository bankAccountRepository) {
+    public PaymentController(PaymentService paymentService, BookingService bookingService, BankDetailsService bankDetailsService, UserService userService, CardDetailsService cardDetailsService, BankAccountRepository bankAccountRepository, BankAccountService bankAccountService) {
         this.paymentService = paymentService;
         this.bookingService = bookingService;
         this.bankDetailsService = bankDetailsService;
         this.userService = userService;
         this.cardDetailsService = cardDetailsService;
-        this.bankAccountRepository = bankAccountRepository;
+        this.bankAccountService = bankAccountService;
     }
 
     @PostMapping("/pay")
@@ -142,9 +142,9 @@ public class PaymentController {
                 Booking fetchedBooking = booking.get();
                 fetchedBooking.setFormattedBookingDate(formattedBookingDate);
                 fetchedBooking.setFormattedTravelDate(formattedTravelDate);
-                List<BankAccount> userBankAccounts = bankAccountRepository.findBankAccountByUser_UserId(user.getUserId());
+                List<BankAccount> userBankAccounts = bankAccountService.findBankAccountsForUser(user.getUserId());
 
-                System.out.println(userBankAccounts);
+                System.out.println(userBankAccounts.size());
 
                 model.addAttribute("booking", fetchedBooking);
                 model.addAttribute("bankDetails", bankDetailsService.getAllBankDetails());
