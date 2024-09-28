@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -70,8 +71,15 @@ public class PaymentController {
                                       Model model, Principal principal) {
         ResponseEntity<?> response = paymentService.checkPaymentStatusAndReturnBookingForBookingId(bookingId);
         if (response.getStatusCode() == HttpStatus.OK) {
+
+            List<BankAccount> userBankAccounts = bankAccountService.findBankAccountsForUser(user.getUserId());
+            List<BankDetails> banksBelongingToUser = new ArrayList<>();
+            for(BankAccount account : userBankAccounts) {
+                banksBelongingToUser.add(account.getBankDetails());
+            }
+
             model.addAttribute("booking", response.getBody());
-            model.addAttribute("bankDetails", bankDetailsService.getAllBankDetails());
+            model.addAttribute("bankDetails", banksBelongingToUser);
             User loggedInUser = userService.findByUsername(principal.getName());
             model.addAttribute("walletDetails", userService.getUserWalletByEmail(loggedInUser.getEmail()));
             model.addAttribute("isBookingIdPresent", true);
@@ -142,12 +150,15 @@ public class PaymentController {
                 Booking fetchedBooking = booking.get();
                 fetchedBooking.setFormattedBookingDate(formattedBookingDate);
                 fetchedBooking.setFormattedTravelDate(formattedTravelDate);
-                List<BankAccount> userBankAccounts = bankAccountService.findBankAccountsForUser(user.getUserId());
 
-                System.out.println(userBankAccounts.size());
+                List<BankAccount> userBankAccounts = bankAccountService.findBankAccountsForUser(user.getUserId());
+                List<BankDetails> banksBelongingToUser = new ArrayList<>();
+                for(BankAccount account : userBankAccounts) {
+                    banksBelongingToUser.add(account.getBankDetails());
+                }
 
                 model.addAttribute("booking", fetchedBooking);
-                model.addAttribute("bankDetails", bankDetailsService.getAllBankDetails());
+                model.addAttribute("bankDetails", banksBelongingToUser);
                 model.addAttribute("walletDetails", userService.getUserWalletByEmail(user.getEmail()));
                 model.addAttribute("isBookingIdPresent", true);
                 model.addAttribute("paymentModes", PaymentMethod.values());
@@ -275,8 +286,14 @@ public class PaymentController {
                     fetchedBooking.setFormattedBookingDate(formattedBookingDate);
                     fetchedBooking.setFormattedTravelDate(formattedTravelDate);
 
+                    List<BankAccount> userBankAccounts = bankAccountService.findBankAccountsForUser(user.getUserId());
+                    List<BankDetails> banksBelongingToUser = new ArrayList<>();
+                    for(BankAccount account : userBankAccounts) {
+                        banksBelongingToUser.add(account.getBankDetails());
+                    }
+
                     model.addAttribute("booking", fetchedBooking);
-                    model.addAttribute("bankDetails", bankDetailsService.getAllBankDetails());
+                    model.addAttribute("bankDetails", banksBelongingToUser);
                     model.addAttribute("walletDetails", userService.getUserWalletByEmail(user.getEmail()));
                     model.addAttribute("loggedInUserName", user.getFullName());
                     model.addAttribute("isBookingIdPresent", true);
