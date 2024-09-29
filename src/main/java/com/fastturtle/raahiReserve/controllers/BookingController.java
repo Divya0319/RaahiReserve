@@ -391,13 +391,26 @@ public class BookingController {
         return "findPassengersTraveledOnDate";
     }
 
-    @GetMapping("/bookingSummary")
-    public String showBookingSummaryForm() {
+    @GetMapping("/bookingSummaryForm")
+    public String showBookingSummaryForm(Model model) {
+        model.addAttribute("isBookingIdPresent", false);
         return "bookingSummary";
     }
 
-    @PostMapping("/bookingSummary")
-    public String showBookingSummary() {
+    @GetMapping("/bookingSummary")
+    public String showBookingSummary(@RequestParam("bookingId") int bookingId, Model model) {
+        Booking booking = bookingService.findByBookingId(bookingId).orElse(null);
+
+        if(booking == null) {
+            model.addAttribute("isBookingIdPresent", false);
+            model.addAttribute("errorMessage", "No booking found for id " + bookingId);
+        } else {
+            model.addAttribute("booking", booking);
+            model.addAttribute("isBookingIdPresent", true);
+            BookingSummaryDTO bookingSummary = bookingService.createBookingSummary(booking);
+            model.addAttribute("bookingSummary", bookingSummary);
+        }
+
         return "bookingSummary";
     }
 
