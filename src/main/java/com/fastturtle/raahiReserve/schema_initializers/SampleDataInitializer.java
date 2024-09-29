@@ -266,7 +266,7 @@ public class SampleDataInitializer {
             BusSeat busSeatForUser = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking1, SeatType.AISLE);
 
             BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(busSeatForUser);
-            Float seatCostForUser = seatCostRepository.findCostByBusTypeAnAndSeatType(busTypeForUser, busSeatForUser.getSeatType());
+            Float seatCostForUser = seatCostRepository.findSeatCostByBusTypeAndSeatType(busTypeForUser, busSeatForUser.getSeatType());
 
             booking1Cost += seatCostForUser;
 
@@ -279,10 +279,10 @@ public class SampleDataInitializer {
         BusSeat busSeat2 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking1, SeatType.WINDOW);
 
         BusType busTypeForSeat1 = busSeatRepository.findBusTypeFromBusSeat(busSeat1);
-        Float seatCostForSeat1 = seatCostRepository.findCostByBusTypeAnAndSeatType(busTypeForSeat1, busSeat1.getSeatType());
+        Float seatCostForSeat1 = seatCostRepository.findSeatCostByBusTypeAndSeatType(busTypeForSeat1, busSeat1.getSeatType());
 
         BusType busTypeForSeat2 = busSeatRepository.findBusTypeFromBusSeat(busSeat2);
-        Float seatCostForSeat2 = seatCostRepository.findCostByBusTypeAnAndSeatType(busTypeForSeat2, busSeat2.getSeatType());
+        Float seatCostForSeat2 = seatCostRepository.findSeatCostByBusTypeAndSeatType(busTypeForSeat2, busSeat2.getSeatType());
 
 
         booking1.addPassenger(new Passenger(passengerNames[0], passengerAges[0], passengerGenders[0], busSeat1));
@@ -339,7 +339,7 @@ public class SampleDataInitializer {
         BusSeat busSeat3 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking2, SeatType.AISLE);
 
         BusType busTypeForSeat3 = busSeatRepository.findBusTypeFromBusSeat(busSeat3);
-        Float seatCostForSeat3 = seatCostRepository.findCostByBusTypeAnAndSeatType(busTypeForSeat3, busSeat3.getSeatType());
+        Float seatCostForSeat3 = seatCostRepository.findSeatCostByBusTypeAndSeatType(busTypeForSeat3, busSeat3.getSeatType());
 
 
         booking2.addPassenger(new Passenger(passengerNames[2], passengerAges[2], passengerGenders[2], busSeat3));
@@ -382,7 +382,7 @@ public class SampleDataInitializer {
             BusSeat busSeatForUser = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking3, SeatType.WINDOW);
 
             BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(busSeatForUser);
-            Float seatCostForUser = seatCostRepository.findCostByBusTypeAnAndSeatType(busTypeForUser, busSeatForUser.getSeatType());
+            Float seatCostForUser = seatCostRepository.findSeatCostByBusTypeAndSeatType(busTypeForUser, busSeatForUser.getSeatType());
 
             booking3Cost += seatCostForUser;
 
@@ -393,7 +393,7 @@ public class SampleDataInitializer {
         BusSeat busSeat4 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking3, SeatType.AISLE);
 
         BusType busTypeForSeat4 = busSeatRepository.findBusTypeFromBusSeat(busSeat4);
-        Float seatCostForSeat4 = seatCostRepository.findCostByBusTypeAnAndSeatType(busTypeForSeat4, busSeat4.getSeatType());
+        Float seatCostForSeat4 = seatCostRepository.findSeatCostByBusTypeAndSeatType(busTypeForSeat4, busSeat4.getSeatType());
 
 
         booking3.addPassenger(new Passenger(passengerNames[3], passengerAges[3], passengerGenders[3], busSeat4));
@@ -434,7 +434,7 @@ public class SampleDataInitializer {
         BusSeat busSeat5 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking4, SeatType.WINDOW);
 
         BusType busTypeForSeat5 = busSeatRepository.findBusTypeFromBusSeat(busSeat5);
-        Float seatCostForSeat5 = seatCostRepository.findCostByBusTypeAnAndSeatType(busTypeForSeat5, busSeat5.getSeatType());
+        Float seatCostForSeat5 = seatCostRepository.findSeatCostByBusTypeAndSeatType(busTypeForSeat5, busSeat5.getSeatType());
 
 
         booking4.addPassenger(new Passenger(passengerNames[4], passengerAges[4], passengerGenders[4], busSeat5));
@@ -473,7 +473,7 @@ public class SampleDataInitializer {
         BusSeat busSeat6 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking5, null);
 
         BusType busTypeForSeat6 = busSeatRepository.findBusTypeFromBusSeat(busSeat6);
-        Float seatCostForSeat6 = seatCostRepository.findCostByBusTypeAnAndSeatType(busTypeForSeat6, busSeat6.getSeatType());
+        Float seatCostForSeat6 = seatCostRepository.findSeatCostByBusTypeAndSeatType(busTypeForSeat6, busSeat6.getSeatType());
 
         booking5.addPassenger(new Passenger(passengerNames[5], passengerAges[5], passengerGenders[5], busSeat6));
 
@@ -516,7 +516,7 @@ public class SampleDataInitializer {
             BusSeat busSeatForUser = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking, SeatType.AISLE);
 
             BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(busSeatForUser);
-            Float seatCostForUser = seatCostRepository.findCostByBusTypeAnAndSeatType(busTypeForUser, busSeatForUser.getSeatType());
+            Float seatCostForUser = seatCostRepository.findSeatCostByBusTypeAndSeatType(busTypeForUser, busSeatForUser.getSeatType());
 
             bookingCost += seatCostForUser;
 
@@ -529,10 +529,10 @@ public class SampleDataInitializer {
         BusSeat busSeat2 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking, SeatType.WINDOW);
 
         BusType busTypeForSeat1 = busSeatRepository.findBusTypeFromBusSeat(busSeat1);
-        Float seatCostForSeat1 = seatCostRepository.findCostByBusTypeAnAndSeatType(busTypeForSeat1, busSeat1.getSeatType());
+        Float seatCostForSeat1 = seatCostRepository.findSeatCostByBusTypeAndSeatType(busTypeForSeat1, busSeat1.getSeatType());
 
         BusType busTypeForSeat2 = busSeatRepository.findBusTypeFromBusSeat(busSeat2);
-        Float seatCostForSeat2 = seatCostRepository.findCostByBusTypeAnAndSeatType(busTypeForSeat2, busSeat2.getSeatType());
+        Float seatCostForSeat2 = seatCostRepository.findSeatCostByBusTypeAndSeatType(busTypeForSeat2, busSeat2.getSeatType());
 
 
         booking.addPassenger(new Passenger(passengerNames[7], passengerAges[7], passengerGenders[7], busSeat1));

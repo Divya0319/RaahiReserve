@@ -1,6 +1,7 @@
 package com.fastturtle.raahiReserve.controllers;
 
 import com.fastturtle.raahiReserve.dtos.BookingRequest;
+import com.fastturtle.raahiReserve.dtos.BookingSummaryDTO;
 import com.fastturtle.raahiReserve.dtos.TravelRequest;
 import com.fastturtle.raahiReserve.enums.BusType;
 import com.fastturtle.raahiReserve.enums.Gender;
@@ -295,6 +296,10 @@ public class BookingController {
                 // Added formatted dates to the model
                 model.addAttribute("formattedBookingDate", formattedBookingDate);
                 model.addAttribute("formattedTravelDate", formattedTravelDate);
+
+                BookingSummaryDTO bookingSummary = bookingService.createBookingSummary(booking);
+
+                model.addAttribute("bookingSummary", bookingSummary);
             }
 
         } else if(response.getStatusCode() == HttpStatus.BAD_REQUEST) {

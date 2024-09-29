@@ -1,7 +1,10 @@
 package com.fastturtle.raahiReserve.services;
 
 import com.fastturtle.raahiReserve.dtos.BookingRequest;
+import com.fastturtle.raahiReserve.dtos.BookingSummaryDTO;
+import com.fastturtle.raahiReserve.dtos.SeatCostDetailsDTO;
 import com.fastturtle.raahiReserve.dtos.TravelRequest;
+import com.fastturtle.raahiReserve.enums.BookingStatus;
 import com.fastturtle.raahiReserve.enums.BusType;
 import com.fastturtle.raahiReserve.enums.PaymentStatus;
 import com.fastturtle.raahiReserve.enums.SeatType;
@@ -156,7 +159,7 @@ public class BookingService {
             busSeatRepository.save(seatForUser);
 
             BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(seatForUser);
-            Float seatCostForUser = seatCostRepository.findCostByBusTypeAnAndSeatType(busTypeForUser, seatForUser.getSeatType());
+            Float seatCostForUser = seatCostRepository.findSeatCostByBusTypeAndSeatType(busTypeForUser, seatForUser.getSeatType());
 
             bookingCost += seatCostForUser;
 
@@ -192,7 +195,7 @@ public class BookingService {
 
             busSeatRepository.save(seatForPassenger);
 
-            Float seatCostForUser = seatCostRepository.findCostByBusTypeAnAndSeatType(
+            Float seatCostForUser = seatCostRepository.findSeatCostByBusTypeAndSeatType(
                     busSeatRepository.findBusTypeFromBusSeat(seatForPassenger), seatForPassenger.getSeatType());
             bookingCost += seatCostForUser;
 
@@ -217,6 +220,8 @@ public class BookingService {
                 booking.getPassengers().size());
 
         busRepository.save(busForBooking);
+
+        booking.setBookingStatus(BookingStatus.CREATED);
         bookingRepository.save(booking);
         
         return ResponseEntity.ok(booking);
@@ -279,6 +284,21 @@ public class BookingService {
                     return travelDateTime.isAfter(currentDateTime) && travelDateTime.isBefore(thresholdDateTime);
                 })
                 .collect(Collectors.toList());
+    }
+
+    public BookingSummaryDTO createBookingSummary(Booking booking) {
+        BookingSummaryDTO bookingSummary = new BookingSummaryDTO();
+
+        for(Passenger p : booking.getPassengers()) {
+            SeatCostDetailsDTO seatDetail = new SeatCostDetailsDTO();
+            seatDetail.setSeatNumber(p.getBusSeat().getSeatNumber());
+            seatDetail.setSeatType(p.getBusSeat().getSeatType().name());
+            seatDetail.setSeatCost(seatCostRepository.findSeatCostByBusTypeAndSeatType(booking.getBusRoute().getBus().getBusType(), p.getBusSeat().getSeatType()));
+
+            bookingSummary.addSeatCostDetail(seatDetail);
+        }
+
+        return bookingSummary;
     }
 
 }
