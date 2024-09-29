@@ -390,13 +390,26 @@ public class BookingController {
     }
 
     @GetMapping("/bookingSummaryForm")
-    public String showBookingSummaryForm(Model model) {
+    public String showBookingSummaryForm(Principal principal, Model model) {
+        if(principal != null) {
+            if(user == null) {
+                user = userService.findByUsername(principal.getName());
+            }
+            model.addAttribute("loggedInUserName", user.getFullName());
+        }
         return "bookingSummary";
     }
 
     @GetMapping("/bookingSummary")
-    public String showBookingSummary(@RequestParam("bookingId") int bookingId, Model model) {
+    public String showBookingSummary(@RequestParam("bookingId") int bookingId, Model model, Principal principal) {
         Booking booking = bookingService.findByBookingId(bookingId).orElse(null);
+
+        if(principal != null) {
+            if(user == null) {
+                user = userService.findByUsername(principal.getName());
+            }
+            model.addAttribute("loggedInUserName", user.getFullName());
+        }
 
         if(booking == null) {
             model.addAttribute("errorMessage", "No booking found for id " + bookingId);
