@@ -361,5 +361,7 @@ public class PaymentController {
     //9. Change the booking status from created to completed, if all the passengers are travelled in it.
     //10. When a booking is cancelled, vacate all the seats occupied by passengers in it.
     //11. Add UI changes to payment page, to show only those banks in netbanking, in which user has bank account.
+    //12. Need to beautify the booking summary section in bookingResult template
+    //13. Need to add option to view all details of a booking(view booking details).
 
 }
