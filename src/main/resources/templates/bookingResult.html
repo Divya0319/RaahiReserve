@@ -92,38 +92,42 @@
             </div>
 
             <div class="container mt-4">
+                <p class="d-flex justify-content-end"><strong>Booking Summary</strong></p>
+
                 <!-- Aisle Seats Section -->
                 <div th:if="${#lists.size(bookingSummary.seatCostDetails) > 0}">
-                    <div class="d-flex justify-content-between align-items-center mb-2"
+                    <div class="d-flex justify-content-end mb-2 mt-2"
                          th:each="seatDetail : ${bookingSummary.seatCostDetails}"
                          th:if="${seatDetail.seatType == 'AISLE'}">
-                        <span>AISLE</span>
-                        <span th:text="${seatDetail.seatNumber}"></span>
-                        <span>-</span>
-                        <span th:text="${seatDetail.seatCost}"></span>
+                        <span class="me-3">AISLE</span>  <!-- Add margin-end -->
+                        <span class="ms-2 me-2" th:text="${seatDetail.seatNumber}"></span> <!-- Add margin-start and margin-end -->
+                        <span> - </span>
+                        <span class="ms-2" th:text="${seatDetail.seatCost}"></span> <!-- Add margin-start -->
                     </div>
                 </div>
 
                 <!-- Window Seats Section -->
                 <div th:if="${#lists.size(bookingSummary.seatCostDetails) > 0}">
-                    <div class="d-flex justify-content-between align-items-center mb-2"
+                    <div class="d-flex justify-content-end mb-2"
                          th:each="seatDetail : ${bookingSummary.seatCostDetails}"
                          th:if="${seatDetail.seatType == 'WINDOW'}">
-                        <span>WINDOW</span>
-                        <span th:text="${seatDetail.seatNumber}"></span>
-                        <span>-</span>
-                        <span th:text="${seatDetail.seatCost}"></span>
+                        <span class="me-3">WINDOW</span> <!-- Add margin-end -->
+                        <span class="ms-2 me-2" th:text="${seatDetail.seatNumber}"></span> <!-- Add margin-start and margin-end -->
+                        <span> - </span>
+                        <span class="ms-2" th:text="${seatDetail.seatCost}"></span> <!-- Add margin-start -->
                     </div>
                 </div>
 
                 <!-- Horizontal Rule -->
-                <hr class="custom-hr"/>
+                <div class="d-flex justify-content-end">
+                    <hr style="width: 50%; margin-right: 0;" /> <!-- Right align the hr with width control -->
+                </div>
 
                 <!-- Total Cost Section -->
                 <div class="d-flex justify-content-end mt-3">
-                    <span class="mr-2">Total</span>
+                    <span class="me-2">Total</span>
                     <span>-</span>
-                    <span class="ml-2" th:text="${bookingSummary.totalCost}"></span>
+                    <span class="ms-2" th:text="${bookingSummary.totalCost}"></span>
                 </div>
             </div>
 
