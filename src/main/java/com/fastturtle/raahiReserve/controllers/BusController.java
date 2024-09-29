@@ -42,6 +42,6 @@ public class BusController {
         model.addAttribute("selectedBusType", selectedBusType);
 
         // Redirect or return a view name to avoid template resolution error.
-        return "result"; // Change "result" to the name of your success page template.
+        return "bookingSummary"; // Change "result" to the name of your success page template.
     }
 }

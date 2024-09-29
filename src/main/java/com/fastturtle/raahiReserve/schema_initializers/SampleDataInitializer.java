@@ -10,7 +10,9 @@ import com.fastturtle.raahiReserve.models.*;
 import com.fastturtle.raahiReserve.repositories.*;
 import jakarta.annotation.PostConstruct;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;

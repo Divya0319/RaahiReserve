@@ -391,4 +391,14 @@ public class BookingController {
         return "findPassengersTraveledOnDate";
     }
 
+    @GetMapping("/bookingSummary")
+    public String showBookingSummaryForm() {
+        return "bookingSummary";
+    }
+
+    @PostMapping("/bookingSummary")
+    public String showBookingSummary() {
+        return "bookingSummary";
+    }
+
 }
