@@ -326,15 +326,13 @@ public class BookingController {
         Bus b = booking.getBusRoute().getBus();
         String formattedBusNo = BusDataUtils.formatBusNumber(b.getBusNo());
         String formattedBusTime = BusDataUtils.formatBusTiming(b.getBusTiming());
+        String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.getBookingDate());
+        String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.getTravelDate());
 
         b.setFormattedBusNumber(formattedBusNo);
         b.setFormattedBusTiming(formattedBusTime);
 
         model.addAttribute("booking", booking);
-
-        String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.getBookingDate());
-        String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.getTravelDate());
-
         model.addAttribute("formattedBookingDate", formattedBookingDate);
         model.addAttribute("formattedTravelDate", formattedTravelDate);
 
@@ -393,7 +391,6 @@ public class BookingController {
 
     @GetMapping("/bookingSummaryForm")
     public String showBookingSummaryForm(Model model) {
-        model.addAttribute("isBookingIdPresent", false);
         return "bookingSummary";
     }
 
@@ -402,11 +399,21 @@ public class BookingController {
         Booking booking = bookingService.findByBookingId(bookingId).orElse(null);
 
         if(booking == null) {
-            model.addAttribute("isBookingIdPresent", false);
             model.addAttribute("errorMessage", "No booking found for id " + bookingId);
         } else {
+            Bus b = booking.getBusRoute().getBus();
+            String formattedBusNo = BusDataUtils.formatBusNumber(b.getBusNo());
+            String formattedBusTime = BusDataUtils.formatBusTiming(b.getBusTiming());
+            String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.getBookingDate());
+            String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.getTravelDate());
+
+            b.setFormattedBusNumber(formattedBusNo);
+            b.setFormattedBusTiming(formattedBusTime);
+
             model.addAttribute("booking", booking);
-            model.addAttribute("isBookingIdPresent", true);
+            model.addAttribute("formattedBookingDate", formattedBookingDate);
+            model.addAttribute("formattedTravelDate", formattedTravelDate);
+
             BookingSummaryDTO bookingSummary = bookingService.createBookingSummary(booking);
             model.addAttribute("bookingSummary", bookingSummary);
         }
