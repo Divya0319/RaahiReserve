@@ -22,6 +22,10 @@
                     <span th:text="${paymentRequestDTO.cardCompany} + ' ' + ${paymentRequestDTO.paymentMode}"></span> ID check
                 </h2>
 
+                <h2 th:if="${paymentRequestDTO.cardNo != null && paymentRequestDTO.paymentMode == 'CREDIT_CARD'}">
+                    <span th:text="${paymentRequestDTO.cardCompany} + ' ' + ${paymentRequestDTO.paymentMode}"></span> ID check
+                </h2>
+
             </div>
 
             <div class="card-body bg-light text-dark">

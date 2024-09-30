@@ -17,6 +17,9 @@ public class PaymentRequestDTO {
     private String cardHolderName;
     private String cvv;
 
+    private DebitCardSpecificDTO debitCardSpecificDTO;
+    private CreditCardSpecificDTO creditCardSpecificDTO;
+
     // Bank details
     private Integer bankID;
 
@@ -117,6 +120,22 @@ public class PaymentRequestDTO {
 
     public void setUserID(Integer userID) {
         this.userID = userID;
+    }
+
+    public DebitCardSpecificDTO getDebitCardSpecificDTO() {
+        return debitCardSpecificDTO;
+    }
+
+    public void setDebitCardSpecificDTO(DebitCardSpecificDTO debitCardSpecificDTO) {
+        this.debitCardSpecificDTO = debitCardSpecificDTO;
+    }
+
+    public CreditCardSpecificDTO getCreditCardSpecificDTO() {
+        return creditCardSpecificDTO;
+    }
+
+    public void setCreditCardSpecificDTO(CreditCardSpecificDTO creditCardSpecificDTO) {
+        this.creditCardSpecificDTO = creditCardSpecificDTO;
     }
 }
 

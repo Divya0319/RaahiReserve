@@ -1,5 +1,6 @@
 package com.fastturtle.raahiReserve.controllers;
 
+import com.fastturtle.raahiReserve.dtos.CreditCardSpecificDTO;
 import com.fastturtle.raahiReserve.dtos.PaymentRequest;
 import com.fastturtle.raahiReserve.dtos.PaymentRequestDTO;
 import com.fastturtle.raahiReserve.enums.CardType;
@@ -324,6 +325,17 @@ public class PaymentController {
                 paymentRequestDTO.setExpiryYear(Integer.valueOf(expiryYear));
                 paymentRequestDTO.setCvv(cvv);
                 paymentRequestDTO.setUserID(user.getUserId());
+
+                if(paymentMode == PaymentMethod.CREDIT_CARD) {
+                    CardUtils cardUtils = new CardUtils(cardCompany);
+                    long totalCreditLimit = cardUtils.getCreditLimit();
+                    CreditCardSpecificDTO creditCardSpecificDTO = new CreditCardSpecificDTO();
+                    creditCardSpecificDTO.setTotalCreditLimit(totalCreditLimit);
+                    creditCardSpecificDTO.setAvailableCreditLimit(totalCreditLimit - (long)(0.1 * totalCreditLimit));
+                    paymentRequestDTO.setCreditCardSpecificDTO(creditCardSpecificDTO);
+                } else if(paymentMode == PaymentMethod.DEBIT_CARD) {
+
+                }
             }
         } else if(selectedDebitCardID != null) {
             CardDetails selectedCardDetails = cardDetailsService.findByID(selectedDebitCardID);
