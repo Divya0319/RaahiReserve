@@ -2,6 +2,7 @@ package com.fastturtle.raahiReserve.dtos;
 
 import com.fastturtle.raahiReserve.enums.PaymentMethod;
 import com.fastturtle.raahiReserve.enums.PaymentRefType;
+import com.fastturtle.raahiReserve.models.BankAccount;
 
 public class PaymentRequestDTO {
     private Integer bookingId;
@@ -22,6 +23,8 @@ public class PaymentRequestDTO {
 
     // Bank details
     private Integer bankID;
+    private BankAccount bankAccount;
+    private String maskedAccountNo;
 
     // Wallet details
     private Integer userID;
@@ -112,6 +115,22 @@ public class PaymentRequestDTO {
 
     public void setBankID(Integer bankID) {
         this.bankID = bankID;
+    }
+
+    public BankAccount getBankAccount() {
+        return bankAccount;
+    }
+
+    public void setBankAccount(BankAccount bankAccount) {
+        this.bankAccount = bankAccount;
+    }
+
+    public String getMaskedAccountNo() {
+        return maskedAccountNo;
+    }
+
+    public void setMaskedAccountNo(String maskedAccountNo) {
+        this.maskedAccountNo = maskedAccountNo;
     }
 
     public Integer getUserID() {

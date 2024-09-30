@@ -239,7 +239,17 @@ public class PaymentController {
             model.addAttribute("selectedBankForPayment", selectedBankForPayment);
             paymentRequestDTO.setPaymentRefType(PaymentRefType.BANK);
             int bankID = bankDetailsService.finBankIDByBankName(selectedBankForPayment);
+
+            BankAccount userBankAccount = bankAccountService.findBankAccountForUserByBankID(user.getUserId(), bankID);
             paymentRequestDTO.setBankID(bankID);
+            paymentRequestDTO.setBankAccount(userBankAccount);
+
+            String accNoString = String.valueOf(userBankAccount.getAccountNo());
+            String last4DigitsOfBankAcc = accNoString.substring(accNoString.length() - 4);
+            String maskedAccNo = "**" + last4DigitsOfBankAcc;
+
+            paymentRequestDTO.setMaskedAccountNo(maskedAccNo);
+
             paymentRequestDTO.setUserID(user.getUserId());
         }
 
@@ -355,6 +365,14 @@ public class PaymentController {
                     DebitCardDetails debitCard = (DebitCardDetails) paymentService.createAndSaveCard(cardDTO, user, CardType.DEBIT, bankAccounts);
                     DebitCardSpecificDTO debitCardSpecificDTO = new DebitCardSpecificDTO();
                     debitCardSpecificDTO.setBankAccount(debitCard.getBankAccount());
+
+                    String accNoString = String.valueOf(debitCard.getBankAccount().getAccountNo());
+
+                    String last4DigitsOfBankAcc = accNoString.substring(accNoString.length() - 4);
+
+                    String maskedAccNo = "**" + last4DigitsOfBankAcc;
+                    debitCardSpecificDTO.setMaskedAccountNo(maskedAccNo);
+
                     paymentRequestDTO.setDebitCardSpecificDTO(debitCardSpecificDTO);
                 }
             }
@@ -367,6 +385,14 @@ public class PaymentController {
 
             DebitCardSpecificDTO debitCardSpecificDTO = new DebitCardSpecificDTO();
             debitCardSpecificDTO.setBankAccount(selectedCardDetails.getBankAccount());
+
+            String accNoString = String.valueOf(selectedCardDetails.getBankAccount().getAccountNo());
+
+            String last4DigitsOfBankAcc = accNoString.substring(accNoString.length() - 4);
+
+            String maskedAccNo = "**" + last4DigitsOfBankAcc;
+            debitCardSpecificDTO.setMaskedAccountNo(maskedAccNo);
+
             paymentRequestDTO.setDebitCardSpecificDTO(debitCardSpecificDTO);
 
         } else if(selectedCreditCardID != null) {

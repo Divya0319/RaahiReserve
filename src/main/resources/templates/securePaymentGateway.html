@@ -22,13 +22,20 @@
                     <span th:text="${paymentRequestDTO.cardCompany} + ' ' + ${paymentRequestDTO.paymentMode}"></span> ID check
                 </h2>
 
-                <h2 th:if="${paymentRequestDTO.cardNo != null && paymentRequestDTO.paymentMode.name() == 'CREDIT_CARD'}">
-                    <span th:text="${paymentRequestDTO.creditCardSpecificDTO.totalCreditLimit} + ' ' + ${paymentRequestDTO.creditCardSpecificDTO.availableCreditLimit}"></span> ID check
-                </h2>
+                <p th:if="${paymentRequestDTO.cardNo != null && paymentRequestDTO.paymentMode.name() == 'CREDIT_CARD'}">
+                    Available Credit: <strong th:text="${paymentRequestDTO.creditCardSpecificDTO.availableCreditLimit}"></strong>
+                    &nbsp; Total Credit: <strong th:text="${paymentRequestDTO.creditCardSpecificDTO.totalCreditLimit}"></strong>
+                </p>
 
-                <h2 th:if="${paymentRequestDTO.cardNo != null && paymentRequestDTO.paymentMode.name() == 'DEBIT_CARD'}">
-                    <span th:text="${paymentRequestDTO.debitCardSpecificDTO.bankAccount.accountNo} + ' ' + ${paymentRequestDTO.debitCardSpecificDTO.bankAccount.balance}"></span> ID check
-                </h2>
+                <p th:if="${paymentRequestDTO.cardNo != null && paymentRequestDTO.paymentMode.name() == 'DEBIT_CARD'}">
+                    Available Balance: <strong th:text="${paymentRequestDTO.debitCardSpecificDTO.bankAccount.balance}"></strong>
+                    &nbsp; Account ending with: <strong th:text="${paymentRequestDTO.debitCardSpecificDTO.maskedAccountNo}"></strong>
+                </p>
+
+                <p th:if="${paymentRequestDTO.bankAccount != null}">
+                    Available Balance: <strong th:text="${paymentRequestDTO.bankAccount.balance}"></strong>
+                    &nbsp; Account ending with: <strong th:text="${paymentRequestDTO.maskedAccountNo}"></strong>
+                </p>
 
             </div>
 
