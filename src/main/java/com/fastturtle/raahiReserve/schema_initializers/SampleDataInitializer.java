@@ -8,6 +8,7 @@ import com.fastturtle.raahiReserve.helpers.RandomSeatNumberProviderWithPreferenc
 import com.fastturtle.raahiReserve.helpers.payment.*;
 import com.fastturtle.raahiReserve.models.*;
 import com.fastturtle.raahiReserve.repositories.*;
+import com.fastturtle.raahiReserve.services.PaymentService;
 import jakarta.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -155,9 +156,10 @@ public class SampleDataInitializer {
     private final CardDetailRepository cardDetailRepository;
     private final BankAccountRepository bankAccountRepository;
     private final CardFactorySelector cardFactorySelector;
+    private final PaymentService paymentService;
 
 //    @Autowired
-    public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder, UserWalletRepository userWalletRepository, BankDetailRepository bankDetailRepository, BankDetailRepository bankDetailRepository1, CardDetailRepository cardDetailRepository, BankAccountRepository bankAccountRepository, CardFactorySelector cardFactorySelector) {
+    public SampleDataInitializer(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder, UserWalletRepository userWalletRepository, BankDetailRepository bankDetailRepository, BankDetailRepository bankDetailRepository1, CardDetailRepository cardDetailRepository, BankAccountRepository bankAccountRepository, CardFactorySelector cardFactorySelector, PaymentService paymentService) {
         this.busRepository = busRepository;
         this.routeRepository = routeRepository;
         this.busRouteRepository = busRouteRepository;
@@ -172,6 +174,7 @@ public class SampleDataInitializer {
         this.cardDetailRepository = cardDetailRepository;
         this.bankAccountRepository = bankAccountRepository;
         this.cardFactorySelector = cardFactorySelector;
+        this.paymentService = paymentService;
     }
 
     @PostConstruct
@@ -725,7 +728,7 @@ public class SampleDataInitializer {
 
         for(int i = 0; i < cardNumbers.length; i++) {
             CardDetails cardDetails;
-            CardDTO cardDTO = createCardDTO(cardNumbers[i], cardHolderNames[i], cardCompanies[i], expiryMonths[i], expiryYears[i], cVVs[i]);
+            CardDTO cardDTO = paymentService.createCardDTO(cardNumbers[i], cardHolderNames[i], expiryMonths[i], expiryYears[i], cVVs[i], cardCompanies[i]);
 
             if(cardTypes[i] == CardType.DEBIT) {
                 List<BankAccount> bankAccounts = bankAccountRepository.findAll();
@@ -741,17 +744,6 @@ public class SampleDataInitializer {
             cardDetailRepository.save(cardDetails);
 
         }
-    }
-
-    private CardDTO createCardDTO(String cardNumber, String cardHolderName, String cardCompany, Byte expiryMonth, Integer expiryYear, String cvv) {
-        CardDTO cardDTO = new CardDTO();
-        cardDTO.setCardNumber(cardNumber);
-        cardDTO.setCardHolderName(cardHolderName);
-        cardDTO.setCardCompany(cardCompany);
-        cardDTO.setExpiryMonth(expiryMonth);
-        cardDTO.setExpiryYear(expiryYear);
-        cardDTO.setCvv(cvv);
-        return cardDTO;
     }
 
     private void createAndSaveBankDetails() {

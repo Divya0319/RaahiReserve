@@ -22,8 +22,12 @@
                     <span th:text="${paymentRequestDTO.cardCompany} + ' ' + ${paymentRequestDTO.paymentMode}"></span> ID check
                 </h2>
 
-                <h2 th:if="${paymentRequestDTO.cardNo != null && paymentRequestDTO.paymentMode == 'CREDIT_CARD'}">
-                    <span th:text="${paymentRequestDTO.cardCompany} + ' ' + ${paymentRequestDTO.paymentMode}"></span> ID check
+                <h2 th:if="${paymentRequestDTO.cardNo != null && paymentRequestDTO.paymentMode.name() == 'CREDIT_CARD'}">
+                    <span th:text="${paymentRequestDTO.creditCardSpecificDTO.totalCreditLimit} + ' ' + ${paymentRequestDTO.creditCardSpecificDTO.availableCreditLimit}"></span> ID check
+                </h2>
+
+                <h2 th:if="${paymentRequestDTO.cardNo != null && paymentRequestDTO.paymentMode.name() == 'DEBIT_CARD'}">
+                    <span th:text="${paymentRequestDTO.debitCardSpecificDTO.bankAccount.accountNo} + ' ' + ${paymentRequestDTO.debitCardSpecificDTO.bankAccount.balance}"></span> ID check
                 </h2>
 
             </div>

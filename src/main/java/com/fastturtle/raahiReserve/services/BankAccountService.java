@@ -19,4 +19,8 @@ public class BankAccountService {
     public List<BankAccount> findBankAccountsForUser(Integer userId) {
         return bankAccountRepository.findBankAccountByUser_UserId(userId);
     }
+
+    public List<BankAccount> findAll() {
+        return bankAccountRepository.findAll();
+    }
 }

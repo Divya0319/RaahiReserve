@@ -122,27 +122,7 @@ public class PaymentService {
 
         CardDetails cardDetails = cardDetailRepository.findByCardNumber(dto.getCardNo());
 
-        if(cardDetails == null) {
-            User user = userRepository.findById(dto.getUserID()).get();
-
-            if(cardType == CardType.DEBIT) {
-                List<BankAccount> bankAccounts = bankAccountRepository.findAll();
-                CardDTO cardDTO = convertToCardDTO(dto);
-                cardDetails = cardFactorySelector.createCard(cardDTO, cardType, bankAccounts);
-
-            } else {
-                List<BankDetails> banks = bankDetailRepository.findAll();
-                CardDTO cardDTO = convertToCardDTO(dto);
-                cardDetails = cardFactorySelector.createCard(cardDTO, cardType, banks);
-
-            }
-            cardDetails.setLinkedUser(user);
-            cardDetailRepository.save(cardDetails);
-            payment.setPaymentReferenceId(cardDetails.getCardId());
-
-        } else {
-            payment.setPaymentReferenceId(cardDetails.getCardId());
-        }
+        payment.setPaymentReferenceId(cardDetails.getCardId());
 
         if(dto.getAction().equals("completed")) {
             boolean isPaymentCompleted = false;
@@ -272,4 +252,24 @@ public class PaymentService {
         return response;
 
     }
+
+    public CardDetails createAndSaveCard(CardDTO cardDTO, User user, CardType cardType, List<?> additionalData) {
+
+        CardDetails cardDetails = cardFactorySelector.createCard(cardDTO, cardType, additionalData);
+        cardDetails.setLinkedUser(user);
+
+        return cardDetailRepository.save(cardDetails);
+    }
+
+    public CardDTO createCardDTO(String cardNumber, String cardHolderName, Byte expiryMonth, Integer expiryYear, String cvv, String cardCompany) {
+        CardDTO cardDTO = new CardDTO();
+        cardDTO.setCardNumber(cardNumber);
+        cardDTO.setCardCompany(cardCompany);
+        cardDTO.setCardHolderName(cardHolderName);
+        cardDTO.setExpiryMonth(expiryMonth);
+        cardDTO.setExpiryYear(expiryYear);
+        cardDTO.setCvv(cvv);
+        return cardDTO;
+    }
+
 }

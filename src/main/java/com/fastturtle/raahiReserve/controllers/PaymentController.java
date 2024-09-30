@@ -1,15 +1,13 @@
 package com.fastturtle.raahiReserve.controllers;
 
-import com.fastturtle.raahiReserve.dtos.CreditCardSpecificDTO;
-import com.fastturtle.raahiReserve.dtos.PaymentRequest;
-import com.fastturtle.raahiReserve.dtos.PaymentRequestDTO;
+import com.fastturtle.raahiReserve.dtos.*;
 import com.fastturtle.raahiReserve.enums.CardType;
 import com.fastturtle.raahiReserve.enums.PaymentRefType;
+import com.fastturtle.raahiReserve.factories.CardFactorySelector;
 import com.fastturtle.raahiReserve.helpers.CardUtils;
 import com.fastturtle.raahiReserve.helpers.DateUtils;
 import com.fastturtle.raahiReserve.models.*;
 import com.fastturtle.raahiReserve.enums.PaymentMethod;
-import com.fastturtle.raahiReserve.repositories.BankAccountRepository;
 import com.fastturtle.raahiReserve.services.*;
 import com.fastturtle.raahiReserve.validators.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +39,7 @@ public class PaymentController {
     private User user;
 
     @Autowired
-    public PaymentController(PaymentService paymentService, BookingService bookingService, BankDetailsService bankDetailsService, UserService userService, CardDetailsService cardDetailsService, BankAccountRepository bankAccountRepository, BankAccountService bankAccountService) {
+    public PaymentController(PaymentService paymentService, BookingService bookingService, BankDetailsService bankDetailsService, UserService userService, CardDetailsService cardDetailsService, BankAccountService bankAccountService, CardFactorySelector cardFactorySelector) {
         this.paymentService = paymentService;
         this.bookingService = bookingService;
         this.bankDetailsService = bankDetailsService;
@@ -319,7 +317,7 @@ public class PaymentController {
             if(!cardCompany.equals("Invalid Card")) {
                 paymentRequestDTO.setPaymentRefType(PaymentRefType.CARD);
                 paymentRequestDTO.setCardNo(cardNumber);
-                paymentRequestDTO.setCardCompany(CardUtils.getCardCompany(cardNumber));
+                paymentRequestDTO.setCardCompany(cardCompany);
                 paymentRequestDTO.setCardHolderName(cardHolderName);
                 paymentRequestDTO.setExpiryMonth(Byte.valueOf(expiryMonth));
                 paymentRequestDTO.setExpiryYear(Integer.valueOf(expiryYear));
@@ -327,29 +325,61 @@ public class PaymentController {
                 paymentRequestDTO.setUserID(user.getUserId());
 
                 if(paymentMode == PaymentMethod.CREDIT_CARD) {
-                    CardUtils cardUtils = new CardUtils(cardCompany);
-                    long totalCreditLimit = cardUtils.getCreditLimit();
-                    CreditCardSpecificDTO creditCardSpecificDTO = new CreditCardSpecificDTO();
-                    creditCardSpecificDTO.setTotalCreditLimit(totalCreditLimit);
-                    creditCardSpecificDTO.setAvailableCreditLimit(totalCreditLimit - (long)(0.1 * totalCreditLimit));
-                    paymentRequestDTO.setCreditCardSpecificDTO(creditCardSpecificDTO);
-                } else if(paymentMode == PaymentMethod.DEBIT_CARD) {
+                    CardDTO cardDTO = paymentService.createCardDTO(
+                            cardNumber,
+                            cardHolderName,
+                            Byte.valueOf(expiryMonth),
+                            Integer.valueOf(expiryYear),
+                            cvv,
+                            cardCompany);
 
+                    List<BankDetails> banks = bankDetailsService.getAllBankDetails();
+                    CreditCardDetails creditCard = (CreditCardDetails) paymentService.createAndSaveCard(cardDTO, user, CardType.CREDIT, banks);
+
+                    CreditCardSpecificDTO creditCardSpecificDTO = new CreditCardSpecificDTO();
+                    creditCardSpecificDTO.setTotalCreditLimit(creditCard.getTotalCreditLimit());
+                    creditCardSpecificDTO.setAvailableCreditLimit(creditCard.getAvailableCreditLimit());
+                    paymentRequestDTO.setCreditCardSpecificDTO(creditCardSpecificDTO);
+
+
+                } else if(paymentMode == PaymentMethod.DEBIT_CARD) {
+                    CardDTO cardDTO = paymentService.createCardDTO(
+                            cardNumber,
+                            cardHolderName,
+                            Byte.valueOf(expiryMonth),
+                            Integer.valueOf(expiryYear),
+                            cvv,
+                            cardCompany);
+
+                    List<BankAccount> bankAccounts = bankAccountService.findAll();
+                    DebitCardDetails debitCard = (DebitCardDetails) paymentService.createAndSaveCard(cardDTO, user, CardType.DEBIT, bankAccounts);
+                    DebitCardSpecificDTO debitCardSpecificDTO = new DebitCardSpecificDTO();
+                    debitCardSpecificDTO.setBankAccount(debitCard.getBankAccount());
+                    paymentRequestDTO.setDebitCardSpecificDTO(debitCardSpecificDTO);
                 }
             }
         } else if(selectedDebitCardID != null) {
-            CardDetails selectedCardDetails = cardDetailsService.findByID(selectedDebitCardID);
+            DebitCardDetails selectedCardDetails = (DebitCardDetails) cardDetailsService.findByID(selectedDebitCardID);
 
             paymentRequestDTO.setPaymentRefType(PaymentRefType.CARD);
             paymentRequestDTO.setCardNo(selectedCardDetails.getCardNumber());
             paymentRequestDTO.setCardCompany(selectedCardDetails.getCardCompany());
+
+            DebitCardSpecificDTO debitCardSpecificDTO = new DebitCardSpecificDTO();
+            debitCardSpecificDTO.setBankAccount(selectedCardDetails.getBankAccount());
+            paymentRequestDTO.setDebitCardSpecificDTO(debitCardSpecificDTO);
 
         } else if(selectedCreditCardID != null) {
-            CardDetails selectedCardDetails = cardDetailsService.findByID(selectedCreditCardID);
+            CreditCardDetails selectedCardDetails = (CreditCardDetails) cardDetailsService.findByID(selectedCreditCardID);
 
             paymentRequestDTO.setPaymentRefType(PaymentRefType.CARD);
             paymentRequestDTO.setCardNo(selectedCardDetails.getCardNumber());
             paymentRequestDTO.setCardCompany(selectedCardDetails.getCardCompany());
+
+            CreditCardSpecificDTO creditCardSpecificDTO = new CreditCardSpecificDTO();
+            creditCardSpecificDTO.setTotalCreditLimit(selectedCardDetails.getTotalCreditLimit());
+            creditCardSpecificDTO.setAvailableCreditLimit(selectedCardDetails.getAvailableCreditLimit());
+            paymentRequestDTO.setCreditCardSpecificDTO(creditCardSpecificDTO);
 
 
         } else if(paymentMode == PaymentMethod.WALLET) {

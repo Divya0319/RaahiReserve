@@ -91,7 +91,7 @@
                 <span th:text="${failureMessage}"></span>
             </div>
 
-            <div class="container mt-4">
+            <div th:if="${bookingSummary != null}" class="container mt-4">
                 <p class="d-flex justify-content-end"><strong>Booking Summary</strong></p>
 
                 <!-- Aisle Seats Section -->
