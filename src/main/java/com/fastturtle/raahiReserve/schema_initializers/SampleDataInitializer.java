@@ -26,7 +26,7 @@ public class SampleDataInitializer {
     private final ExecutorService executorService;
 
     @Autowired
-    public SampleDataInitializer(InitialDataService initialDataService, BusRepository busRepository, BusSeatRepository busSeatRepository, @Qualifier("sampleDataInitializerExecutor") ExecutorService executorService) {
+    public SampleDataInitializer(InitialDataService initialDataService, BusRepository busRepository, BusSeatRepository busSeatRepository, ExecutorService executorService) {
         this.initialDataService = initialDataService;
         this.busRepository = busRepository;
         this.busSeatRepository = busSeatRepository;
