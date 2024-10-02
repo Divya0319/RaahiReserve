@@ -8,8 +8,6 @@ import com.fastturtle.raahiReserve.services.InitialDataService;
 import jakarta.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutionException;
@@ -36,7 +34,6 @@ public class SampleDataInitializer {
     @PostConstruct
     public void init() {
 
-//        initialDataService.createAndSaveBusesAndBusRoutes();
         executorService.submit(initialDataService::createAndSaveBusesAndBusRoutes);
 
         executorService.shutdown();

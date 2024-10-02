@@ -9,7 +9,6 @@ import com.fastturtle.raahiReserve.helpers.payment.*;
 import com.fastturtle.raahiReserve.models.*;
 import com.fastturtle.raahiReserve.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -183,15 +182,6 @@ public class InitialDataService {
 
     public void createAndSaveBusesAndBusRoutes() {
         for (int i = 0; i < busNos.length; i++) {
-//            Bus bus = new Bus(busNos[i], busCompanyNames[i], totalSeats[i], availableSeats[i],
-//                    busType[i], busTiming[i]);
-//            busRepository.save(bus);
-//
-//            Route route = new Route(source[i], destination[i]);
-//            routeRepository.save(route);
-//
-//            BusRoute busRoute = new BusRoute(bus, route, directions[i]);
-//            busRouteRepository.save(busRoute);
             final int index = i;
 
             executorService.submit(() -> busRouteService.createAndSaveSingleBusAndRoute(

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+
+    <Appenders>
+        <!-- Console appender configuration -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="com.projects.spring_web_service" level="DEBUG" additivity="false" includeLocation="true">
+            <AppenderRef ref="Console" level="INFO"/>
+        </Logger>
+
+        <Root level="INFO" includeLocation="true">
+            <AppenderRef ref="Console" level="INFO"/>
+        </Root>
+    </Loggers>
+</Configuration>
