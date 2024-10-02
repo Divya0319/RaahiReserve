@@ -9,6 +9,10 @@ import com.fastturtle.raahiReserve.helpers.payment.*;
 import com.fastturtle.raahiReserve.models.*;
 import com.fastturtle.raahiReserve.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -154,9 +158,12 @@ public class InitialDataService {
     private final BankAccountRepository bankAccountRepository;
     private final CardFactorySelector cardFactorySelector;
     private final PaymentService paymentService;
+    private final BusRouteService busRouteService;
+
+    private final TaskExecutor taskExecutor;
 
     @Autowired
-    public InitialDataService(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder, UserWalletRepository userWalletRepository, BankDetailRepository bankDetailRepository, CardDetailRepository cardDetailRepository, BankAccountRepository bankAccountRepository, CardFactorySelector cardFactorySelector, PaymentService paymentService) {
+    public InitialDataService(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder, UserWalletRepository userWalletRepository, BankDetailRepository bankDetailRepository, CardDetailRepository cardDetailRepository, BankAccountRepository bankAccountRepository, CardFactorySelector cardFactorySelector, PaymentService paymentService, BusRouteService busRouteService, @Qualifier("taskExecutor") TaskExecutor taskExecutor) {
         this.busRepository = busRepository;
         this.routeRepository = routeRepository;
         this.busRouteRepository = busRouteRepository;
@@ -172,21 +179,43 @@ public class InitialDataService {
         this.bankAccountRepository = bankAccountRepository;
         this.cardFactorySelector = cardFactorySelector;
         this.paymentService = paymentService;
+        this.busRouteService = busRouteService;
+        this.taskExecutor = taskExecutor;
+    }
+
+    @Async
+    public void createAndSaveBusesAndBusRoutes() {
+        for (int i = 0; i < busNos.length; i++) {
+//            Bus bus = new Bus(busNos[i], busCompanyNames[i], totalSeats[i], availableSeats[i],
+//                    busType[i], busTiming[i]);
+//            busRepository.save(bus);
+//
+//            Route route = new Route(source[i], destination[i]);
+//            routeRepository.save(route);
+//
+//            BusRoute busRoute = new BusRoute(bus, route, directions[i]);
+//            busRouteRepository.save(busRoute);
+            final int index = i;
+
+            taskExecutor.execute(() -> busRouteService.createAndSaveSingleBusAndRoute(
+                    index, busNos, busCompanyNames, totalSeats, availableSeats, busType, busTiming,
+                    source, destination, directions, busRepository, routeRepository, busRouteRepository));
+
+
+        }
     }
 
     @Transactional
-    public void createAndSaveBusesAndBusRoutes() {
-        for (int i = 0; i < busNos.length; i++) {
-            Bus bus = new Bus(busNos[i], busCompanyNames[i], totalSeats[i], availableSeats[i],
-                    busType[i], busTiming[i]);
-            busRepository.save(bus);
+    public void createAndSaveSingleBusAndBusRoute(int i) {
+        Bus bus = new Bus(busNos[i], busCompanyNames[i], totalSeats[i], availableSeats[i],
+                busType[i], busTiming[i]);
+        busRepository.save(bus);
 
-            Route route = new Route(source[i], destination[i]);
-            routeRepository.save(route);
+        Route route = new Route(source[i], destination[i]);
+        routeRepository.save(route);
 
-            BusRoute busRoute = new BusRoute(bus, route, directions[i]);
-            busRouteRepository.save(busRoute);
-        }
+        BusRoute busRoute = new BusRoute(bus, route, directions[i]);
+        busRouteRepository.save(busRoute);
     }
 
     @Transactional
