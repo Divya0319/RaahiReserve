@@ -23,21 +23,23 @@ public class SampleDataInitializer {
     private final InitialDataService initialDataService;
     private final BusRepository busRepository;
     private final BusSeatRepository busSeatRepository;
-    private final TaskExecutor taskExecutor;
+    private final ExecutorService executorService;
 
     @Autowired
-    public SampleDataInitializer(InitialDataService initialDataService, BusRepository busRepository, BusSeatRepository busSeatRepository, @Qualifier("taskExecutor") TaskExecutor taskExecutor) {
+    public SampleDataInitializer(InitialDataService initialDataService, BusRepository busRepository, BusSeatRepository busSeatRepository, @Qualifier("sampleDataInitializerExecutor") ExecutorService executorService) {
         this.initialDataService = initialDataService;
         this.busRepository = busRepository;
         this.busSeatRepository = busSeatRepository;
-        this.taskExecutor = taskExecutor;
+        this.executorService = executorService;
     }
 
     @PostConstruct
     public void init() {
 
 //        initialDataService.createAndSaveBusesAndBusRoutes();
-        taskExecutor.execute(initialDataService::createAndSaveBusesAndBusRoutes);
+        executorService.submit(initialDataService::createAndSaveBusesAndBusRoutes);
+
+        executorService.shutdown();
 
     }
 
