@@ -8,6 +8,7 @@ import com.fastturtle.raahiReserve.helpers.RandomSeatNumberProviderWithPreferenc
 import com.fastturtle.raahiReserve.helpers.payment.*;
 import com.fastturtle.raahiReserve.models.*;
 import com.fastturtle.raahiReserve.repositories.*;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
+@Log4j2
 @Service
 public class InitialDataService {
 
@@ -156,10 +159,9 @@ public class InitialDataService {
     private final BankAccountRepository bankAccountRepository;
     private final CardFactorySelector cardFactorySelector;
     private final PaymentService paymentService;
-    private final BusRouteService busRouteService;
 
     @Autowired
-    public InitialDataService(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder, UserWalletRepository userWalletRepository, BankDetailRepository bankDetailRepository, CardDetailRepository cardDetailRepository, BankAccountRepository bankAccountRepository, CardFactorySelector cardFactorySelector, PaymentService paymentService, BusRouteService busRouteService) {
+    public InitialDataService(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder, UserWalletRepository userWalletRepository, BankDetailRepository bankDetailRepository, CardDetailRepository cardDetailRepository, BankAccountRepository bankAccountRepository, CardFactorySelector cardFactorySelector, PaymentService paymentService) {
         this.busRepository = busRepository;
         this.routeRepository = routeRepository;
         this.busRouteRepository = busRouteRepository;
@@ -175,23 +177,44 @@ public class InitialDataService {
         this.bankAccountRepository = bankAccountRepository;
         this.cardFactorySelector = cardFactorySelector;
         this.paymentService = paymentService;
-        this.busRouteService = busRouteService;
 
     }
 
+    @Transactional
     public void createAndSaveBusesAndBusRoutes() {
         ExecutorService executorService = Executors.newFixedThreadPool(busNos.length);
         for (int i = 0; i < busNos.length; i++) {
             final int index = i;
 
-            executorService.submit(() -> busRouteService.createAndSaveSingleBusAndRoute(
-                    index, busNos, busCompanyNames, totalSeats, availableSeats, busType, busTiming,
-                    source, destination, directions, busRepository, routeRepository, busRouteRepository));
+            executorService.submit(() -> {
+                Bus bus = new Bus(busNos[index], busCompanyNames[index], totalSeats[index], availableSeats[index],
+                        busType[index], busTiming[index]);
+                busRepository.save(bus);
+
+                log.info("Bus {} has been created", bus.getBusNo());
+
+                Route route = new Route(source[index], destination[index]);
+                routeRepository.save(route);
+
+                log.info("Route from {} to {} has been created", route.getSource(), route.getDestination());
+
+                BusRoute busRoute = new BusRoute(bus, route, directions[index]);
+                busRouteRepository.save(busRoute);
+
+                log.info("Bus Route for {} has been created", busRoute.getBus().getBusNo());
+            });
 
 
         }
 
         executorService.shutdown();
+
+        try {
+            executorService.awaitTermination(5, TimeUnit.MINUTES);
+        } catch(InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
+
     }
 
     @Transactional
@@ -269,16 +292,32 @@ public class InitialDataService {
 
         ExecutorService executorService = Executors.newFixedThreadPool(busNos.length);
 
+        // Create and save Bus in parallel
         for (int i = 0; i < busNos.length; i++) {
-            // Create and save Bus
-            Bus bus = new Bus(busNos[i], busCompanyNames[i], totalSeats[i], availableSeats[i],
-                    busType[i], busTiming[i]);
-            busRepository.save(bus);
+            final int index = i;
 
+            executorService.submit(() -> {
+                Bus bus = new Bus(busNos[index], busCompanyNames[index], totalSeats[index], availableSeats[index],
+                        busType[index], busTiming[index]);
+                busRepository.save(bus);
+
+                log.info("Another Bus {} has been created", bus.getBusNo());
+            });
+
+        }
+
+        executorService.shutdown();
+
+        try {
+            executorService.awaitTermination(5, TimeUnit.MINUTES);
+        } catch(InterruptedException ex) {
+            Thread.currentThread().interrupt();
         }
 
         List<Route> routes = routeRepository.findAll();
         List<Bus> buses = busRepository.findAll();
+
+        ExecutorService routeExecutorService = Executors.newFixedThreadPool(buses.size());
 
         BusRoute[] busRoutes = new BusRoute[10];
 
@@ -295,15 +334,36 @@ public class InitialDataService {
         busRoutes[9] = new BusRoute(buses.get(14), routes.get(2), directions[9]);
 
         for (int i = 0; i < 10; i++) {
-            busRouteRepository.save(busRoutes[i]);
+            final int index = i;
+            routeExecutorService.submit(() -> {
+                busRouteRepository.save(busRoutes[index]);
+                log.info("Another Bus Route for {} has been created", busRoutes[index].getBus().getBusNo());
+            });
+
+        }
+
+        routeExecutorService.shutdown();
+
+        try {
+            routeExecutorService.awaitTermination(5, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
     @Transactional
     public void createAndSaveUsers() {
+
+        ExecutorService userExecutorService = Executors.newFixedThreadPool(usernames.length);
         for(int i = 0; i < usernames.length; i++) {
-            User user = new User(usernames[i], fullNames[i], passwordEncoder.encode(passwords[i]), emails[i], userAges[i], userGenders[i], phNos[i]);
-            userRepository.save(user);
+            final int index = i;
+            userExecutorService.submit(() -> {
+                User user = new User(usernames[index], fullNames[index], passwordEncoder.encode(passwords[index]), emails[index], userAges[index], userGenders[index], phNos[index]);
+                userRepository.save(user);
+
+                log.info("User {} has been created", user.getFullName());
+            });
+
         }
     }
 
@@ -318,20 +378,25 @@ public class InitialDataService {
         float nonAcWindowCost = 300.0f;
         float nonAcAisleCost = 100.0f;
 
+        ExecutorService seatExecutorService = Executors.newFixedThreadPool(6);
+
         for(BusType busType :  BusType.values()) {
             for(SeatType seatType : SeatType.values()) {
-                float finalCost = switch (busType) {
-                    case SLEEPER -> (seatType == SeatType.WINDOW) ? sleeperWindowCost : sleeperAisleCost;
-                    case AC -> (seatType == SeatType.WINDOW) ? acWindowCost : acAisleCost;
-                    case NON_AC -> (seatType == SeatType.WINDOW) ? nonAcWindowCost : nonAcAisleCost;
-                };
+                seatExecutorService.submit(() -> {
+                    float finalCost = switch (busType) {
+                        case SLEEPER -> (seatType == SeatType.WINDOW) ? sleeperWindowCost : sleeperAisleCost;
+                        case AC -> (seatType == SeatType.WINDOW) ? acWindowCost : acAisleCost;
+                        case NON_AC -> (seatType == SeatType.WINDOW) ? nonAcWindowCost : nonAcAisleCost;
+                    };
 
-                SeatCost seatCost = new SeatCost();
-                seatCost.setBusType(busType);
-                seatCost.setSeatType(seatType);
-                seatCost.setCost(finalCost);
+                    SeatCost seatCost = new SeatCost();
+                    seatCost.setBusType(busType);
+                    seatCost.setSeatType(seatType);
+                    seatCost.setCost(finalCost);
 
-                seatCostRepository.save(seatCost);
+                    seatCostRepository.save(seatCost);
+                });
+
 
             }
         }
