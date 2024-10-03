@@ -158,8 +158,6 @@ public class InitialDataService {
     private final PaymentService paymentService;
     private final BusRouteService busRouteService;
 
-    private final ExecutorService executorService;
-
     @Autowired
     public InitialDataService(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder, UserWalletRepository userWalletRepository, BankDetailRepository bankDetailRepository, CardDetailRepository cardDetailRepository, BankAccountRepository bankAccountRepository, CardFactorySelector cardFactorySelector, PaymentService paymentService, BusRouteService busRouteService) {
         this.busRepository = busRepository;
@@ -178,10 +176,11 @@ public class InitialDataService {
         this.cardFactorySelector = cardFactorySelector;
         this.paymentService = paymentService;
         this.busRouteService = busRouteService;
-        this.executorService = Executors.newFixedThreadPool(10);
+
     }
 
     public void createAndSaveBusesAndBusRoutes() {
+        ExecutorService executorService = Executors.newFixedThreadPool(busNos.length);
         for (int i = 0; i < busNos.length; i++) {
             final int index = i;
 
@@ -193,19 +192,6 @@ public class InitialDataService {
         }
 
         executorService.shutdown();
-    }
-
-    @Transactional
-    public void createAndSaveSingleBusAndBusRoute(int i) {
-        Bus bus = new Bus(busNos[i], busCompanyNames[i], totalSeats[i], availableSeats[i],
-                busType[i], busTiming[i]);
-        busRepository.save(bus);
-
-        Route route = new Route(source[i], destination[i]);
-        routeRepository.save(route);
-
-        BusRoute busRoute = new BusRoute(bus, route, directions[i]);
-        busRouteRepository.save(busRoute);
     }
 
     @Transactional
@@ -280,6 +266,8 @@ public class InitialDataService {
                 Direction.UP,
                 Direction.DOWN
         };
+
+        ExecutorService executorService = Executors.newFixedThreadPool(busNos.length);
 
         for (int i = 0; i < busNos.length; i++) {
             // Create and save Bus

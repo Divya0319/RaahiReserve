@@ -43,4 +43,14 @@ public class BusRouteService {
 
         log.info("Bus Route for {} has been created", busRoute.getBus().getBusNo());
     }
+
+    @Transactional
+    public void createAndInsert10MoreBuses() {
+            // Create and save Bus
+        Bus bus = new Bus(busNos[i], busCompanyNames[i], totalSeats[i], availableSeats[i],
+                busType[i], busTiming[i]);
+        busRepository.save(bus);
+
+
+    }
 }
