@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Configuration
-public class ExecutorServiceConfig {
+public class ExecutorServicePrototypeImpl implements ExecutorServicePrototype {
 
     @Bean
     @Scope("prototype")
@@ -16,4 +16,8 @@ public class ExecutorServiceConfig {
         return Executors.newFixedThreadPool(5);
     }
 
+    @Override
+    public ExecutorService clone() {
+        return null;
+    }
 }
