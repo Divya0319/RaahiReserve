@@ -24,6 +24,10 @@ public class SampleDataInitializer {
         initialDataService.createAndSaveBusesAndBusRoutes();
         initialDataService.createAndInsert10MoreBuses();
         initialDataService.createAndSaveUsers();
+        initialDataService.createAndSaveSeatCosts();
+        initialDataService.createAndSaveBankDetails();
+        initialDataService.createAndSaveBankAccounts();
+        initialDataService.assignUsersToBankAccounts();
 
     }
 

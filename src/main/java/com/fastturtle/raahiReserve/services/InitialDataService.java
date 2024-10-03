@@ -20,6 +20,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -191,17 +192,17 @@ public class InitialDataService {
                         busType[index], busTiming[index]);
                 busRepository.save(bus);
 
-                log.info("Bus {} has been created", bus.getBusNo());
+//                log.info("Bus {} has been created", bus.getBusNo());
 
                 Route route = new Route(source[index], destination[index]);
                 routeRepository.save(route);
 
-                log.info("Route from {} to {} has been created", route.getSource(), route.getDestination());
+//                log.info("Route from {} to {} has been created", route.getSource(), route.getDestination());
 
                 BusRoute busRoute = new BusRoute(bus, route, directions[index]);
                 busRouteRepository.save(busRoute);
 
-                log.info("Bus Route for {} has been created", busRoute.getBus().getBusNo());
+//                log.info("Bus Route for {} has been created", busRoute.getBus().getBusNo());
             });
 
 
@@ -301,7 +302,7 @@ public class InitialDataService {
                         busType[index], busTiming[index]);
                 busRepository.save(bus);
 
-                log.info("Another Bus {} has been created", bus.getBusNo());
+//                log.info("Another Bus {} has been created", bus.getBusNo());
             });
 
         }
@@ -337,7 +338,7 @@ public class InitialDataService {
             final int index = i;
             routeExecutorService.submit(() -> {
                 busRouteRepository.save(busRoutes[index]);
-                log.info("Another Bus Route for {} has been created", busRoutes[index].getBus().getBusNo());
+//                log.info("Another Bus Route for {} has been created", busRoutes[index].getBus().getBusNo());
             });
 
         }
@@ -361,7 +362,7 @@ public class InitialDataService {
                 User user = new User(usernames[index], fullNames[index], passwordEncoder.encode(passwords[index]), emails[index], userAges[index], userGenders[index], phNos[index]);
                 userRepository.save(user);
 
-                log.info("User {} has been created", user.getFullName());
+//                log.info("User {} has been created", user.getFullName());
             });
 
         }
@@ -382,23 +383,32 @@ public class InitialDataService {
 
         for(BusType busType :  BusType.values()) {
             for(SeatType seatType : SeatType.values()) {
+                final BusType finalBusType = busType;
+                final SeatType finalSeatType = seatType;
                 seatExecutorService.submit(() -> {
-                    float finalCost = switch (busType) {
-                        case SLEEPER -> (seatType == SeatType.WINDOW) ? sleeperWindowCost : sleeperAisleCost;
-                        case AC -> (seatType == SeatType.WINDOW) ? acWindowCost : acAisleCost;
-                        case NON_AC -> (seatType == SeatType.WINDOW) ? nonAcWindowCost : nonAcAisleCost;
+                    float finalCost = switch (finalBusType) {
+                        case SLEEPER -> (finalSeatType == SeatType.WINDOW) ? sleeperWindowCost : sleeperAisleCost;
+                        case AC -> (finalSeatType == SeatType.WINDOW) ? acWindowCost : acAisleCost;
+                        case NON_AC -> (finalSeatType == SeatType.WINDOW) ? nonAcWindowCost : nonAcAisleCost;
                     };
 
                     SeatCost seatCost = new SeatCost();
-                    seatCost.setBusType(busType);
-                    seatCost.setSeatType(seatType);
+                    seatCost.setBusType(finalBusType);
+                    seatCost.setSeatType(finalSeatType);
                     seatCost.setCost(finalCost);
 
                     seatCostRepository.save(seatCost);
                 });
 
-
             }
+        }
+
+        seatExecutorService.shutdown();
+
+        try {
+            seatExecutorService.awaitTermination(5, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -430,9 +440,23 @@ public class InitialDataService {
                 "GRMN1234567890123456"
         };
 
+        ExecutorService bankExecutorService = Executors.newFixedThreadPool(bankNames.length);
+
         for(int i = 0; i < bankNames.length; i++) {
-            BankDetails bankDetails = new BankDetails(bankNames[i], bankCodes[i]);
-            bankDetailRepository.save(bankDetails);
+            final int index = i;
+            bankExecutorService.submit(() -> {
+                BankDetails bankDetails = new BankDetails(bankNames[index], bankCodes[index]);
+                bankDetailRepository.save(bankDetails);
+            });
+
+        }
+
+        bankExecutorService.shutdown();
+
+        try {
+            bankExecutorService.awaitTermination(5, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -524,56 +548,88 @@ public class InitialDataService {
                 "Kurud",
         };
 
-        int[] bankDetailsFK = new int[]{
-                1,2,3,4,5,
-                2,6,8,7,9,
-                1,8,2,4,7,
-                3,5,9,10,6
+        String[] bankCodesPrefix = new String[]{
+                "HDFC","AXIS","SBI","ICICI","BOB",
+                "AXIS","CANARA","YES","PNB","ALHBD",
+                "HDFC","YES","AXIS","ICICI","PNB",
+                "SBI","BOB","ALHBD","GRMN","CANARA"
         };
 
+        ExecutorService bankAccountExecutorService = Executors.newFixedThreadPool(accountNos.length);
+
         for(int i = 0; i < accountNos.length; i++) {
-            BankDetails bankDetails = bankDetailRepository.findById(bankDetailsFK[i]).get();
-            BankAccount bankAccount = new BankAccount(
-                    accountNos[i], balances[i], ifscCodes[i], branchCodes[i], branchNames[i]
-            );
-            bankAccount.setBankDetails(bankDetails);
-            bankAccountRepository.save(bankAccount);
+            final int index = i;
+            bankAccountExecutorService.submit(() -> {
+
+                BankDetails bankDetails = bankDetailRepository.findByBankCodeStartingWith(bankCodesPrefix[index]);
+                BankAccount bankAccount = new BankAccount(
+                        accountNos[index], balances[index], ifscCodes[index], branchCodes[index], branchNames[index]
+                );
+                bankAccount.setBankDetails(bankDetails);
+                bankAccountRepository.save(bankAccount);
+            });
 
         }
 
-        assignUsersToBankAccounts();
+        bankAccountExecutorService.shutdown();
+
+        try {
+            bankAccountExecutorService.awaitTermination(5, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
     }
 
+    @Transactional
     public void assignUsersToBankAccounts() {
-        List<BankAccount> bankAccounts = bankAccountRepository.findAll();
+        List<String> ifscCodes = Arrays.asList(
+                "HDFC8459375", "AXIS4305392", "PNB6482620", "CANARA6419926",
+                "AXIS4875392", "CANARA6483926", "YES6483549", "BOB6545947",
+                "SBI4858363", "YES6273549", "ICICI4399438", "ALHBD7495733",
+                "ICICI4759438", "PNB6483520", "HDFC8452075", "GRMN6483925",
+                "BOB6583947", "ALHBD7305733", "AXIS4065392", "SBI4831363"
+        );
 
-        bankAccounts.get(0).setUser(userRepository.findById(1).get());
-        bankAccounts.get(5).setUser(userRepository.findById(1).get());
-        bankAccounts.get(14).setUser(userRepository.findById(1).get());
-        bankAccounts.get(19).setUser(userRepository.findById(1).get());
+        // List of usernames for corresponding bank accounts
+        List<String> userNames = Arrays.asList(
+                "JohnDoe", "JohnDoe", "JohnDoe", "JohnDoe",
+                "AliceSmith", "AliceSmith", "AliceSmith", "AliceSmith",
+                "BobJohnson", "BobJohnson", "BobJohnson", "BobJohnson",
+                "EmilyBrown", "EmilyBrown", "EmilyBrown", "EmilyBrown",
+                "MichaelDavis", "MichaelDavis", "MichaelDavis", "MichaelDavis"
+        );
 
-        bankAccounts.get(1).setUser(userRepository.findById(2).get());
-        bankAccounts.get(6).setUser(userRepository.findById(2).get());
-        bankAccounts.get(11).setUser(userRepository.findById(2).get());
-        bankAccounts.get(16).setUser(userRepository.findById(2).get());
+        ExecutorService userAssigningExecutorService = Executors.newFixedThreadPool(ifscCodes.size());
 
-        bankAccounts.get(2).setUser(userRepository.findById(3).get());
-        bankAccounts.get(7).setUser(userRepository.findById(3).get());
-        bankAccounts.get(13).setUser(userRepository.findById(3).get());
-        bankAccounts.get(17).setUser(userRepository.findById(3).get());
+        // Looping through the ifsc list and assign users based on them
+        for (int i = 0; i < ifscCodes.size(); i++) {
+            final int index = i;
+            userAssigningExecutorService.submit(() -> {
+                String ifsc = ifscCodes.get(index);
+                String userName = userNames.get(index);
 
-        bankAccounts.get(3).setUser(userRepository.findById(4).get());
-        bankAccounts.get(8).setUser(userRepository.findById(4).get());
-        bankAccounts.get(10).setUser(userRepository.findById(4).get());
-        bankAccounts.get(18).setUser(userRepository.findById(4).get());
+                // Fetching the bank account by IFSC
+                BankAccount bankAccount = bankAccountRepository.findByIfscCode(ifsc);
 
-        bankAccounts.get(4).setUser(userRepository.findById(5).get());
-        bankAccounts.get(9).setUser(userRepository.findById(5).get());
-        bankAccounts.get(12).setUser(userRepository.findById(5).get());
-        bankAccounts.get(15).setUser(userRepository.findById(5).get());
+                // Fetching the user by username
+                User user = userRepository.findByUserName(userName);
 
-        bankAccountRepository.saveAll(bankAccounts);
+                // Setting the user for the bank account
+                bankAccount.setUser(user);
+
+                bankAccountRepository.save(bankAccount);
+            });
+        }
+
+        userAssigningExecutorService.shutdown();
+
+        try {
+            userAssigningExecutorService.awaitTermination(5, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
     }
 
     @Transactional
@@ -688,7 +744,6 @@ public class InitialDataService {
 
     }
 
-    @Transactional
     public void createAndSaveUserPassengerToBooking(Booking booking, BusSeat busSeatForUser) {
         Passenger userPassenger = new Passenger();
         userPassenger.setName(booking.getUser().getFullName());
