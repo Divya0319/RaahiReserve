@@ -21,6 +21,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 public class InitialDataService {
@@ -160,7 +161,7 @@ public class InitialDataService {
     private final ExecutorService executorService;
 
     @Autowired
-    public InitialDataService(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder, UserWalletRepository userWalletRepository, BankDetailRepository bankDetailRepository, CardDetailRepository cardDetailRepository, BankAccountRepository bankAccountRepository, CardFactorySelector cardFactorySelector, PaymentService paymentService, BusRouteService busRouteService, ExecutorService executorService) {
+    public InitialDataService(BusRepository busRepository, RouteRepository routeRepository, BusRouteRepository busRouteRepository, UserRepository userRepository, BusSeatRepository busSeatRepository, BookingRepository bookingRepository, SeatCostRepository seatCostRepository, PassengerRepository passengerRepository, BCryptPasswordEncoder passwordEncoder, UserWalletRepository userWalletRepository, BankDetailRepository bankDetailRepository, CardDetailRepository cardDetailRepository, BankAccountRepository bankAccountRepository, CardFactorySelector cardFactorySelector, PaymentService paymentService, BusRouteService busRouteService) {
         this.busRepository = busRepository;
         this.routeRepository = routeRepository;
         this.busRouteRepository = busRouteRepository;
@@ -177,7 +178,7 @@ public class InitialDataService {
         this.cardFactorySelector = cardFactorySelector;
         this.paymentService = paymentService;
         this.busRouteService = busRouteService;
-        this.executorService = executorService;
+        this.executorService = Executors.newFixedThreadPool(10);
     }
 
     public void createAndSaveBusesAndBusRoutes() {
