@@ -660,23 +660,36 @@ public class InitialDataService {
 
         List<User> users = userRepository.findAll();
 
+        ExecutorService cardExecutorService = Executors.newFixedThreadPool(cardNumbers.length);
+
         for(int i = 0; i < cardNumbers.length; i++) {
-            CardDetails cardDetails;
-            CardDTO cardDTO = paymentService.createCardDTO(cardNumbers[i], cardHolderNames[i], expiryMonths[i], expiryYears[i], cVVs[i], cardCompanies[i]);
+            final int index = i;
+            cardExecutorService.submit(() -> {
+                CardDetails cardDetails;
+                CardDTO cardDTO = paymentService.createCardDTO(cardNumbers[index], cardHolderNames[index], expiryMonths[index], expiryYears[index], cVVs[index], cardCompanies[index]);
 
-            if(cardTypes[i] == CardType.DEBIT) {
-                List<BankAccount> bankAccounts = bankAccountRepository.findAll();
-                cardDetails = cardFactorySelector.createCard(cardDTO, CardType.DEBIT, bankAccounts);
+                if(cardTypes[index] == CardType.DEBIT) {
+                    List<BankAccount> bankAccounts = bankAccountRepository.findAll();
+                    cardDetails = cardFactorySelector.createCard(cardDTO, CardType.DEBIT, bankAccounts);
 
-            } else {
-                List<BankDetails> banks = bankDetailRepository.findAll();
-                cardDetails = cardFactorySelector.createCard(cardDTO, CardType.CREDIT, banks);
+                } else {
+                    List<BankDetails> banks = bankDetailRepository.findAll();
+                    cardDetails = cardFactorySelector.createCard(cardDTO, CardType.CREDIT, banks);
 
-            }
+                }
 
-            cardDetails.setLinkedUser(users.get(i));
-            cardDetailRepository.save(cardDetails);
+                cardDetails.setLinkedUser(users.get(index));
+                cardDetailRepository.save(cardDetails);
+            });
 
+        }
+
+        cardExecutorService.shutdown();
+
+        try {
+            cardExecutorService.awaitTermination(5, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -684,10 +697,24 @@ public class InitialDataService {
     public void createAndSaveUserWallets() {
         List<User> users = userRepository.findAll();
 
+        ExecutorService walletExecutorService = Executors.newFixedThreadPool(users.size());
+
         for(User user : users) {
-            UserWallet uw = new UserWallet(BigDecimal.valueOf(2000));
-            uw.setUser(user);
-            userWalletRepository.save(uw);
+            final User finalUser = user;
+            walletExecutorService.submit(() -> {
+                UserWallet uw = new UserWallet(BigDecimal.valueOf(2000));
+                uw.setUser(finalUser);
+                userWalletRepository.save(uw);
+            });
+
+        }
+
+        walletExecutorService.shutdown();
+
+        try {
+            walletExecutorService.awaitTermination(5, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 

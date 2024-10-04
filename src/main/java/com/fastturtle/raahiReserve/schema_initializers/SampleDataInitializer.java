@@ -28,6 +28,8 @@ public class SampleDataInitializer {
         initialDataService.createAndSaveBankDetails();
         initialDataService.createAndSaveBankAccounts();
         initialDataService.assignUsersToBankAccounts();
+        initialDataService.createAndSaveCardDetails();
+        initialDataService.createAndSaveUserWallets();
 
     }
 
