@@ -35,4 +35,6 @@ public interface BusRouteRepository extends JpaRepository<BusRoute, Integer> {
             "ORDER BY b.busId ASC"
     )
     List<Bus> findBusesAvailableInGivenBusRoute(@Param("busRoute") BusRoute busRoute);
+
+    BusRoute findByBus_BusNo(String busNo);
 }

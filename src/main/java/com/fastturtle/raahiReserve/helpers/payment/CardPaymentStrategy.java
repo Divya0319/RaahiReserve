@@ -7,11 +7,13 @@ import com.fastturtle.raahiReserve.enums.PaymentStatus;
 import com.fastturtle.raahiReserve.models.*;
 import com.fastturtle.raahiReserve.repositories.BankAccountRepository;
 import com.fastturtle.raahiReserve.repositories.CardDetailRepository;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Log4j2
 @Component
 public class CardPaymentStrategy implements PaymentStrategy {
 
@@ -61,11 +63,11 @@ public class CardPaymentStrategy implements PaymentStrategy {
                     if(bankAccount.getBalance() >= booking.getPrice()) {
                         bankAccount.setBalance(bankAccount.getBalance() - booking.getPrice());
                         bankAccountRepository.save(bankAccount);
-                        System.out.println("OTP verified successfully: " + booking.getPrice() + " " + booking.getTravelDate());
+                        log.info("OTP verified successfully DEBIT : {} {}",  booking.getPrice(), booking.getTravelDate());
                         payment.setPaymentStatus(PaymentStatus.COMPLETED);
                     } else {
                         System.out.println("Insufficient balance in account");
-                        System.out.println("Payment Failed: " + booking.getPrice() + " " + booking.getTravelDate());
+                        log.info("Payment Failed: DEBIT {} {}",booking.getPrice(), booking.getTravelDate());
                         payment.setPaymentStatus(PaymentStatus.FAILED);
                     }
 
@@ -74,17 +76,17 @@ public class CardPaymentStrategy implements PaymentStrategy {
                     if(availableCreditLimit >= booking.getPrice()) {
                         creditCardDetails.setAvailableCreditLimit(availableCreditLimit - (long)booking.getPrice());
                         cardDetailRepository.save(creditCardDetails);
-                        System.out.println("OTP verified successfully: " + booking.getPrice() + " " + booking.getTravelDate());
+                        log.info("OTP verified successfully CREDIT : {} {}",  booking.getPrice(), booking.getTravelDate());
                         payment.setPaymentStatus(PaymentStatus.COMPLETED);
                     } else {
                         System.out.println("Insufficient balance in card");
-                        System.out.println("Payment Failed: " + booking.getPrice() + " " + booking.getTravelDate());
+                        log.info("Payment Failed CREDIT: {} {}",booking.getPrice(), booking.getTravelDate());
                         payment.setPaymentStatus(PaymentStatus.FAILED);
                     }
                 }
 
             } else {
-                System.out.println("Payment Failed: " + booking.getPrice() + " " + booking.getTravelDate());
+                log.info("Payment Failed: CARD {} {}", booking.getPrice(), booking.getTravelDate());
                 payment.setPaymentStatus(PaymentStatus.FAILED);
 
             }
@@ -96,7 +98,7 @@ public class CardPaymentStrategy implements PaymentStrategy {
 
 
         } else {
-            System.out.println("Invalid OTP");
+            log.info("Invalid OTP");
         }
 
         return null;

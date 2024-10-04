@@ -5,11 +5,13 @@ import com.fastturtle.raahiReserve.enums.PaymentRefType;
 import com.fastturtle.raahiReserve.enums.PaymentStatus;
 import com.fastturtle.raahiReserve.models.*;
 import com.fastturtle.raahiReserve.repositories.UserWalletRepository;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
+@Log4j2
 @Component
 public class WalletPaymentStrategy implements PaymentStrategy {
 
@@ -37,18 +39,18 @@ public class WalletPaymentStrategy implements PaymentStrategy {
         payment.setPaymentReferenceType(PaymentRefType.USER);
 
         if(booking.getPrice() <= walletBalance1) {
-            String enteredEmail = "alice.smith@rediffmail.com";
+            String enteredEmail = "bob.johnson@yahoo.in";
 
             if(enteredEmail.equals(user.getEmail())) {
                 int receivedOtp = walletParams.getReceivedOtp();
                 String otpString = String.valueOf(receivedOtp);
                 if(otpString.length() == 6) {
                     if(paymentStatus == PaymentStatus.COMPLETED) {
-                        System.out.println("OTP verified successfully : " + + booking.getPrice() + " " + booking.getTravelDate());
+                        log.info("OTP verified successfully WALLET : {} {}",  booking.getPrice(), booking.getTravelDate());
                         payment.setPaymentStatus(PaymentStatus.COMPLETED);
 
                     } else {
-                        System.out.println("Payment Failed: " + + booking.getPrice() + " " + booking.getTravelDate());
+                        log.info("Payment Failed WALLET: {} {}",booking.getPrice(), booking.getTravelDate());
                         payment.setPaymentStatus(PaymentStatus.FAILED);
 
                     }
@@ -65,12 +67,12 @@ public class WalletPaymentStrategy implements PaymentStrategy {
                     return booking;
 
                 } else {
-                    System.out.println("Invalid OTP");
+                    log.info("Invalid OTP");
                 }
             }
 
         } else {
-            System.out.println("Insufficient balance for payment of booking id: " + + booking.getPrice() + " " + booking.getTravelDate());
+            log.info("Insufficient balance for payment of booking: {} {}", booking.getPrice(), booking.getTravelDate());
         }
 
         return null;

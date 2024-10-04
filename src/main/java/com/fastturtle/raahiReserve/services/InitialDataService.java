@@ -720,9 +720,11 @@ public class InitialDataService {
 
     @Transactional
     public Booking createAndSaveBooking1(RandomSeatNumberProviderWithPreference rsnp) {
-        BusRoute busRouteForBooking1 = busRouteRepository.findById(4).get();
+        log.info("Starting Booking 1");
 
-        Booking booking1 = new Booking(userRepository.findById(4).get(), busRouteForBooking1, bookingDates[0], travelDates[0]);
+        BusRoute busRouteForBooking1 = busRouteRepository.findByBus_BusNo("PJ02HK7295");
+
+        Booking booking1 = new Booking(userRepository.findByUserName("EmilyBrown"), busRouteForBooking1, bookingDates[0], travelDates[0]);
 
         booking1.setUserPassenger(true);
 
@@ -767,6 +769,8 @@ public class InitialDataService {
                 bookingWithPaymentAdded.getPassengers().size());
         busRepository.save(busForBooking1);
 
+        log.info("Finishing Booking 1");
+
         return bookingRepository.save(bookingWithPaymentAdded);
 
     }
@@ -799,9 +803,12 @@ public class InitialDataService {
 
     @Transactional
     public Booking createAndSaveBooking2(RandomSeatNumberProviderWithPreference rsnp) {
-        BusRoute busRouteForBooking2 = busRouteRepository.findById(3).get();
+        log.info("Starting Booking 2");
+        BusRoute busRouteForBooking2 = busRouteRepository.findByBus_BusNo("AP11HL2756");
 
-        Booking booking2 = new Booking(userRepository.findById(3).get(), busRouteForBooking2, bookingDates[1], travelDates[1]);
+        User user = userRepository.findByUserName("BobJohnson");
+
+        Booking booking2 = new Booking(user, busRouteForBooking2, bookingDates[1], travelDates[1]);
 
         Bus busForBooking2 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking2).get(0);
         rsnp.setBusNo(busForBooking2.getBusNo());
@@ -817,7 +824,6 @@ public class InitialDataService {
         booking2.setBookingStatus(BookingStatus.CREATED);
 
         // Doing payment for Booking 2 via User wallet
-        User user = userRepository.findByUserName("AliceSmith");
         WalletPaymentStrategy wps = new WalletPaymentStrategy(userWalletRepository);
         WalletPaymentParams walletPaymentParams = new WalletPaymentParams();
         walletPaymentParams.setUser(user);
@@ -830,8 +836,10 @@ public class InitialDataService {
                     booking2.getPassengers().size());
             busRepository.save(busForBooking2);
 
+            log.info("Finishing Booking 2");
             return bookingRepository.save(booking2);
         } else {
+            log.info("Finishing Booking 2 null");
             return null;
         }
 
@@ -839,8 +847,10 @@ public class InitialDataService {
 
     @Transactional
     public Booking createAndSaveBooking3(RandomSeatNumberProviderWithPreference rsnp) {
-        BusRoute busRouteForBooking3 = busRouteRepository.findById(2).get();
-        Booking booking3 = new Booking(userRepository.findById(2).get(), busRouteForBooking3, bookingDates[3], travelDates[3]);
+        log.info("Starting Booking 3");
+
+        BusRoute busRouteForBooking3 = busRouteRepository.findByBus_BusNo("CG04LM7492");
+        Booking booking3 = new Booking(userRepository.findByUserName("AliceSmith"), busRouteForBooking3, bookingDates[3], travelDates[3]);
         booking3.setUserPassenger(true);
 
         Bus busForBooking3 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking3).get(0);
@@ -887,8 +897,11 @@ public class InitialDataService {
                     booking3.getPassengers().size());
             busRepository.save(busForBooking3);
 
+            log.info("Finishing Booking 3");
+
             return bookingRepository.save(booking3);
         } else {
+            log.info("Finishing Booking 3 null");
             return null;
         }
 
@@ -896,9 +909,13 @@ public class InitialDataService {
 
     @Transactional
     public Booking createAndSaveBooking4(RandomSeatNumberProviderWithPreference rsnp) {
-        BusRoute busRouteForBooking4 = busRouteRepository.findById(9).get();
+        log.info("Starting Booking 4");
+        BusRoute busRouteForBooking4 = busRouteRepository.findByBus_BusNo("PJ16TH1295");
 
-        Booking booking4 = new Booking(userRepository.findById(5).get(), busRouteForBooking4, bookingDates[2], travelDates[2]);
+        User user = userRepository.findByUserName("JohnDoe");
+
+
+        Booking booking4 = new Booking(user, busRouteForBooking4, bookingDates[2], travelDates[2]);
 
         Bus busForBooking4 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking4).get(0);
         rsnp.setBusNo(busForBooking4.getBusNo());
@@ -917,7 +934,7 @@ public class InitialDataService {
         NetbankingPaymentStrategy nbps = new NetbankingPaymentStrategy(bankDetailRepository, bankAccountRepository);
         NetbankingPaymentParams netbankingPaymentParams = new NetbankingPaymentParams();
         netbankingPaymentParams.setBankNamePrefix("HDFC");
-        netbankingPaymentParams.setUserId(1);
+        netbankingPaymentParams.setUserId(user.getUserId());
         netbankingPaymentParams.setReceivedOtp(343532);
         netbankingPaymentParams.setPaymentDate(paymentDates[2]);
 
@@ -928,17 +945,21 @@ public class InitialDataService {
                     booking4.getPassengers().size());
             busRepository.save(busForBooking4);
 
+            log.info("Finishing Booking 4");
             return bookingRepository.save(booking4);
         } else {
+            log.info("Finishing Booking 4 null");
             return null;
         }
     }
 
     @Transactional
     public Booking createAndSaveBooking5(RandomSeatNumberProviderWithPreference rsnp) {
-        BusRoute busRouteForBooking5 = busRouteRepository.findById(14).get();
 
-        Booking booking5 = new Booking(userRepository.findById(3).get(), busRouteForBooking5, bookingDates[4], travelDates[4]);
+        log.info("Starting Booking 5");
+        BusRoute busRouteForBooking5 = busRouteRepository.findByBus_BusNo("PJ02BL7215");
+
+        Booking booking5 = new Booking(userRepository.findByUserName("BobJohnson"), busRouteForBooking5, bookingDates[4], travelDates[4]);
 
         Bus busForBooking5 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking5).get(0);
         rsnp.setBusNo(busForBooking5.getBusNo());
@@ -967,17 +988,25 @@ public class InitialDataService {
                     booking5.getPassengers().size());
             busRepository.save(busForBooking5);
 
+            log.info("Finishing Booking 5");
+
             return bookingRepository.save(booking5);
+
         } else {
+            log.info("Finishing Booking 5 null");
             return null;
+
         }
+
+
     }
 
     @Transactional
     public void createAndSaveBooking6(RandomSeatNumberProviderWithPreference rsnp) {
-        BusRoute busRouteForBooking = busRouteRepository.findById(14).get();
+        log.info("Starting booking 6");
+        BusRoute busRouteForBooking = busRouteRepository.findByBus_BusNo("MH04PW2747");
 
-        Booking booking = new Booking(userRepository.findById(2).get(), busRouteForBooking, bookingDates[5], travelDates[5]);
+        Booking booking = new Booking(userRepository.findByUserName("MichaelDavis"), busRouteForBooking, bookingDates[5], travelDates[5]);
 
         booking.setUserPassenger(true);
 
@@ -1024,12 +1053,14 @@ public class InitialDataService {
 
         bookingRepository.save(bookingWithPaymentAdded);
 
+        log.info("Finishing Booking 6");
+
     }
 
     private Booking createAndSavePendingPaymentForBooking(Booking booking) {
         Payment payment = new Payment();
         payment.setPaymentStatus(PaymentStatus.PENDING);
-        System.out.println("Payment pending: " + booking.getPrice() + " " + booking.getTravelDate());
+        log.info("Payment pending: {} {}", booking.getPrice(), booking.getTravelDate());
 
         payment.setPaymentMethod(null);
         payment.setAmount(0.00f);

@@ -6,9 +6,11 @@ import com.fastturtle.raahiReserve.enums.PaymentStatus;
 import com.fastturtle.raahiReserve.models.*;
 import com.fastturtle.raahiReserve.repositories.BankAccountRepository;
 import com.fastturtle.raahiReserve.repositories.BankDetailRepository;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+@Log4j2
 @Component
 public class NetbankingPaymentStrategy implements PaymentStrategy {
 
@@ -40,11 +42,11 @@ public class NetbankingPaymentStrategy implements PaymentStrategy {
             if(paymentStatus == PaymentStatus.COMPLETED) {
                 bankAccount.setBalance(bankAccount.getBalance() - booking.getPrice());
                 bankAccountRepository.save(bankAccount);
-                System.out.println("OTP verified successfully: " + + booking.getPrice() + " " + booking.getTravelDate());
+                log.info("OTP verified successfully: {} {}", booking.getPrice(), booking.getTravelDate());
                 payment.setPaymentStatus(PaymentStatus.COMPLETED);
 
             } else {
-                System.out.println("Payment Failed: " + + booking.getPrice() + " " + booking.getTravelDate());
+                log.info("Payment Failed NETBANKING: {} {}", booking.getPrice(), booking.getTravelDate());
                 payment.setPaymentStatus(PaymentStatus.FAILED);
 
             }
@@ -56,7 +58,7 @@ public class NetbankingPaymentStrategy implements PaymentStrategy {
 
 
         } else {
-            System.out.println("Invalid OTP");
+            log.info("Invalid OTP");
         }
 
         return null;
