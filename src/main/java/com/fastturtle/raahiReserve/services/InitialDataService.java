@@ -981,7 +981,7 @@ public class InitialDataService {
         cardPaymentParams.setReceivedOtp(457433);
         cardPaymentParams.setCardType(CardType.CREDIT);
 
-        booking5 = cps.processPayment(booking5, PaymentStatus.COMPLETED, cardPaymentParams);
+        booking5 = cps.processPayment(booking5, PaymentStatus.FAILED, cardPaymentParams);
 
         if(booking5 != null) {
             busForBooking5.setAvailableSeats(busForBooking5.getAvailableSeats() -
@@ -1002,7 +1002,7 @@ public class InitialDataService {
     }
 
     @Transactional
-    public void createAndSaveBooking6(RandomSeatNumberProviderWithPreference rsnp) {
+    public Booking createAndSaveBooking6(RandomSeatNumberProviderWithPreference rsnp) {
         log.info("Starting booking 6");
         BusRoute busRouteForBooking = busRouteRepository.findByBus_BusNo("MH04PW2747");
 
@@ -1051,9 +1051,9 @@ public class InitialDataService {
                 bookingWithPaymentAdded.getPassengers().size());
         busRepository.save(busForBooking);
 
-        bookingRepository.save(bookingWithPaymentAdded);
-
         log.info("Finishing Booking 6");
+
+        return bookingRepository.save(bookingWithPaymentAdded);
 
     }
 
@@ -1073,12 +1073,25 @@ public class InitialDataService {
 
     @Transactional
     public void markingTravelForBooking(Booking booking) {
+        log.info("Starting marking booking : {}", booking.getBookingId());
         List<Passenger> listOfPassengersInB1 = bookingRepository.findAllPassengersInBooking(booking);
         List<Passenger> travellingPassengersB1 = new ArrayList<>();
         travellingPassengersB1.add(listOfPassengersInB1.get(0));
 
+        ExecutorService traveledMarkService = Executors.newFixedThreadPool(listOfPassengersInB1.size());
+
         for(Passenger p : listOfPassengersInB1) {
-            p.setTraveled(travellingPassengersB1.contains(p));
+            final Passenger finalP = p;
+            traveledMarkService.submit(() -> finalP.setTraveled(travellingPassengersB1.contains(finalP)));
+
+        }
+
+        traveledMarkService.shutdown();
+
+        try {
+            traveledMarkService.awaitTermination(5, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
 
         // Updating all passenger's travel status belonging to a booking
@@ -1086,16 +1099,32 @@ public class InitialDataService {
 
         List<Passenger> passengersInBooking = bookingRepository.findAllPassengersInBooking(booking);
 
+        ExecutorService busSeatService = Executors.newFixedThreadPool(passengersInBooking.size());
+
         for(Passenger p : passengersInBooking) {
-            BusSeat busSeat = p.getBusSeat();
-            busSeat.setOccupied(false);
-            busSeatRepository.save(busSeat);
+            final Passenger finalP = p;
+            busSeatService.submit(() -> {
+                BusSeat busSeat = finalP.getBusSeat();
+                busSeat.setOccupied(false);
+                busSeatRepository.save(busSeat);
+            });
+
+        }
+
+        busSeatService.shutdown();
+
+        try {
+            busSeatService.awaitTermination(5, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
 
         Bus busForBooking = bookingRepository.findBusForBooking(booking.getBookingId());
 
         busForBooking.setAvailableSeats(busForBooking.getAvailableSeats() + passengersInBooking.size());
         busRepository.save(busForBooking);
+
+        log.info("Finishing marking booking : {}", booking.getBookingId());
     }
 
 }
