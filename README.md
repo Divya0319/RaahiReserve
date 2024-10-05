@@ -41,13 +41,13 @@ The app will be available at http://localhost:8092.
 * To see the running application with its UI, 
 ```bash
 git clone thymeleaf-integration https://github.com/Divya0319/RaahiReserve.git
-* ``` 
+``` 
 * and `git checkout` to it.
 * Database is initialised during application startup with some sample data.
 * To see the performance gain of this initialisation,
 ```bash
 git clone multithreading https://github.com/Divya0319/RaahiReserve.git
- ``` 
+``` 
 * and `git checkout` to it, and compare the server startup times with and without multithreading (its fascinating!!).
 
 ## Contributing
