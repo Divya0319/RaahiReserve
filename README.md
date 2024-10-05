@@ -37,5 +37,10 @@ mvn spring-boot:run
 
 The app will be available at http://localhost:8092.
 
+* Default branch is main.
+* To see the running application with its UI, `git pull` the `thymeleaf-integration` branch as well, and `git checkout` to it.
+* Database is initialised during application startup with some sample data.
+* To see the performance gain of this initialisation, `git pull` the `multithreading` branch and `git checkout` to it, and compare the server startup times with and without multithreading (its fascinating!!).
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue to discuss potential updates before making them.
