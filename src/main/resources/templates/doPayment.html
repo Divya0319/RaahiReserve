@@ -19,7 +19,7 @@
 
                 <form th:action="@{/payments/fetchBookingDetails}" method="post">
 
-                    <div class="d-flex align-items-center mb-3">
+                    <div th:if="${payNowSelected == null}" class="d-flex align-items-center mb-3">
 
                         <label for="bookingId" class="form-label me-2">Booking ID</label>
 
