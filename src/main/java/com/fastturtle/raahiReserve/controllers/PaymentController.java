@@ -125,7 +125,7 @@ public class PaymentController {
     }
 
     @GetMapping("/doPayment")
-    public String showPaymentPage(@RequestParam(value = "bookingId", required = false) Integer bookingId, Model model, Principal principal) {
+    public String showPaymentPage(@RequestParam(value = "bookingId", required = false) Integer bookingId, @RequestParam(value = "payNowSelected", required = false) Boolean payNowSelected, Model model, Principal principal) {
 
         if(bookingId != null) {
             Optional<Booking> booking = bookingService.findByBookingId(bookingId);
@@ -178,6 +178,11 @@ public class PaymentController {
         }
         model.addAttribute("loggedInUserName", user.getFullName());
         model.addAttribute("isBookingIdPresent", bookingId != null);
+
+        if(payNowSelected != null) {
+            model.addAttribute("payNowSelected", payNowSelected);
+        }
+
         return "doPayment";
     }
 
