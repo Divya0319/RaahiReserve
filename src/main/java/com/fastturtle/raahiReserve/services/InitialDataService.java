@@ -315,24 +315,21 @@ public class InitialDataService {
             Thread.currentThread().interrupt();
         }
 
-        List<Route> routes = routeRepository.findAll();
-        List<Bus> buses = busRepository.findAll();
-
-        ExecutorService routeExecutorService = Executors.newFixedThreadPool(buses.size());
+        ExecutorService routeExecutorService = Executors.newFixedThreadPool(busNos.length);
 
         BusRoute[] busRoutes = new BusRoute[10];
 
         // Create and save BusRoute
-        busRoutes[0] = new BusRoute(buses.get(5), routes.get(3), directions[0]);
-        busRoutes[1] = new BusRoute(buses.get(6), routes.get(2), directions[1]);
-        busRoutes[2] = new BusRoute(buses.get(7), routes.get(4), directions[2]);
-        busRoutes[3] = new BusRoute(buses.get(8), routes.get(1), directions[3]);
-        busRoutes[4] = new BusRoute(buses.get(9), routes.get(0), directions[4]);
-        busRoutes[5] = new BusRoute(buses.get(10), routes.get(3), directions[5]);
-        busRoutes[6] = new BusRoute(buses.get(11), routes.get(2), directions[6]);
-        busRoutes[7] = new BusRoute(buses.get(12), routes.get(4), directions[7]);
-        busRoutes[8] = new BusRoute(buses.get(13), routes.get(3), directions[8]);
-        busRoutes[9] = new BusRoute(buses.get(14), routes.get(2), directions[9]);
+        busRoutes[0] = new BusRoute(busRepository.findByBusNo("KA07WA7234"), routeRepository.findBySourceAndDestination("Bangalore", "Punjab"), directions[0]);
+        busRoutes[1] = new BusRoute(busRepository.findByBusNo("CG14LT7402"), routeRepository.findBySourceAndDestination("Hyderabad", "Chhattisgarh"), directions[1]);
+        busRoutes[2] = new BusRoute(busRepository.findByBusNo("AP02LH2736"), routeRepository.findBySourceAndDestination("Goa", "Mumbai"), directions[2]);
+        busRoutes[3] = new BusRoute(busRepository.findByBusNo("PJ16TH1295"), routeRepository.findBySourceAndDestination("Mumbai", "Indore"), directions[3]);
+        busRoutes[4] = new BusRoute(busRepository.findByBusNo("MH04WM2756"), routeRepository.findBySourceAndDestination("Chhattisgarh", "Mumbai"), directions[4]);
+        busRoutes[5] = new BusRoute(busRepository.findByBusNo("MH07HM7813"), routeRepository.findBySourceAndDestination("Bangalore", "Punjab"), directions[5]);
+        busRoutes[6] = new BusRoute(busRepository.findByBusNo("CG04HJ7412"), routeRepository.findBySourceAndDestination("Hyderabad", "Chhattisgarh"), directions[6]);
+        busRoutes[7] = new BusRoute(busRepository.findByBusNo("AP11WA2746"), routeRepository.findBySourceAndDestination("Goa", "Mumbai"), directions[7]);
+        busRoutes[8] = new BusRoute(busRepository.findByBusNo("PJ02BL7215"), routeRepository.findBySourceAndDestination("Bangalore", "Punjab"), directions[8]);
+        busRoutes[9] = new BusRoute(busRepository.findByBusNo("MH04PW2747"), routeRepository.findBySourceAndDestination("Hyderabad", "Chhattisgarh"), directions[9]);
 
         for (int i = 0; i < 10; i++) {
             final int index = i;

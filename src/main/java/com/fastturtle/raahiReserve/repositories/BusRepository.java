@@ -47,4 +47,6 @@ public interface BusRepository extends JpaRepository<Bus, Integer> {
 
     Bus findByBusId(Integer busId);
 
+    Bus findByBusNo(String busNo);
+
 }
