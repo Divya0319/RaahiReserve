@@ -732,9 +732,11 @@ public class InitialDataService {
         rsnp.setBusNo(busForBooking1.getBusNo());
 
         Float booking1Cost = 0.0f;
+        int lastAssignedSeat = -1;
 
         if(booking1.isUserPassenger()) {
-            BusSeat busSeatForUser = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking1, SeatType.AISLE);
+            BusSeat busSeatForUser = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking1, SeatType.AISLE, lastAssignedSeat);
+            lastAssignedSeat = busSeatForUser.getSeatNumber();
 
             BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(busSeatForUser);
             Float seatCostForUser = seatCostRepository.findSeatCostByBusTypeAndSeatType(busTypeForUser, busSeatForUser.getSeatType());
@@ -745,9 +747,10 @@ public class InitialDataService {
 
         }
 
-        BusSeat busSeat1 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking1, SeatType.WINDOW);
+        BusSeat busSeat1 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking1, SeatType.WINDOW, lastAssignedSeat);
+        lastAssignedSeat = busSeat1.getSeatNumber();
 
-        BusSeat busSeat2 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking1, SeatType.WINDOW);
+        BusSeat busSeat2 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking1, SeatType.WINDOW, lastAssignedSeat);
 
         BusType busTypeForSeat1 = busSeatRepository.findBusTypeFromBusSeat(busSeat1);
         Float seatCostForSeat1 = seatCostRepository.findSeatCostByBusTypeAndSeatType(busTypeForSeat1, busSeat1.getSeatType());
@@ -784,12 +787,13 @@ public class InitialDataService {
         booking.addPassenger(userPassenger);
     }
 
-    private BusSeat saveAssignedSeatToBusSeatEntityForBooking(RandomSeatNumberProviderWithPreference rsnp, Bus busForBooking, SeatType seatPref) {
+    private BusSeat saveAssignedSeatToBusSeatEntityForBooking(RandomSeatNumberProviderWithPreference rsnp, Bus busForBooking, SeatType seatPref, Integer lastAssignedSeat) {
         int assignedSeat;
         if(seatPref == null) {
-            assignedSeat = rsnp.getRandomSeatNumber();
+            assignedSeat = rsnp.getRandomSeatNumber(lastAssignedSeat, 2);
+
         } else {
-            assignedSeat = rsnp.getRandomSeatNumberWithPreference(seatPref, true);
+            assignedSeat = rsnp.getRandomSeatNumberWithPreference(seatPref, true, lastAssignedSeat, 2);
         }
 
         BusSeat busSeat = new BusSeat();
@@ -813,7 +817,7 @@ public class InitialDataService {
         Bus busForBooking2 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking2).get(0);
         rsnp.setBusNo(busForBooking2.getBusNo());
 
-        BusSeat busSeat3 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking2, SeatType.AISLE);
+        BusSeat busSeat3 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking2, SeatType.AISLE, -1);
 
         BusType busTypeForSeat3 = busSeatRepository.findBusTypeFromBusSeat(busSeat3);
         Float seatCostForSeat3 = seatCostRepository.findSeatCostByBusTypeAndSeatType(busTypeForSeat3, busSeat3.getSeatType());
@@ -858,9 +862,12 @@ public class InitialDataService {
 
         Float booking3Cost = 0.0f;
 
+        int lastAssignedSeat = -1;
+
         if(booking3.isUserPassenger()) {
 
-            BusSeat busSeatForUser = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking3, SeatType.WINDOW);
+            BusSeat busSeatForUser = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking3, SeatType.WINDOW, -1);
+            lastAssignedSeat = busSeatForUser.getSeatNumber();
 
             BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(busSeatForUser);
             Float seatCostForUser = seatCostRepository.findSeatCostByBusTypeAndSeatType(busTypeForUser, busSeatForUser.getSeatType());
@@ -871,7 +878,7 @@ public class InitialDataService {
 
         }
 
-        BusSeat busSeat4 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking3, SeatType.AISLE);
+        BusSeat busSeat4 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking3, SeatType.AISLE, lastAssignedSeat);
 
         BusType busTypeForSeat4 = busSeatRepository.findBusTypeFromBusSeat(busSeat4);
         Float seatCostForSeat4 = seatCostRepository.findSeatCostByBusTypeAndSeatType(busTypeForSeat4, busSeat4.getSeatType());
@@ -920,7 +927,7 @@ public class InitialDataService {
         Bus busForBooking4 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking4).get(0);
         rsnp.setBusNo(busForBooking4.getBusNo());
 
-        BusSeat busSeat5 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking4, SeatType.WINDOW);
+        BusSeat busSeat5 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking4, SeatType.WINDOW, -1);
 
         BusType busTypeForSeat5 = busSeatRepository.findBusTypeFromBusSeat(busSeat5);
         Float seatCostForSeat5 = seatCostRepository.findSeatCostByBusTypeAndSeatType(busTypeForSeat5, busSeat5.getSeatType());
@@ -964,7 +971,7 @@ public class InitialDataService {
         Bus busForBooking5 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking5).get(0);
         rsnp.setBusNo(busForBooking5.getBusNo());
 
-        BusSeat busSeat6 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking5, null);
+        BusSeat busSeat6 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking5, null, -1);
 
         BusType busTypeForSeat6 = busSeatRepository.findBusTypeFromBusSeat(busSeat6);
         Float seatCostForSeat6 = seatCostRepository.findSeatCostByBusTypeAndSeatType(busTypeForSeat6, busSeat6.getSeatType());
@@ -1014,9 +1021,11 @@ public class InitialDataService {
         rsnp.setBusNo(busForBooking.getBusNo());
 
         Float bookingCost = 0.0f;
+        int lastAssignedSeat = -1;
 
         if(booking.isUserPassenger()) {
-            BusSeat busSeatForUser = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking, SeatType.AISLE);
+            BusSeat busSeatForUser = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking, SeatType.AISLE, lastAssignedSeat);
+            lastAssignedSeat = busSeatForUser.getSeatNumber();
 
             BusType busTypeForUser = busSeatRepository.findBusTypeFromBusSeat(busSeatForUser);
             Float seatCostForUser = seatCostRepository.findSeatCostByBusTypeAndSeatType(busTypeForUser, busSeatForUser.getSeatType());
@@ -1027,9 +1036,10 @@ public class InitialDataService {
 
         }
 
-        BusSeat busSeat1 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking, SeatType.WINDOW);
+        BusSeat busSeat1 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking, SeatType.WINDOW, lastAssignedSeat);
+        lastAssignedSeat = busSeat1.getSeatNumber();
 
-        BusSeat busSeat2 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking, SeatType.WINDOW);
+        BusSeat busSeat2 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking, SeatType.WINDOW, lastAssignedSeat);
 
         BusType busTypeForSeat1 = busSeatRepository.findBusTypeFromBusSeat(busSeat1);
         Float seatCostForSeat1 = seatCostRepository.findSeatCostByBusTypeAndSeatType(busTypeForSeat1, busSeat1.getSeatType());

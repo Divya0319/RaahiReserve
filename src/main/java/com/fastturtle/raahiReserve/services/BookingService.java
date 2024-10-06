@@ -138,6 +138,8 @@ public class BookingService {
         RandomSeatNumberProviderWithPreference rsnpwp = new RandomSeatNumberProviderWithPreference(busRepository, busSeatRepository);
         rsnpwp.setBusNo(busForBooking.getBusNo());
 
+        int lastAssignedSeat = -1;
+
         if (userId != null && isUserPassenger) {
             User user = userRepository.findById(userId).orElse(null);
             booking.setUser(user);
@@ -145,16 +147,19 @@ public class BookingService {
 
             BusSeat seatForUser;
             if(seatTypeForUser != null) {
-                int assignedSeatForUer = rsnpwp.getRandomSeatNumberWithPreference(seatTypeForUser, true);
+                int assignedSeatForUser = rsnpwp.getRandomSeatNumberWithPreference(seatTypeForUser, true, lastAssignedSeat, 2);
+                lastAssignedSeat = assignedSeatForUser;
+
                 seatForUser = new BusSeat();
                 seatForUser.setBus(busForBooking);
-                seatForUser.setSeatNumber(assignedSeatForUer);
-                seatForUser.setSeatType(rsnpwp.getSeatTypeFromSeatNumber(assignedSeatForUer));
+                seatForUser.setSeatNumber(assignedSeatForUser);
+                seatForUser.setSeatType(rsnpwp.getSeatTypeFromSeatNumber(assignedSeatForUser));
                 seatForUser.setOccupied(true);
                 seatForUser.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")));
             } else {
                 // Handle "No Preference" case, assign any available seat
-                seatForUser = getBusSeatWithoutPreference(busForBooking);
+                seatForUser = getBusSeatWithoutPreference(busForBooking, lastAssignedSeat, 2);
+                lastAssignedSeat = seatForUser.getSeatNumber();
             }
             busSeatRepository.save(seatForUser);
 
@@ -181,7 +186,9 @@ public class BookingService {
             BusSeat seatForPassenger;
             if(p.getBusSeat() != null && p.getBusSeat().getSeatType() != null) {
                 // Handle specific seat type preference
-                int assignedSeatForPassenger = rsnpwp.getRandomSeatNumberWithPreference(p.getBusSeat().getSeatType(), true);
+                int assignedSeatForPassenger = rsnpwp.getRandomSeatNumberWithPreference(p.getBusSeat().getSeatType(), true, lastAssignedSeat, 2);
+                lastAssignedSeat = assignedSeatForPassenger;
+
                 seatForPassenger = new BusSeat();
                 seatForPassenger.setBus(busForBooking);
                 seatForPassenger.setSeatNumber(assignedSeatForPassenger);
@@ -190,7 +197,8 @@ public class BookingService {
                 seatForPassenger.setCreatedAt(ZonedDateTime.now(ZoneId.of("Asia/Kolkata")));
             } else {
                 // Handle "No Preference" case, assign any available seat
-                seatForPassenger = getBusSeatWithoutPreference(busForBooking);
+                seatForPassenger = getBusSeatWithoutPreference(busForBooking, lastAssignedSeat, 2);
+                lastAssignedSeat = seatForPassenger.getSeatNumber();
             }
 
             busSeatRepository.save(seatForPassenger);
@@ -227,11 +235,11 @@ public class BookingService {
         return ResponseEntity.ok(booking);
     }
 
-    private BusSeat getBusSeatWithoutPreference(Bus busForBooking) {
+    private BusSeat getBusSeatWithoutPreference(Bus busForBooking, int lastAssignedSeat, int maxDistance) {
         RandomSeatNumberProvider rsnp = new RandomSeatNumberProvider(busRepository, busSeatRepository);
         rsnp.setBusNo(busForBooking.getBusNo());
 
-        int assignedSeatForUser = rsnp.getRandomSeatNumber();
+        int assignedSeatForUser = rsnp.getRandomSeatNumber(lastAssignedSeat,maxDistance);
         BusSeat busSeatForUser = new BusSeat();
         busSeatForUser.setBus(busForBooking);
         busSeatForUser.setSeatNumber(assignedSeatForUser);

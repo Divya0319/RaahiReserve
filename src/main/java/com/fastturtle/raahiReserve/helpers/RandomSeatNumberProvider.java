@@ -45,17 +45,33 @@ public class RandomSeatNumberProvider {
                 .toList();
     }
 
-    public int getRandomSeatNumber() {
+    public int getRandomSeatNumber(int lastAssignedSeat, int maxDistance) {
         List<Integer> availableSeats = getAvailableSeats();
+
+        int assignedSeat = -1;
 
         if(availableSeats.isEmpty()) {
             throw new RuntimeException("No available seats");
         }
 
-        Random random = new Random();
-        int randomIndex = random.nextInt(availableSeats.size());
+        if(lastAssignedSeat == -1) {
+            Random random = new Random();
+            int randomIndex = random.nextInt(availableSeats.size());
+            return availableSeats.get(randomIndex);
+        } else {
+            for(int offset = 1; offset <= maxDistance; offset++) {
+                int seatBefore = lastAssignedSeat - offset;
+                int seatAfter = lastAssignedSeat + offset;
 
-        return availableSeats.get(randomIndex);
+                if(availableSeats.contains(seatAfter)) {
+                    return seatAfter;
+                } else if(availableSeats.contains(seatBefore)) {
+                    return seatBefore;
+                }
+            }
+        }
+
+        return assignedSeat;
 
     }
 

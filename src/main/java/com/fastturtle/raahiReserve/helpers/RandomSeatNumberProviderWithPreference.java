@@ -16,8 +16,25 @@ public class RandomSeatNumberProviderWithPreference extends RandomSeatNumberProv
     }
 
     public int getRandomSeatNumberWithPreference(SeatType preference,
-                                                 boolean assignSeatIfPreferenceUnavailable) {
+                                                 boolean assignSeatIfPreferenceUnavailable, int lastAssignedSeat, int maxDistance) {
         List<Integer> availableSeats = getAvailableSeats();
+
+        if(lastAssignedSeat != -1) {
+            // Trying to assign adjacent or nearby seats
+            for(int offset = 1; offset <= maxDistance; offset++) {
+                int seatBefore = lastAssignedSeat - offset;
+                int seatAfter = lastAssignedSeat + offset;
+
+                if(availableSeats.contains(seatAfter)) {
+                    return seatAfter;
+                } else if(availableSeats.contains(seatBefore)) {
+                    return seatBefore;
+                }
+            }
+
+        }
+
+        // First passenger or no adjacent seats available, assigning based on preference
         List<Integer> preferredSeats = availableSeats.stream()
                 .filter(seat -> seatMatchesPreference(seat, preference))
                 .toList();
