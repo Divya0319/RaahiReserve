@@ -5,6 +5,7 @@ import com.fastturtle.raahiReserve.enums.PaymentStatus;
 import com.fastturtle.raahiReserve.models.Booking;
 import com.fastturtle.raahiReserve.models.Bus;
 import com.fastturtle.raahiReserve.models.Passenger;
+import com.fastturtle.raahiReserve.models.Route;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -42,4 +43,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
     long count();
 
     long countByBookingStatus(BookingStatus bookingStatus);
+
+    @Query("select b.busRoute, count(b) from Booking b group by b.busRoute order by count(b) desc")
+    List<Object[]> findTopRoutesWithBookingCount();
 }
