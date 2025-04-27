@@ -143,8 +143,8 @@ public class PaymentController {
                     }
 
                 }
-                String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.get().getBookingDate());
-                String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.get().getTravelDate());
+                String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.get().getBookingDateTime());
+                String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.get().getTravelDateTime());
 
                 Booking fetchedBooking = booking.get();
                 fetchedBooking.setFormattedBookingDate(formattedBookingDate);
@@ -294,8 +294,8 @@ public class PaymentController {
                         }
                     }
 
-                    String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.get().getBookingDate());
-                    String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.get().getTravelDate());
+                    String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.get().getBookingDateTime());
+                    String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.get().getTravelDateTime());
 
                     Booking fetchedBooking = booking.get();
                     fetchedBooking.setFormattedBookingDate(formattedBookingDate);

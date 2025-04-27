@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -150,7 +151,7 @@ public class PaymentService {
 
         payment.setPaymentReferenceType(PaymentRefType.CARD);
         payment.setAmount(booking.getPrice());
-        payment.setPaymentDate(LocalDate.now());
+        payment.setPaymentDateTime(LocalDateTime.now());
 
         paymentRepository.save(payment);
 
@@ -185,7 +186,7 @@ public class PaymentService {
         payment.setPaymentReferenceId(bankAccount.getId());
         payment.setPaymentReferenceType(PaymentRefType.BANK);
         payment.setAmount(booking.getPrice());
-        payment.setPaymentDate(LocalDate.now());
+        payment.setPaymentDateTime(LocalDateTime.now());
 
         paymentRepository.save(payment);
 
@@ -208,7 +209,7 @@ public class PaymentService {
         payment.setPaymentReferenceId(dto.getUserID());
         payment.setPaymentReferenceType(PaymentRefType.USER);
         payment.setAmount(booking.getPrice());
-        payment.setPaymentDate(LocalDate.now());
+        payment.setPaymentDateTime(LocalDateTime.now());
 
         User user = userRepository.findById(dto.getUserID()).get();
         payment.setUser(user);
@@ -227,8 +228,8 @@ public class PaymentService {
             Optional<Payment> optionalPayment = paymentRepository.findByBookingId(bookingId);
 
             // Formatted dates with ordinal suffixes
-            String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.get().getBookingDate());
-            String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.get().getTravelDate());
+            String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.get().getBookingDateTime());
+            String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.get().getTravelDateTime());
 
             booking.get().setFormattedBookingDate(formattedBookingDate);
             booking.get().setFormattedTravelDate(formattedTravelDate);

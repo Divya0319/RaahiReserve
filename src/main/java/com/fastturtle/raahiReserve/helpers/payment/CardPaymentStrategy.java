@@ -63,11 +63,11 @@ public class CardPaymentStrategy implements PaymentStrategy {
                     if(bankAccount.getBalance() >= booking.getPrice()) {
                         bankAccount.setBalance(bankAccount.getBalance() - booking.getPrice());
                         bankAccountRepository.save(bankAccount);
-                        log.info("OTP verified successfully DEBIT : {} {}",  booking.getPrice(), booking.getTravelDate());
+                        log.info("OTP verified successfully DEBIT : {} {}",  booking.getPrice(), booking.getTravelDateTime());
                         payment.setPaymentStatus(PaymentStatus.COMPLETED);
                     } else {
                         System.out.println("Insufficient balance in account");
-                        log.info("Payment Failed: DEBIT {} {}",booking.getPrice(), booking.getTravelDate());
+                        log.info("Payment Failed: DEBIT {} {}",booking.getPrice(), booking.getTravelDateTime());
                         payment.setPaymentStatus(PaymentStatus.FAILED);
                     }
 
@@ -76,23 +76,23 @@ public class CardPaymentStrategy implements PaymentStrategy {
                     if(availableCreditLimit >= booking.getPrice()) {
                         creditCardDetails.setAvailableCreditLimit(availableCreditLimit - (long)booking.getPrice());
                         cardDetailRepository.save(creditCardDetails);
-                        log.info("OTP verified successfully CREDIT : {} {}",  booking.getPrice(), booking.getTravelDate());
+                        log.info("OTP verified successfully CREDIT : {} {}",  booking.getPrice(), booking.getTravelDateTime());
                         payment.setPaymentStatus(PaymentStatus.COMPLETED);
                     } else {
                         System.out.println("Insufficient balance in card");
-                        log.info("Payment Failed CREDIT: {} {}",booking.getPrice(), booking.getTravelDate());
+                        log.info("Payment Failed CREDIT: {} {}",booking.getPrice(), booking.getTravelDateTime());
                         payment.setPaymentStatus(PaymentStatus.FAILED);
                     }
                 }
 
             } else {
-                log.info("Payment Failed: CARD {} {}", booking.getPrice(), booking.getTravelDate());
+                log.info("Payment Failed: CARD {} {}", booking.getPrice(), booking.getTravelDateTime());
                 payment.setPaymentStatus(PaymentStatus.FAILED);
 
             }
             payment.setBooking(booking);
             payment.setAmount(booking.getPrice());
-            payment.setPaymentDate(paymentParams.getPaymentDate());
+            payment.setPaymentDateTime(paymentParams.getPaymentDateTime());
             booking.setPayment(payment);
             return booking;
 

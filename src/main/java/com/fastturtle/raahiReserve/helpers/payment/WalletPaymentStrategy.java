@@ -46,11 +46,11 @@ public class WalletPaymentStrategy implements PaymentStrategy {
                 String otpString = String.valueOf(receivedOtp);
                 if(otpString.length() == 6) {
                     if(paymentStatus == PaymentStatus.COMPLETED) {
-                        log.info("OTP verified successfully WALLET : {} {}",  booking.getPrice(), booking.getTravelDate());
+                        log.info("OTP verified successfully WALLET : {} {}",  booking.getPrice(), booking.getTravelDateTime());
                         payment.setPaymentStatus(PaymentStatus.COMPLETED);
 
                     } else {
-                        log.info("Payment Failed WALLET: {} {}",booking.getPrice(), booking.getTravelDate());
+                        log.info("Payment Failed WALLET: {} {}",booking.getPrice(), booking.getTravelDateTime());
                         payment.setPaymentStatus(PaymentStatus.FAILED);
 
                     }
@@ -61,7 +61,7 @@ public class WalletPaymentStrategy implements PaymentStrategy {
 
                     payment.setBooking(booking);
                     payment.setAmount(booking.getPrice());
-                    payment.setPaymentDate(paymentParams.getPaymentDate());
+                    payment.setPaymentDateTime(paymentParams.getPaymentDateTime());
                     booking.setPayment(payment);
 
                     return booking;
@@ -72,7 +72,7 @@ public class WalletPaymentStrategy implements PaymentStrategy {
             }
 
         } else {
-            log.info("Insufficient balance for payment of booking: {} {}", booking.getPrice(), booking.getTravelDate());
+            log.info("Insufficient balance for payment of booking: {} {}", booking.getPrice(), booking.getTravelDateTime());
         }
 
         return null;

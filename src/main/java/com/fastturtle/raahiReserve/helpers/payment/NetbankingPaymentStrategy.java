@@ -42,17 +42,17 @@ public class NetbankingPaymentStrategy implements PaymentStrategy {
             if(paymentStatus == PaymentStatus.COMPLETED) {
                 bankAccount.setBalance(bankAccount.getBalance() - booking.getPrice());
                 bankAccountRepository.save(bankAccount);
-                log.info("OTP verified successfully: {} {}", booking.getPrice(), booking.getTravelDate());
+                log.info("OTP verified successfully: {} {}", booking.getPrice(), booking.getTravelDateTime());
                 payment.setPaymentStatus(PaymentStatus.COMPLETED);
 
             } else {
-                log.info("Payment Failed NETBANKING: {} {}", booking.getPrice(), booking.getTravelDate());
+                log.info("Payment Failed NETBANKING: {} {}", booking.getPrice(), booking.getTravelDateTime());
                 payment.setPaymentStatus(PaymentStatus.FAILED);
 
             }
             payment.setBooking(booking);
             payment.setAmount(booking.getPrice());
-            payment.setPaymentDate(paymentParams.getPaymentDate());
+            payment.setPaymentDateTime(paymentParams.getPaymentDateTime());
             booking.setPayment(payment);
             return booking;
 

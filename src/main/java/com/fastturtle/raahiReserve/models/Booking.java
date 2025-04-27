@@ -11,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "booking", indexes = {
-        @Index(name = "idx_booking_travel_date", columnList = "travelDate")
+        @Index(name = "idx_booking_travel_date", columnList = "travelDateTime")
 })
 public class Booking {
 

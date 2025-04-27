@@ -8,6 +8,7 @@ import com.fastturtle.raahiReserve.helpers.PaymentMethodConverter;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "payment", indexes = {
@@ -29,7 +30,7 @@ public class Payment {
     private float amount;
 
     @Column(name = "paymentDate")
-    private LocalDate paymentDate;
+    private LocalDateTime paymentDateTime;
 
     @Enumerated(EnumType.STRING)
     @Convert(converter = PaymentMethodConverter.class)
@@ -75,12 +76,12 @@ public class Payment {
         this.amount = amount;
     }
 
-    public LocalDate getPaymentDate() {
-        return paymentDate;
+    public LocalDateTime getPaymentDateTime() {
+        return paymentDateTime;
     }
 
-    public void setPaymentDate(LocalDate paymentDate) {
-        this.paymentDate = paymentDate;
+    public void setPaymentDateTime(LocalDateTime paymentDateTime) {
+        this.paymentDateTime = paymentDateTime;
     }
 
     public PaymentMethod getPaymentMethod() {

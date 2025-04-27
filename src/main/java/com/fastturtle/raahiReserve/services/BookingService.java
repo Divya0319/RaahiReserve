@@ -79,7 +79,7 @@ public class BookingService {
             Booking booking = new Booking();
             booking.setBusRoute(busRoute);
             booking.setUser(user);
-            booking.setBookingDate(LocalDate.now());
+            booking.setBookingDateTime(LocalDateTime.now());
             response = ResponseEntity.ok(booking);
         }
 
@@ -122,7 +122,7 @@ public class BookingService {
 
     public ResponseEntity<?> doBookingFromPassengerForm(Integer userId, boolean isUserPassenger,
                                                         SeatType seatTypeForUser, String source,
-                                                        String destination, String travelDate, int selectedBusId, List<Passenger> passengers) {
+                                                        String destination, String travelDateTime, int selectedBusId, List<Passenger> passengers) {
         if(source.equals(destination)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Source and destination cannot be same"));
         }
@@ -212,8 +212,8 @@ public class BookingService {
         }
 
         booking.setPrice(bookingCost);
-        booking.setTravelDate(LocalDate.parse(travelDate));
-        booking.setBookingDate(LocalDate.now());
+        booking.setTravelDateTime(LocalDateTime.parse(travelDateTime));
+        booking.setBookingDateTime(LocalDateTime.now());
         booking.setBusRoute(busRouteForBooking);
 
         Payment payment = new Payment();
@@ -221,7 +221,7 @@ public class BookingService {
         payment.setPaymentStatus(PaymentStatus.PENDING);
         payment.setBooking(booking);
         payment.setAmount(0.00f);
-        payment.setPaymentDate(null);
+        payment.setPaymentDateTime(null);
         booking.setPayment(payment);
 
         busForBooking.setAvailableSeats(busForBooking.getAvailableSeats() -
@@ -269,8 +269,8 @@ public class BookingService {
         return ResponseEntity.ok().body(passengerRepository.saveAll(passengers));
     }
 
-    public Optional<List<Passenger>> findPassengersTraveledOnDate(LocalDate travelDate) {
-        return passengerRepository.findPassengersByTravelDate(travelDate);
+    public Optional<List<Passenger>> findPassengersTraveledOnDate(LocalDateTime travelDateTime) {
+        return passengerRepository.findPassengersByTravelDate(travelDateTime);
     }
 
     public Bus findBusForBooking(int bookingId) {
@@ -279,7 +279,7 @@ public class BookingService {
 
     public List<Booking> getBookingsWithinNext48HoursWithPendingOrFailedPayment() {
         List<Booking> bookings = bookingRepository.findBookingsWithPendingOrFailedPayments(
-                PaymentStatus.PENDING, PaymentStatus.FAILED, LocalDate.now());
+                PaymentStatus.PENDING, PaymentStatus.FAILED, LocalDateTime.now());
 
         LocalDateTime currentDateTime = LocalDateTime.now();
         LocalDateTime thresholdDateTime = currentDateTime.plusHours(48);
@@ -287,8 +287,7 @@ public class BookingService {
         // Filter bookings whose travelDate and busTiming combined are within 48 hours
         return bookings.stream()
                 .filter(booking -> {
-                    LocalDateTime travelDateTime = booking.getTravelDate()
-                            .atTime(booking.getBusRoute().getBus().getBusTiming());
+                    LocalDateTime travelDateTime = booking.getTravelDateTime();
                     return travelDateTime.isAfter(currentDateTime) && travelDateTime.isBefore(thresholdDateTime);
                 })
                 .collect(Collectors.toList());

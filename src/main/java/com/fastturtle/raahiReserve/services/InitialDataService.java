@@ -1112,11 +1112,11 @@ public class InitialDataService {
     private Booking createAndSavePendingPaymentForBooking(Booking booking) {
         Payment payment = new Payment();
         payment.setPaymentStatus(PaymentStatus.PENDING);
-        log.info("Payment pending: {} {}", booking.getPrice(), booking.getTravelDate());
+        log.info("Payment pending: {} {}", booking.getPrice(), booking.getTravelDateTime());
 
         payment.setPaymentMethod(null);
         payment.setAmount(0.00f);
-        payment.setPaymentDate(null);
+        payment.setPaymentDateTime(null);
         payment.setBooking(booking);
         booking.setPayment(payment);
 

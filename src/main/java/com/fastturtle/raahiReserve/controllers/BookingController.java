@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Controller
@@ -290,8 +291,8 @@ public class BookingController {
                 model.addAttribute("booking", booking);
 
                 // Formatted dates with ordinal suffixes
-                String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.getBookingDate());
-                String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.getTravelDate());
+                String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.getBookingDateTime());
+                String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.getTravelDateTime());
 
                 // Added formatted dates to the model
                 model.addAttribute("formattedBookingDate", formattedBookingDate);
@@ -326,8 +327,8 @@ public class BookingController {
         Bus b = booking.getBusRoute().getBus();
         String formattedBusNo = BusDataUtils.formatBusNumber(b.getBusNo());
         String formattedBusTime = BusDataUtils.formatBusTiming(b.getBusTiming());
-        String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.getBookingDate());
-        String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.getTravelDate());
+        String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.getBookingDateTime());
+        String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.getTravelDateTime());
 
         b.setFormattedBusNumber(formattedBusNo);
         b.setFormattedBusTiming(formattedBusTime);
@@ -365,7 +366,7 @@ public class BookingController {
 
     @PostMapping("/findPassengersTraveledOnDate")
     public String findNumberOfPassengersTravelledOnDate(@RequestParam("travelDate") String travelDate, Model model, Principal principal) {
-        Optional<List<Passenger>> passengers = bookingService.findPassengersTraveledOnDate(LocalDate.parse(
+        Optional<List<Passenger>> passengers = bookingService.findPassengersTraveledOnDate(LocalDateTime.parse(
                 travelDate));
 
         if(passengers.isPresent()) {
@@ -417,8 +418,8 @@ public class BookingController {
             Bus b = booking.getBusRoute().getBus();
             String formattedBusNo = BusDataUtils.formatBusNumber(b.getBusNo());
             String formattedBusTime = BusDataUtils.formatBusTiming(b.getBusTiming());
-            String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.getBookingDate());
-            String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.getTravelDate());
+            String formattedBookingDate = DateUtils.formatWithOrdinalSuffix(booking.getBookingDateTime());
+            String formattedTravelDate = DateUtils.formatWithOrdinalSuffix(booking.getTravelDateTime());
 
             b.setFormattedBusNumber(formattedBusNo);
             b.setFormattedBusTiming(formattedBusTime);
