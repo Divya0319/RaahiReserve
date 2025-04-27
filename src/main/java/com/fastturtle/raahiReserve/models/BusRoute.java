@@ -12,11 +12,11 @@ public class BusRoute {
     @Column(name = "busRouteId")
     private int busRouteId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "bus_id", nullable = false)
     private Bus bus;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "route_id", nullable = false)
     private Route route;
 

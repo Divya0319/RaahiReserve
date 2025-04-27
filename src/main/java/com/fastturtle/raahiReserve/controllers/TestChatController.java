@@ -54,10 +54,22 @@ public class TestChatController
                 .limit(2)
                 .toList();
 
-        List<BusRoute> top2BusRoutes = new ArrayList<>();
+        Map<BusRoute, Long> topRoutesMap = new LinkedHashMap<>();
 
-        for(Object[] row : topRoutesWithBookingCount) {
-            top2BusRoutes.add((BusRoute) row[0]);
+        for (Object[] row : topRoutesWithBookingCount) {
+            BusRoute route = (BusRoute) row[0];
+            Long count = (Long) row[1];
+            topRoutesMap.put(route, count);
+        }
+
+        StringBuilder top2RouteAggregated = new StringBuilder();
+
+        for (Map.Entry<BusRoute, Long> entry : topRoutesMap.entrySet()) {
+            top2RouteAggregated.append(
+                    entry.getKey().getRoute().getSource())
+                    .append(" to ").append(entry.getKey().getRoute().getDestination())
+                    .append(" (").append(entry.getValue()).append(" bookings)");
+            top2RouteAggregated.append("\n");
         }
 
         List<Booking> bookings = bookingRepository.findAll();
@@ -108,7 +120,13 @@ public class TestChatController
         String maxTimeSlotTravel = maxEntryTravel.getKey();
         int maxSlotValueTravel = maxEntryTravel.getValue();
 
-        String statsText = """
+        System.out.println("Total bookings: " + totalBookings);
+        System.out.println("Cancelled bookings count: " + cancelledBookingsCount);
+
+        System.out.println("Max time slot of travel: " + maxTimeSlotTravel);
+        System.out.println("Max time slot of booking: " + maxTimeSlotBooking);
+
+        String statsTextHardCoded = """
             Total Bookings: 312
             Cancellations: 21
             Top Routes:
@@ -124,6 +142,29 @@ public class TestChatController
             - Window: 65%
             - Aisle: 20%
             """;
+
+        String statsText = String.format("""
+                Total Bookings: %d
+                Cancellations: %d
+                Top Routes:
+                %s
+                Preferred Times:
+                - Travel Time: %s
+                - Booking Time: %s
+                Bus Type Preference:
+                    - AC Sleeper: 164
+                    - Non-AC Seater: 92
+                    Seat Preference:
+                    - Window: 65%%
+                    - Aisle: 20%%
+                """,
+                totalBookings,
+                cancelledBookingsCount,
+                top2RouteAggregated,
+                maxTimeSlotBooking,
+                maxTimeSlotTravel
+
+        );
 
         String promptString = "Please write a 2-3 line friendly summary of these bus booking stats. Please don't use markdown formatting:\n" + statsText;
 

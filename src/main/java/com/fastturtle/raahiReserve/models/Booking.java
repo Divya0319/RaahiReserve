@@ -3,6 +3,7 @@ package com.fastturtle.raahiReserve.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fastturtle.raahiReserve.enums.BookingStatus;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Fetch;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,7 +25,7 @@ public class Booking {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "bus_route_id")
     private BusRoute busRoute;
 
