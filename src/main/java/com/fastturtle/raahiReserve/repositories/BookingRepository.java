@@ -1,5 +1,6 @@
 package com.fastturtle.raahiReserve.repositories;
 
+import com.fastturtle.raahiReserve.enums.BookingStatus;
 import com.fastturtle.raahiReserve.enums.PaymentStatus;
 import com.fastturtle.raahiReserve.models.Booking;
 import com.fastturtle.raahiReserve.models.Bus;
@@ -36,4 +37,8 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             @Param("pendingStatus") PaymentStatus pendingStatus,
             @Param("failedStatus") PaymentStatus failedStatus,
             @Param("currentDate") LocalDate currentDate);
+
+    long count();
+
+    long countByBookingStatus(BookingStatus bookingStatus);
 }

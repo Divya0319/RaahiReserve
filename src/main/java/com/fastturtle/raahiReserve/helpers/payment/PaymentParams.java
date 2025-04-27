@@ -1,19 +1,19 @@
 package com.fastturtle.raahiReserve.helpers.payment;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public abstract class PaymentParams {
 
-    private LocalDate paymentDate;
+    private LocalDateTime paymentDateTime;
 
     private int receivedOtp;
 
-    public LocalDate getPaymentDate() {
-        return paymentDate;
+    public LocalDateTime getPaymentDateTime() {
+        return paymentDateTime;
     }
 
-    public void setPaymentDate(LocalDate paymentDate) {
-        this.paymentDate = paymentDate;
+    public void setPaymentDateTime(LocalDateTime paymentDateTime) {
+        this.paymentDateTime = paymentDateTime;
     }
 
     public int getReceivedOtp() {

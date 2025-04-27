@@ -5,6 +5,7 @@ import com.fastturtle.raahiReserve.enums.BookingStatus;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,11 +28,11 @@ public class Booking {
     @JoinColumn(name = "bus_route_id")
     private BusRoute busRoute;
 
-    @Column(name = "bookingDate")
-    private LocalDate bookingDate;
+    @Column(name = "bookingDateTime")
+    private LocalDateTime bookingDateTime;
 
-    @Column(name = "travelDate")
-    private LocalDate travelDate;
+    @Column(name = "travelDateTime")
+    private LocalDateTime travelDateTime;
 
     @Column(name = "bookingStatus")
     @Enumerated(EnumType.STRING)
@@ -61,11 +62,11 @@ public class Booking {
     @Transient
     private String formattedTravelDate;
 
-    public Booking(User user, BusRoute busRoute, LocalDate bookingDate, LocalDate travelDate) {
+    public Booking(User user, BusRoute busRoute, LocalDateTime bookingDateTime, LocalDateTime travelDateTime) {
         this.user = user;
         this.busRoute = busRoute;
-        this.bookingDate = bookingDate;
-        this.travelDate = travelDate;
+        this.bookingDateTime = bookingDateTime;
+        this.travelDateTime = travelDateTime;
         this.passengers = new ArrayList<>();
     }
 
@@ -97,20 +98,20 @@ public class Booking {
         this.busRoute = busRoute;
     }
 
-    public LocalDate getBookingDate() {
-        return bookingDate;
+    public LocalDateTime getBookingDateTime() {
+        return bookingDateTime;
     }
 
-    public void setBookingDate(LocalDate bookingDate) {
-        this.bookingDate = bookingDate;
+    public void setBookingDateTime(LocalDateTime bookingDateTime) {
+        this.bookingDateTime = bookingDateTime;
     }
 
-    public LocalDate getTravelDate() {
-        return travelDate;
+    public LocalDateTime getTravelDateTime() {
+        return travelDateTime;
     }
 
-    public void setTravelDate(LocalDate travelDate) {
-        this.travelDate = travelDate;
+    public void setTravelDateTime(LocalDateTime travelDateTime) {
+        this.travelDateTime = travelDateTime;
     }
 
     public List<Passenger> getPassengers() {
@@ -174,8 +175,8 @@ public class Booking {
     public String toString() {
         return "Booking{" +
                 "bookingId=" + bookingId +
-                ", bookingDate=" + bookingDate +
-                ", travelDate=" + travelDate +
+                ", bookingDateTime=" + bookingDateTime +
+                ", travelDateTime=" + travelDateTime +
                 ", bookingStatus=" + bookingStatus +
                 ", price=" + price +
                 '}';

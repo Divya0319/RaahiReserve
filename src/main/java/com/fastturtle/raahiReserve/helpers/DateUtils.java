@@ -3,6 +3,7 @@ package com.fastturtle.raahiReserve.helpers;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -12,6 +13,11 @@ public class DateUtils {
     // Define the date formats
     private static final SimpleDateFormat SOURCE_DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
     private static final SimpleDateFormat TARGET_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+
+    // New formatters for LocalDateTime
+    private static final DateTimeFormatter SOURCE_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private static final DateTimeFormatter TARGET_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
 
     // Method to convert date format
     public static String convertDateFormat(String sourceDate) {
@@ -27,10 +33,24 @@ public class DateUtils {
         }
     }
 
-    public static String formatWithOrdinalSuffix(LocalDate sourceDate) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy");
-        String formattedDate = sourceDate.format(formatter);
-        int day = sourceDate.getDayOfMonth();
+    // New method to handle String -> LocalDateTime -> formatted String
+    public static String convertDateTimeFormat(String sourceDateTime) {
+        try {
+            // Parse from source format
+            LocalDateTime dateTime = LocalDateTime.parse(sourceDateTime, SOURCE_DATE_TIME_FORMATTER);
+            // Format to target format
+            return dateTime.format(TARGET_DATE_TIME_FORMATTER);
+        } catch (Exception e) {
+            System.err.println("Invalid datetime format: " + sourceDateTime);
+            return null;
+        }
+    }
+
+    // Modified method to handle LocalDateTime with ordinal suffix
+    public static String formatWithOrdinalSuffix(LocalDateTime sourceDateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy 'at' HH:mm");
+        String formattedDate = sourceDateTime.format(formatter);
+        int day = sourceDateTime.getDayOfMonth();
 
         String suffix;
         if(day >= 11 && day <= 13) {
@@ -45,7 +65,6 @@ public class DateUtils {
         }
 
         return formattedDate.replaceFirst("\\d+", day + suffix);
-
     }
 
     public static String formatTimeTo12HrFormat(LocalTime time) {

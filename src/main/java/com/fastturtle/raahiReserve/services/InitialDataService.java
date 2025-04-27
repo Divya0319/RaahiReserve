@@ -15,10 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -79,21 +76,21 @@ public class InitialDataService {
     Gender[] userGenders = {Gender.MALE, Gender.FEMALE, Gender.MALE, Gender.OTHER, Gender.MALE};
     String[] phNos = {"9898976767", "7878765656", "8989877665", "9988656543", "8987967578"};
 
-    LocalDate[] bookingDates = {LocalDate.parse(DateUtils.convertDateFormat("02/09/2023")),
-            LocalDate.parse(DateUtils.convertDateFormat("03/09/2023")),
-            LocalDate.parse(DateUtils.convertDateFormat("10/09/2023")),
-            LocalDate.parse(DateUtils.convertDateFormat("12/12/2023")),
-            LocalDate.parse(DateUtils.convertDateFormat("08/08/2024")),
-            LocalDate.parse(DateUtils.convertDateFormat("01/09/2024"))
+    LocalDateTime[] bookingDates = {LocalDateTime.parse(DateUtils.convertDateTimeFormat("02/09/2023 07:15")),
+            LocalDateTime.parse(DateUtils.convertDateTimeFormat("03/09/2023 09:28")),
+            LocalDateTime.parse(DateUtils.convertDateTimeFormat("10/09/2023 10:06")),
+            LocalDateTime.parse(DateUtils.convertDateTimeFormat("12/12/2023 16:37")),
+            LocalDateTime.parse(DateUtils.convertDateTimeFormat("08/08/2024 08:25")),
+            LocalDateTime.parse(DateUtils.convertDateTimeFormat("01/09/2024 12:35"))
     };
 
-    LocalDate[] paymentDates = {
-            LocalDate.parse(DateUtils.convertDateFormat("08/09/2023")),
-            LocalDate.parse(DateUtils.convertDateFormat("08/10/2023")),
-            LocalDate.parse(DateUtils.convertDateFormat("15/09/2024")),
-            LocalDate.parse(DateUtils.convertDateFormat("12/12/2023")),
-            LocalDate.parse(DateUtils.convertDateFormat("15/08/2024")),
-            LocalDate.parse(DateUtils.convertDateFormat("01/09/2024"))
+    LocalDateTime[] paymentDates = {
+            LocalDateTime.parse(DateUtils.convertDateTimeFormat("08/09/2023 01:16")),
+            LocalDateTime.parse(DateUtils.convertDateTimeFormat("08/10/2023 06:45")),
+            LocalDateTime.parse(DateUtils.convertDateTimeFormat("15/09/2024 13:06")),
+            LocalDateTime.parse(DateUtils.convertDateTimeFormat("12/12/2023 05:55")),
+            LocalDateTime.parse(DateUtils.convertDateTimeFormat("15/08/2024 11:27")),
+            LocalDateTime.parse(DateUtils.convertDateTimeFormat("01/09/2024 08:47"))
     };
 
     LocalDate[] travelDates = {
@@ -721,11 +718,19 @@ public class InitialDataService {
 
         BusRoute busRouteForBooking1 = busRouteRepository.findByBus_BusNo("PJ02HK7295");
 
-        Booking booking1 = new Booking(userRepository.findByUserName("EmilyBrown"), busRouteForBooking1, bookingDates[0], travelDates[0]);
+        Bus busForBooking1 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking1).get(0);
+
+        LocalDateTime travelDateTime = LocalDateTime.of(
+                travelDates[0].getYear(),
+                travelDates[0].getMonth(),
+                travelDates[0].getDayOfMonth(),
+                busForBooking1.getBusTiming().getHour(),
+                busForBooking1.getBusTiming().getMinute());
+
+        Booking booking1 = new Booking(userRepository.findByUserName("EmilyBrown"), busRouteForBooking1, bookingDates[0], travelDateTime);
 
         booking1.setUserPassenger(true);
 
-        Bus busForBooking1 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking1).get(0);
         rsnp.setBusNo(busForBooking1.getBusNo());
 
         Float booking1Cost = 0.0f;
@@ -807,11 +812,19 @@ public class InitialDataService {
         log.info("Starting Booking 2");
         BusRoute busRouteForBooking2 = busRouteRepository.findByBus_BusNo("AP11HL2756");
 
+        Bus busForBooking2 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking2).get(0);
+
         User user = userRepository.findByUserName("BobJohnson");
 
-        Booking booking2 = new Booking(user, busRouteForBooking2, bookingDates[1], travelDates[1]);
+        LocalDateTime travelDateTime = LocalDateTime.of(
+                travelDates[1].getYear(),
+                travelDates[1].getMonth(),
+                travelDates[1].getDayOfMonth(),
+                busForBooking2.getBusTiming().getHour(),
+                busForBooking2.getBusTiming().getMinute());
 
-        Bus busForBooking2 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking2).get(0);
+        Booking booking2 = new Booking(user, busRouteForBooking2, bookingDates[1], travelDateTime);
+
         rsnp.setBusNo(busForBooking2.getBusNo());
 
         BusSeat busSeat3 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking2, SeatType.AISLE, -1);
@@ -829,7 +842,7 @@ public class InitialDataService {
         WalletPaymentParams walletPaymentParams = new WalletPaymentParams();
         walletPaymentParams.setUser(user);
         walletPaymentParams.setReceivedOtp(673412);
-        walletPaymentParams.setPaymentDate(paymentDates[3]);
+        walletPaymentParams.setPaymentDateTime(paymentDates[3]);
         booking2 = wps.processPayment(booking2, PaymentStatus.COMPLETED, walletPaymentParams);
 
         if(booking2 != null) {
@@ -851,10 +864,19 @@ public class InitialDataService {
         log.info("Starting Booking 3");
 
         BusRoute busRouteForBooking3 = busRouteRepository.findByBus_BusNo("CG04LM7492");
-        Booking booking3 = new Booking(userRepository.findByUserName("AliceSmith"), busRouteForBooking3, bookingDates[3], travelDates[3]);
-        booking3.setUserPassenger(true);
 
         Bus busForBooking3 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking3).get(0);
+
+        LocalDateTime travelDateTime = LocalDateTime.of(
+                travelDates[3].getYear(),
+                travelDates[3].getMonth(),
+                travelDates[3].getDayOfMonth(),
+                busForBooking3.getBusTiming().getHour(),
+                busForBooking3.getBusTiming().getMinute());
+
+        Booking booking3 = new Booking(userRepository.findByUserName("AliceSmith"), busRouteForBooking3, bookingDates[3], travelDateTime);
+        booking3.setUserPassenger(true);
+
         rsnp.setBusNo(busForBooking3.getBusNo());
 
         Float booking3Cost = 0.0f;
@@ -890,7 +912,7 @@ public class InitialDataService {
         CardPaymentStrategy cps = new CardPaymentStrategy(cardDetailRepository, bankAccountRepository);
         CardPaymentParams cardPaymentParams = new CardPaymentParams();
         cardPaymentParams.setLast4Digits(6789);
-        cardPaymentParams.setPaymentDate(paymentDates[4]);
+        cardPaymentParams.setPaymentDateTime(paymentDates[4]);
         cardPaymentParams.setReceivedOtp(840320);
         cardPaymentParams.setCardType(CardType.DEBIT);
 
@@ -916,12 +938,19 @@ public class InitialDataService {
         log.info("Starting Booking 4");
         BusRoute busRouteForBooking4 = busRouteRepository.findByBus_BusNo("PJ16TH1295");
 
+        Bus busForBooking4 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking4).get(0);
+
         User user = userRepository.findByUserName("JohnDoe");
 
+        LocalDateTime travelDateTime = LocalDateTime.of(
+                travelDates[2].getYear(),
+                travelDates[2].getMonth(),
+                travelDates[2].getDayOfMonth(),
+                busForBooking4.getBusTiming().getHour(),
+                busForBooking4.getBusTiming().getMinute());
 
-        Booking booking4 = new Booking(user, busRouteForBooking4, bookingDates[2], travelDates[2]);
+        Booking booking4 = new Booking(user, busRouteForBooking4, bookingDates[2], travelDateTime);
 
-        Bus busForBooking4 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking4).get(0);
         rsnp.setBusNo(busForBooking4.getBusNo());
 
         BusSeat busSeat5 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking4, SeatType.WINDOW, -1);
@@ -940,7 +969,7 @@ public class InitialDataService {
         netbankingPaymentParams.setBankNamePrefix("HDFC");
         netbankingPaymentParams.setUserId(user.getUserId());
         netbankingPaymentParams.setReceivedOtp(343532);
-        netbankingPaymentParams.setPaymentDate(paymentDates[2]);
+        netbankingPaymentParams.setPaymentDateTime(paymentDates[2]);
 
         booking4 = nbps.processPayment(booking4, PaymentStatus.COMPLETED, netbankingPaymentParams);
 
@@ -963,9 +992,17 @@ public class InitialDataService {
         log.info("Starting Booking 5");
         BusRoute busRouteForBooking5 = busRouteRepository.findByBus_BusNo("PJ02BL7215");
 
-        Booking booking5 = new Booking(userRepository.findByUserName("BobJohnson"), busRouteForBooking5, bookingDates[4], travelDates[4]);
-
         Bus busForBooking5 = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking5).get(0);
+
+        LocalDateTime travelDateTime = LocalDateTime.of(
+                travelDates[4].getYear(),
+                travelDates[4].getMonth(),
+                travelDates[4].getDayOfMonth(),
+                busForBooking5.getBusTiming().getHour(),
+                busForBooking5.getBusTiming().getMinute());
+
+        Booking booking5 = new Booking(userRepository.findByUserName("BobJohnson"), busRouteForBooking5, bookingDates[4], travelDateTime);
+
         rsnp.setBusNo(busForBooking5.getBusNo());
 
         BusSeat busSeat6 = saveAssignedSeatToBusSeatEntityForBooking(rsnp, busForBooking5, null, -1);
@@ -981,7 +1018,7 @@ public class InitialDataService {
         CardPaymentStrategy cps = new CardPaymentStrategy(cardDetailRepository, bankAccountRepository);
         CardPaymentParams cardPaymentParams = new CardPaymentParams();
         cardPaymentParams.setLast4Digits(5678);
-        cardPaymentParams.setPaymentDate(paymentDates[4]);
+        cardPaymentParams.setPaymentDateTime(paymentDates[4]);
         cardPaymentParams.setReceivedOtp(457433);
         cardPaymentParams.setCardType(CardType.CREDIT);
 
@@ -1010,11 +1047,19 @@ public class InitialDataService {
         log.info("Starting booking 6");
         BusRoute busRouteForBooking = busRouteRepository.findByBus_BusNo("MH04PW2747");
 
-        Booking booking = new Booking(userRepository.findByUserName("MichaelDavis"), busRouteForBooking, bookingDates[5], travelDates[5]);
+        Bus busForBooking = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking).get(0);
+
+        LocalDateTime travelDateTime = LocalDateTime.of(
+                travelDates[5].getYear(),
+                travelDates[5].getMonth(),
+                travelDates[5].getDayOfMonth(),
+                busForBooking.getBusTiming().getHour(),
+                busForBooking.getBusTiming().getMinute());
+
+        Booking booking = new Booking(userRepository.findByUserName("MichaelDavis"), busRouteForBooking, bookingDates[5], travelDateTime);
 
         booking.setUserPassenger(true);
 
-        Bus busForBooking = busRouteRepository.findBusesAvailableInGivenBusRoute(busRouteForBooking).get(0);
         rsnp.setBusNo(busForBooking.getBusNo());
 
         Float bookingCost = 0.0f;
