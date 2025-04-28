@@ -1,11 +1,13 @@
 package com.fastturtle.raahiReserve.controllers;
 
+import com.fastturtle.raahiReserve.dtos.CityPassengerCountDTO;
 import com.fastturtle.raahiReserve.enums.BookingStatus;
 import com.fastturtle.raahiReserve.enums.TimeSlot;
 import com.fastturtle.raahiReserve.models.Booking;
 import com.fastturtle.raahiReserve.models.BusRoute;
 import com.fastturtle.raahiReserve.models.ChatRequest;
 import com.fastturtle.raahiReserve.repositories.BookingRepository;
+import com.fastturtle.raahiReserve.repositories.PassengerRepository;
 import org.springframework.ai.azure.openai.AzureOpenAiChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -26,11 +28,13 @@ public class TestChatController
     private final AzureOpenAiChatModel azureOpenAiChatModel;
 
     private final BookingRepository bookingRepository;
+    private final PassengerRepository passengerRepository;
 
-    public TestChatController(AzureOpenAiChatModel azureOpenAiChatModel, BookingRepository bookingRepository)
+    public TestChatController(AzureOpenAiChatModel azureOpenAiChatModel, BookingRepository bookingRepository, PassengerRepository passengerRepository)
     {
         this.azureOpenAiChatModel = azureOpenAiChatModel;
         this.bookingRepository = bookingRepository;
+        this.passengerRepository = passengerRepository;
     }
 
     @PostMapping("/chat")
@@ -126,6 +130,26 @@ public class TestChatController
         System.out.println("Max time slot of travel: " + maxTimeSlotTravel);
         System.out.println("Max time slot of booking: " + maxTimeSlotBooking);
 
+        List<CityPassengerCountDTO> countOfPassengersBelongingToMetroCities = passengerRepository.countPassengersFromMetroCities(
+                List.of("Bangalore", "Mumbai", "Delhi"));
+
+        long totalCountOfPassengers = passengerRepository.count();
+
+        StringBuilder metroCityPassengerString = new StringBuilder();
+
+        for(CityPassengerCountDTO countDTO : countOfPassengersBelongingToMetroCities) {
+            String cityName = countDTO.getCityName();
+            Long passengerCount = countDTO.getPassengerCount();
+            double percentage = ((double)passengerCount / totalCountOfPassengers) * 100D;
+            percentage = Math.round(percentage * 100.0) / 100.0;
+            metroCityPassengerString.append(cityName)
+                    .append(" - ")
+                    .append(percentage)
+                    .append("\n");
+        }
+
+        System.out.println("Metro city aggregation: " + metroCityPassengerString);
+
         String statsTextHardCoded = """
             Total Bookings: 312
             Cancellations: 21
@@ -151,18 +175,15 @@ public class TestChatController
                 Preferred Times:
                 - Travel Time: %s
                 - Booking Time: %s
-                Bus Type Preference:
-                    - AC Sleeper: 164
-                    - Non-AC Seater: 92
-                    Seat Preference:
-                    - Window: 65%%
-                    - Aisle: 20%%
+                Percentage of travellers belonging to Metro cities:
+                - %s
                 """,
                 totalBookings,
                 cancelledBookingsCount,
                 top2RouteAggregated,
                 maxTimeSlotBooking,
-                maxTimeSlotTravel
+                maxTimeSlotTravel,
+                metroCityPassengerString
 
         );
 
