@@ -3,6 +3,19 @@
 <head>
     <title>RaahiReserve</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* Small spinner animation */
+        .spin {
+            display: inline-block;
+            animation: spinAnimation 1s linear infinite;
+        }
+
+        @keyframes spinAnimation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
@@ -33,8 +46,11 @@
                 <!-- 🛑 New placeholder section for Booking Trends Summary -->
                 <div class="mt-5">
                     <div class="card">
-                        <div class="card-header bg-info text-white text-center">
+                        <div class="card-header bg-info text-white text-center d-flex justify-content-between align-items-center" >
                             <h4>Booking Trends Summary</h4>
+                            <button id="reloadTrendButton" class="btn btn-sm btn-primary" type="button">
+                                <span id="reloadIcon">&#x21bb;</span>
+                            </button>
                         </div>
                         <div class="card-body bg-white text-dark">
                             <p id="bookingTrendsSummary" class="text-center">
@@ -47,5 +63,32 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function loadBookingTrends() {
+            const reloadIcon = document.getElementById('reloadIcon');
+
+            // Add rotating class
+            reloadIcon.classList.add('spin');
+
+            fetch('/raahireserve/bookingSummary')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('bookingTrendsSummary').textContent = data;
+                })
+                .catch(error => {
+                    console.error('Error fetching booking trend:', error);
+                    document.getElementById('bookingTrendsSummary').textContent = "Failed to load trends.";
+                })
+                .finally(() => {
+                    // Remove rotating class after fetch complete
+                    reloadIcon.classList.remove('spin');
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadBookingTrends);
+        document.getElementById('reloadTrendButton').addEventListener('click', loadBookingTrends);
+    </script>
+
 </body>
 </html>
