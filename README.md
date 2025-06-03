@@ -4,6 +4,9 @@
 
 RaahiReserve is a comprehensive Spring Boot application designed to simplify bus booking and route management for a seamless travel experience. The system provides features such as passenger management, seat selection, booking summary breakdown, and payment integration. Designed for scalability and optimized for performance, the app handles real-time bus seat availability with a clean and intuitive interface.
 
+## Generating booking trend using Gen AI
+![AI working Demo](gifs/booking_trend-with_ai_gif.gif)
+
 ## Features
 - **Core Functionality:** Book trips from selected source and destination locations with ease, assign buses and seats based on passengers' preferences, and mark passengers as traveled on their scheduled date (travel simulation).
 - **Payment Integration:** In-house payment gateway with multiple methods for a smooth booking payment experience, featuring a timeout mechanism to enhance security.
