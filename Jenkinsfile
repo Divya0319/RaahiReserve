@@ -38,49 +38,14 @@ pipeline {
 
         stage('Provision EC2') {
             steps {
-                // Write SQL files
-                writeFile file: 'alter_user.sql', text: '''
-        ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'NewRootPassword123!';
-        FLUSH PRIVILEGES;
-        '''
-                writeFile file: 'cleanup.sql', text: '''
-        DELETE FROM mysql.user WHERE User='';
-        DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
-        DROP DATABASE IF EXISTS test;
-        FLUSH PRIVILEGES;
-        '''
-                writeFile file: 'setup_database.sql', text: '''
-        CREATE DATABASE IF NOT EXISTS raahireserve;
-        CREATE USER IF NOT EXISTS 'scalerstudent'@'localhost' IDENTIFIED BY 'Scalerstudent123';
-        GRANT ALL PRIVILEGES ON raahireserve.* TO 'scalerstudent'@'localhost';
-        FLUSH PRIVILEGES;
-        '''
 
                 sshagent (credentials: ['ubuntu-ec2-key']) {
-                    sh '''
-                        # Copy SQL files to EC2
-                        scp -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=5 alter_user.sql cleanup.sql setup_database.sql ubuntu@ec2-52-192-124-138.ap-northeast-1.compute.amazonaws.com:/home/ubuntu/
-                    '''
 
                     // Java Installation
                     sh '''
                         ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=5 ubuntu@ec2-52-192-124-138.ap-northeast-1.compute.amazonaws.com "set -e; sudo apt-get update -y; sudo apt-get upgrade -y; which java || sudo apt install openjdk-17-jdk openjdk-17-jre -y; java --version"
                     '''
 
-                    // MySQL Installation
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=5 ubuntu@ec2-52-192-124-138.ap-northeast-1.compute.amazonaws.com "set -e; if ! command -v mysql >/dev/null; then sudo apt update -y; sudo apt install mysql-server -y; sudo systemctl enable mysql; sudo systemctl start mysql; else echo '=== MySQL already installed ==='; sudo systemctl start mysql || true; fi; mysql --version"
-                    '''
-
-                    // Root Password Setup & Cleanup
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=5 ubuntu@ec2-52-192-124-138.ap-northeast-1.compute.amazonaws.com "set -e; if mysql -u root -p'NewRootPassword123!' -e 'SELECT 1' 2>/dev/null; then echo '=== Root password already set ==='; else echo '=== Setting root password and cleanup ==='; sudo mysql < /home/ubuntu/alter_user.sql; mysql -u root -p'NewRootPassword123!' < /home/ubuntu/cleanup.sql; fi"
-                    '''
-
-                    // Database Creation
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=5 ubuntu@ec2-52-192-124-138.ap-northeast-1.compute.amazonaws.com "set -e; echo '=== Setting up MySQL Database/User ==='; mysql -u root -p'NewRootPassword123!' < /home/ubuntu/setup_database.sql"
-                    '''
                 }
             }
         }
@@ -100,8 +65,8 @@ pipeline {
                             sleep 3
 
                             # Check port usage
-                            echo "=== Port 8080 Status ==="
-                            sudo ss -tulnp | grep 8080 || echo "Port 8080 available"
+                            echo "=== Port 8092 Status ==="
+                            sudo ss -tulnp | grep 8092 || echo "Port 8092 available"
 
                             # Start new instance with debug output
                             echo "=== Starting Application ==="
