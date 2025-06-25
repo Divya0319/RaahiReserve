@@ -43,12 +43,12 @@ pipeline {
 
                     // Java Installation
                     sh '''
-                        ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=5 ubuntu@ec2-52-192-124-138.ap-northeast-1.compute.amazonaws.com "set -e; sudo apt-get update -y; sudo apt-get upgrade -y; which java || sudo apt install openjdk-17-jdk openjdk-17-jre -y; java --version"
+                        ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=5 ubuntu@ec2-13-158-3-114.ap-northeast-1.compute.amazonaws.com "set -e; sudo apt-get update -y; sudo apt-get upgrade -y; which java || sudo apt install openjdk-17-jdk openjdk-17-jre -y; java --version"
                     '''
 
                 }
-
-
+                
+                
             }
         }
 
@@ -57,10 +57,10 @@ pipeline {
                 sshagent (credentials: ['ubuntu-ec2-key']) {
                     sh '''
                         # Copy JAR file
-                        scp -o StrictHostKeyChecking=no target/*.jar ubuntu@ec2-52-192-124-138.ap-northeast-1.compute.amazonaws.com:/home/ubuntu/app.jar
+                        scp -o StrictHostKeyChecking=no target/*.jar ubuntu@ec2-13-158-3-114.ap-northeast-1.compute.amazonaws.com:/home/ubuntu/app.jar
 
                         # Deploy with better debugging
-                        ssh -o StrictHostKeyChecking=no ubuntu@ec2-52-192-124-138.ap-northeast-1.compute.amazonaws.com /bin/bash <<\'EOF\'
+                        ssh -o StrictHostKeyChecking=no ubuntu@ec2-13-158-3-114.ap-northeast-1.compute.amazonaws.com /bin/bash <<\'EOF\'
                             # Stop existing app
                             echo "=== Stopping existing application ==="
                             pgrep -f app.jar && pkill -f app.jar
