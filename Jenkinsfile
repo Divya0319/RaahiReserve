@@ -77,7 +77,7 @@ pipeline {
 EOF
 
                         # Deploy with better debugging
-                        ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=5 ${EC2_USER}@${EC2_HOST} /bin/bash <<\'EOF\'
+                        ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=5 ${EC2_USER}@${EC2_HOST} /bin/bash <<EOF
                             # Stop existing app
                             echo "=== Stopping existing application ==="
                             pgrep -f ${S3_KEY}.jar && pkill -f ${S3_KEY}
