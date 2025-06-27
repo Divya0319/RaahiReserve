@@ -15,11 +15,6 @@ pipeline {
     }
 
     stages {
-        stage('Shell Test') {
-            steps {
-                sh 'echo "Shell is working fine"'
-            }
-        }
 
         stage('Checkout') {
             steps {
