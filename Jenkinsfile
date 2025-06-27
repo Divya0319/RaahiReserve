@@ -9,6 +9,9 @@ pipeline {
         S3_KEY = 'raahiReserveApp.jar'
         EC2_USER = 'ubuntu'
         EC2_HOST = 'ec2-52-194-236-162.ap-northeast-1.compute.amazonaws.com'
+        OPENAI_AZURE_API_KEY = credentials('OPENAI_AZURE_API_KEY')  // ID from Jenkins credentials
+        AZURE_GPT_ENDPOINT = credentials('AZURE_GPT_ENDPOINT')
+        AZURE_DEP_NAME = credentials('AZURE_DEP_NAME')
     }
 
     stages {
