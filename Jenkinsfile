@@ -73,14 +73,14 @@ pipeline {
                         echo "Pulling latest JAR from S3..."
                         ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=5 ${EC2_USER}@${EC2_HOST} /bin/bash <<EOF
                             echo "Pulling latest JAR from S3..."
-                            aws s3 cp s3://${S3_BUCKET}/${S3_KEY} /home/ubuntu/${S3_KEY}.jar
+                            aws s3 cp s3://${S3_BUCKET}/${S3_KEY} /home/ubuntu/${S3_KEY}
 EOF
 
                         # Deploy with better debugging
                         ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=5 ${EC2_USER}@${EC2_HOST} /bin/bash <<\'EOF\'
                             # Stop existing app
                             echo "=== Stopping existing application ==="
-                            pgrep -f ${S3_KEY}.jar && pkill -f ${S3_KEY}.jar
+                            pgrep -f ${S3_KEY}.jar && pkill -f ${S3_KEY}
                             sleep 3
 
                             # Check port usage
@@ -89,17 +89,17 @@ EOF
 
                             # Start new instance with debug output
                             echo "=== Starting Application ==="
-                            nohup java -jar /home/ubuntu/${S3_KEY}.jar > /home/ubuntu/${S3_KEY}.log 2>&1 &
+                            nohup java -jar /home/ubuntu/${S3_KEY} > /home/ubuntu/raahiReserveApp.log 2>&1 &
                             sleep 5
 
                             # Verify
                             echo "=== Verification ==="
-                            if pgrep -f ${S3_KEY}.jar >/dev/null; then
-                                echo "Application running with PID: $(pgrep -f ${S3_KEY}.jar)"
+                            if pgrep -f ${S3_KEY} >/dev/null; then
+                                echo "Application running with PID: $(pgrep -f ${S3_KEY})"
                                 exit 0
                             else
                                 echo "=== Application Logs ==="
-                                cat /home/ubuntu/${S3_KEY}.log
+                                cat /home/ubuntu/raahiReserveApp.log
                                 echo "ERROR: Process failed to start"
                                 exit 1
                             fi
