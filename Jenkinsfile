@@ -88,6 +88,7 @@ EOF
                             sudo ss -tulnp | grep 8092 || echo "Port 8092 available"
 
                             # Start new instance with debug output
+                            export AZURE_GPT_ENDPOINT=${AZURE_GPT_ENDPOINT} AZURE_DEP_NAME=${AZURE_DEP_NAME} OPENAI_AZURE_API_KEY=${OPENAI_AZURE_API_KEY}
                             echo "=== Starting Application ==="
                             nohup java -jar /home/ubuntu/${S3_KEY} > /home/ubuntu/raahiReserveApp.log 2>&1 &
                             sleep 5
