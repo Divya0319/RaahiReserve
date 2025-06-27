@@ -2,9 +2,19 @@ pipeline {
     agent any
 
     environment {
-        OPENAI_AZURE_API_KEY = credentials('OPENAI_AZURE_API_KEY')  // ID from Jenkins credentials
-        AZURE_GPT_ENDPOINT = credentials('AZURE_GPT_ENDPOINT')
-        AZURE_DEP_NAME = credentials('AZURE_DEP_NAME')
+        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
+        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+        AWS_DEFAULT_REGION = 'ap-northeast-1'
+        S3_BUCKET = 'bkt-sample-app-artifacts'
+        S3_KEY = 'raahiReserveApp.jar'
+        EC2_USER = 'ubuntu'
+        EC2_HOST = 'ec2-52-194-236-162.ap-northeast-1.compute.amazonaws.com'
+    }
+
+    stage('Shell Test') {
+        steps {
+            sh 'echo "Shell is working fine"'
+        }
     }
 
     stages {
@@ -36,6 +46,13 @@ pipeline {
             }
         }
 
+        stage('Upload to S3') {
+            steps {
+                echo 'Uploading JAR to S3...'
+                sh 'aws s3 cp target/*.jar s3://${S3_BUCKET}/${S3_KEY}'
+            }
+        }
+
         stage('Provision EC2') {
             steps {
 
@@ -43,11 +60,9 @@ pipeline {
 
                     // Java Installation
                     sh '''
-                        ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=5 ubuntu@ec2-13-158-3-114.ap-northeast-1.compute.amazonaws.com "set -e; sudo apt-get update -y; sudo apt-get upgrade -y; which java || sudo apt install openjdk-17-jdk openjdk-17-jre -y; java --version"
+                        ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=5 ${EC2_USER}@${EC2_HOST} "set -e; sudo apt-get update -y; sudo apt-get upgrade -y; which java || sudo apt install openjdk-17-jdk openjdk-17-jre -y; java --version"
                     '''
-
                 }
-                
                 
             }
         }
@@ -55,15 +70,19 @@ pipeline {
         stage('Deploy to EC2') {
             steps {
                 sshagent (credentials: ['ubuntu-ec2-key']) {
+                    echo 'Deploying on EC2...'
                     sh '''
-                        # Copy JAR file
-                        scp -o StrictHostKeyChecking=no target/*.jar ubuntu@ec2-13-158-3-114.ap-northeast-1.compute.amazonaws.com:/home/ubuntu/app.jar
+                        echo "Pulling latest JAR from S3..."
+                        ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=5 ${EC2_USER}@${EC2_HOST} /bin/bash <<EOF
+                            echo "Pulling latest JAR from S3..."
+                            aws s3 cp s3://${S3_BUCKET}/${S3_KEY} /home/ubuntu/${S3_KEY}.jar
+EOF
 
                         # Deploy with better debugging
-                        ssh -o StrictHostKeyChecking=no ubuntu@ec2-13-158-3-114.ap-northeast-1.compute.amazonaws.com /bin/bash <<\'EOF\'
+                        ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=5 ${EC2_USER}@${EC2_HOST} /bin/bash <<\'EOF\'
                             # Stop existing app
                             echo "=== Stopping existing application ==="
-                            pgrep -f app.jar && pkill -f app.jar
+                            pgrep -f ${S3_KEY}.jar && pkill -f ${S3_KEY}.jar
                             sleep 3
 
                             # Check port usage
@@ -72,17 +91,17 @@ pipeline {
 
                             # Start new instance with debug output
                             echo "=== Starting Application ==="
-                            nohup java -jar /home/ubuntu/app.jar > /home/ubuntu/app.log 2>&1 &
+                            nohup java -jar /home/ubuntu/${S3_KEY}.jar > /home/ubuntu/${S3_KEY}.log 2>&1 &
                             sleep 5
 
                             # Verify
                             echo "=== Verification ==="
-                            if pgrep -f app.jar >/dev/null; then
-                                echo "Application running with PID: $(pgrep -f app.jar)"
+                            if pgrep -f ${S3_KEY}.jar >/dev/null; then
+                                echo "Application running with PID: $(pgrep -f ${S3_KEY}.jar)"
                                 exit 0
                             else
                                 echo "=== Application Logs ==="
-                                cat /home/ubuntu/app.log
+                                cat /home/ubuntu/${S3_KEY}.log
                                 echo "ERROR: Process failed to start"
                                 exit 1
                             fi
