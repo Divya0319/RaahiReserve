@@ -11,13 +11,13 @@ pipeline {
         EC2_HOST = 'ec2-52-194-236-162.ap-northeast-1.compute.amazonaws.com'
     }
 
-    stage('Shell Test') {
-        steps {
-            sh 'echo "Shell is working fine"'
-        }
-    }
-
     stages {
+        stage('Shell Test') {
+            steps {
+                sh 'echo "Shell is working fine"'
+            }
+        }
+
         stage('Checkout') {
             steps {
                 // Jenkins will automatically check out the source if using Pipeline from SCM
