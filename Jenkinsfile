@@ -51,6 +51,18 @@ pipeline {
             }
         }
 
+        stage('Provision EC2') {
+            steps {
+                sshagent (credentials: ['ubuntu-ec2-key']) {
+
+                    // Java Installation
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=5 ${EC2_USER}@${EC2_HOST} "set -e; sudo apt-get update -y; which java || sudo apt install openjdk-17-jdk openjdk-17-jre -y; java --version"
+                    '''
+
+                }
+            }
+        }
 
         stage('Deploy to EC2') {
             steps {
