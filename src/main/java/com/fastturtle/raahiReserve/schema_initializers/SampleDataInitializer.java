@@ -31,7 +31,7 @@ public class SampleDataInitializer {
         this.busSeatRepository = busSeatRepository;
     }
 
-    @PostConstruct
+//    @PostConstruct
     public void init() {
 
         initialDataService.createAndSaveBusesAndBusRoutes();

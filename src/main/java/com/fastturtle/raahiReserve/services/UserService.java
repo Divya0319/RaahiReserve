@@ -1,5 +1,6 @@
 package com.fastturtle.raahiReserve.services;
 
+import com.fastturtle.raahiReserve.helpers.RetryHelper;
 import com.fastturtle.raahiReserve.models.User;
 import com.fastturtle.raahiReserve.models.UserWallet;
 import com.fastturtle.raahiReserve.repositories.UserRepository;
@@ -34,5 +35,9 @@ public class UserService {
 
     public UserWallet getUserWalletByEmail(String email) {
         return userWalletRepository.findWalletByEmail(email);
+    }
+
+    public List<User> findAllWithRetry() {
+        return RetryHelper.executeWithRetry(() -> userRepository.findAll(), 3, 3000);
     }
 }
