@@ -356,9 +356,15 @@ public class InitialDataService {
                 User user = new User(usernames[index], fullNames[index], passwordEncoder.encode(passwords[index]), emails[index], userAges[index], userGenders[index], phNos[index]);
                 userRepository.save(user);
 
-//                log.info("User {} has been created", user.getFullName());
             });
 
+        }
+
+        userExecutorService.shutdown();
+        try {
+            userExecutorService.awaitTermination(5, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
